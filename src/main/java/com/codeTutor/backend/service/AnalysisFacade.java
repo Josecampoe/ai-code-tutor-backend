@@ -1,6 +1,5 @@
 package com.codeTutor.backend.service;
 
-import com.codeTutor.backend.model.Project;
 import com.codeTutor.backend.service.CodeAnalysisService.AnalysisResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,9 +59,6 @@ public class AnalysisFacade {
     public AnalysisResult saveAndAnalyze(String projectId, String code, String language) {
         // Convertir el ID del proyecto de String a Long para usarlo en el servicio
         Long id = Long.parseLong(projectId);
-
-        // Recuperar el proyecto existente desde la base de datos
-        Project project = projectService.getProject(id);
 
         // Actualizar el código del proyecto y guardar la versión anterior en el historial
         projectService.updateProjectCode(id, code);
