@@ -18,7 +18,7 @@ public class AIService {
 
     private static final String API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/" +
-            "gemini-1.5-flash:generateContent";
+            "gemini-2.0-flash:generateContent";
 
     // La key se inyecta automáticamente desde application.properties
     @Value("${gemini.api.key}")
