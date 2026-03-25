@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 
 /**
  * Servicio que gestiona el historial de versiones del código de cada proyecto.
- * Permite guardar snapshots del código del estudiante y recuperar su historial.
+ * Extiende BaseEntityService para aplicar el patrón Template Method en el guardado de snapshots.
+ * El flujo (validar → construir → persistir → responder) está definido en la clase base.
  */
 @Service
-public class CodeSnapshotService {
+public class CodeSnapshotService extends BaseEntityService<SaveCodeSnapshotRequest, CodeSnapshotResponse, CodeSnapshot> {
 
     // Repositorio de snapshots para persistencia en base de datos
     @Autowired
@@ -27,42 +28,83 @@ public class CodeSnapshotService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    // =========================================================
+    // IMPLEMENTACIÓN DEL PATRÓN TEMPLATE METHOD
+    // =========================================================
+
     /**
-     * Guarda una nueva versión del código del estudiante para un proyecto dado.
-     * El número de versión se asigna automáticamente según cuántas versiones existen.
+     * Paso 1 — Valida que el proyecto referenciado exista en la base de datos.
      */
-    public CodeSnapshotResponse saveSnapshot(SaveCodeSnapshotRequest request) {
-        // Verificar que el proyecto existe antes de guardar el snapshot
+    @Override
+    protected void validate(SaveCodeSnapshotRequest request) {
+        if (!projectRepository.existsById(request.getProjectId())) {
+            throw new RuntimeException("Proyecto no encontrado con ID: " + request.getProjectId());
+        }
+    }
+
+    /**
+     * Paso 2 — Construye el CodeSnapshot calculando el número de versión automáticamente.
+     */
+    @Override
+    protected CodeSnapshot buildEntity(SaveCodeSnapshotRequest request) {
+        // Obtener el proyecto para asociarlo al snapshot
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + request.getProjectId()));
 
-        // Calcular el número de versión sumando 1 al total de versiones existentes
+        // Calcular el número de versión sumando 1 al total existente
         int versionNumber = codeSnapshotRepository.countByProjectId(request.getProjectId()) + 1;
 
-        // Construir el snapshot con los datos del request
-        CodeSnapshot snapshot = CodeSnapshot.builder()
+        return CodeSnapshot.builder()
                 .content(request.getContent())
                 .versionLabel(request.getVersionLabel())
                 .versionNumber(versionNumber)
                 .project(project)
                 .build();
-
-        // Guardar el snapshot en la base de datos
-        CodeSnapshot saved = codeSnapshotRepository.save(snapshot);
-
-        return toResponse(saved);
     }
 
     /**
-     * Retorna el historial completo de versiones de un proyecto, ordenado de más antiguo a más reciente.
+     * Paso 3 — Persiste el snapshot en la base de datos.
+     */
+    @Override
+    protected CodeSnapshot persist(CodeSnapshot snapshot) {
+        return codeSnapshotRepository.save(snapshot);
+    }
+
+    /**
+     * Paso 4 — Convierte el CodeSnapshot guardado a su DTO de respuesta.
+     */
+    @Override
+    protected CodeSnapshotResponse toResponse(CodeSnapshot snapshot) {
+        return CodeSnapshotResponse.builder()
+                .id(snapshot.getId())
+                .content(snapshot.getContent())
+                .versionLabel(snapshot.getVersionLabel())
+                .versionNumber(snapshot.getVersionNumber())
+                .createdAt(snapshot.getCreatedAt())
+                .projectId(snapshot.getProject().getId())
+                .build();
+    }
+
+    // =========================================================
+    // MÉTODOS ADICIONALES
+    // =========================================================
+
+    /**
+     * Guarda un nuevo snapshot usando el flujo del Template Method heredado.
+     * Mantiene el nombre original para compatibilidad con ProjectController.
+     */
+    public CodeSnapshotResponse saveSnapshot(SaveCodeSnapshotRequest request) {
+        // Delegar al Template Method de la clase base
+        return create(request);
+    }
+
+    /**
+     * Retorna el historial completo de versiones de un proyecto, del más antiguo al más reciente.
      */
     public List<CodeSnapshotResponse> getSnapshotsByProject(Long projectId) {
-        // Verificar que el proyecto existe
         if (!projectRepository.existsById(projectId)) {
             throw new RuntimeException("Proyecto no encontrado con ID: " + projectId);
         }
-
-        // Obtener todos los snapshots ordenados por número de versión ascendente
         return codeSnapshotRepository.findByProjectIdOrderByVersionNumberAsc(projectId)
                 .stream()
                 .map(this::toResponse)
@@ -73,25 +115,9 @@ public class CodeSnapshotService {
      * Retorna el snapshot más reciente de un proyecto.
      */
     public CodeSnapshotResponse getLatestSnapshot(Long projectId) {
-        // Buscar el snapshot con el número de versión más alto
         CodeSnapshot snapshot = codeSnapshotRepository
                 .findTopByProjectIdOrderByVersionNumberDesc(projectId)
                 .orElseThrow(() -> new RuntimeException("No hay versiones guardadas para el proyecto ID: " + projectId));
-
         return toResponse(snapshot);
-    }
-
-    /**
-     * Convierte un CodeSnapshot a su DTO de respuesta.
-     */
-    private CodeSnapshotResponse toResponse(CodeSnapshot snapshot) {
-        return CodeSnapshotResponse.builder()
-                .id(snapshot.getId())
-                .content(snapshot.getContent())
-                .versionLabel(snapshot.getVersionLabel())
-                .versionNumber(snapshot.getVersionNumber())
-                .createdAt(snapshot.getCreatedAt())
-                .projectId(snapshot.getProject().getId())
-                .build();
     }
 }
