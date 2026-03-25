@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
  * Se encarga de toda la comunicación con la API de Groq.
  */
 @Service
-public class AIService {
+public class AIService implements AIServiceInterface {
 
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
     private static final String MODEL = "llama-3.3-70b-versatile";

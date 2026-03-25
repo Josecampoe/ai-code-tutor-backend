@@ -18,21 +18,43 @@ import java.util.List;
  * conocer y coordinar directamente todos esos servicios, generando alto acoplamiento.
  * La fachada centraliza esa coordinación, simplifica el controlador y facilita el mantenimiento:
  * si cambia la lógica interna, solo se modifica la fachada, no el controlador.
+ *
+ * Adicionalmente, construye la cadena de decoradores sobre AIService:
+ * AIService → LoggingAIDecorator → CachingAIDecorator
+ * Esto agrega logging y caché de forma transparente sin modificar AIService.
  */
 @Service
 public class AnalysisFacade {
 
-    // Servicio de inteligencia artificial para generación de guías y explicaciones
+    // Servicio base de IA (Singleton gestionado por Spring)
     @Autowired
     private AIService aiService;
 
-    // Servicio de análisis de código para detectar lenguaje y analizar estructura
+    // Servicio de análisis de código (Strategy + Observer + Factory Method)
     @Autowired
     private CodeAnalysisService codeAnalysisService;
 
-    // Servicio de gestión de proyectos para persistencia y control de versiones
+    // Servicio de gestión de proyectos (Command pattern)
     @Autowired
     private ProjectService projectService;
+
+    /**
+     * Cadena de decoradores construida sobre AIService.
+     * AIService (base) → LoggingAIDecorator → CachingAIDecorator
+     * Cada llamada pasa por caché primero, luego logging, luego la IA real.
+     */
+    private AIServiceInterface decoratedAIService;
+
+    /**
+     * Inicializa la cadena de decoradores después de que Spring inyecta AIService.
+     * El orden es: CachingAIDecorator envuelve a LoggingAIDecorator que envuelve a AIService.
+     */
+    @Autowired
+    public void initDecoratorChain() {
+        // Construir la cadena: AIService → Logging → Caching
+        AIServiceInterface withLogging = new LoggingAIDecorator(aiService);
+        this.decoratedAIService = new CachingAIDecorator(withLogging);
+    }
 
     /**
      * Analiza el código del estudiante y retorna una explicación completa con sugerencias.
@@ -45,11 +67,11 @@ public class AnalysisFacade {
 
     /**
      * Genera una guía paso a paso para que el estudiante desarrolle el proyecto descrito.
-     * Delega la generación de la guía al servicio de IA.
+     * Usa la cadena de decoradores (caché + logging) sobre el servicio de IA.
      */
     public String getProjectGuide(String projectDescription) {
-        // Solicitar a la IA que genere una guía orientada al aprendizaje del estudiante
-        return aiService.generateProjectGuide(projectDescription);
+        // Usar el servicio decorado (pasa por caché y logging antes de llamar a Groq)
+        return decoratedAIService.generateProjectGuide(projectDescription);
     }
 
     /**
