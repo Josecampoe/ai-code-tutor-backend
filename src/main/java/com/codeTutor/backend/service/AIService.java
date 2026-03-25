@@ -64,7 +64,7 @@ public class AIService {
     private String callGeminiApi(String prompt) {
         try {
             String requestBody = "{\"contents\": [{\"parts\": [{\"text\": \""
-                    + prompt.replace("\"", "\\\"").replace("\n", "\\n")
+                    + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
                     + "\"}]}]}";
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -74,6 +74,12 @@ public class AIService {
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Si la respuesta no es 200, retornar el error real de Gemini para diagnóstico
+            if (response.statusCode() != 200) {
+                return "Error Gemini [" + response.statusCode() + "]: " + response.body();
+            }
+
             return extractTextFromResponse(response.body());
 
         } catch (Exception e) {
@@ -83,18 +89,46 @@ public class AIService {
 
     /**
      * Extrae el texto generado por Gemini del JSON de respuesta.
+     * La respuesta de Gemini tiene estructura: candidates[0].content.parts[0].text
      */
     private String extractTextFromResponse(String jsonResponse) {
         try {
-            int textIndex = jsonResponse.indexOf("\"text\":");
-            if (textIndex == -1) return "No se pudo obtener respuesta de la IA";
+            // Buscar "text": dentro de candidates → content → parts
+            int candidatesIndex = jsonResponse.indexOf("\"candidates\"");
+            if (candidatesIndex == -1) return "Respuesta inesperada de la IA: " + jsonResponse;
+
+            int textIndex = jsonResponse.indexOf("\"text\":", candidatesIndex);
+            if (textIndex == -1) return "No se encontró texto en la respuesta de la IA";
+
+            // El valor empieza después de "text": "
             int start = jsonResponse.indexOf("\"", textIndex + 7) + 1;
-            int end = jsonResponse.indexOf("\"", start);
+
+            // Buscar el cierre correcto ignorando comillas escapadas
+            int end = start;
+            while (end < jsonResponse.length()) {
+                end = jsonResponse.indexOf("\"", end);
+                if (end == -1) break;
+                // Verificar que no sea una comilla escapada
+                int backslashes = 0;
+                int check = end - 1;
+                while (check >= 0 && jsonResponse.charAt(check) == '\\') {
+                    backslashes++;
+                    check--;
+                }
+                if (backslashes % 2 == 0) break;
+                end++;
+            }
+
+            if (end == -1 || end <= start) return "Error al parsear respuesta de la IA";
+
             return jsonResponse.substring(start, end)
                     .replace("\\n", "\n")
-                    .replace("\\\"", "\"");
+                    .replace("\\t", "\t")
+                    .replace("\\\"", "\"")
+                    .replace("\\\\", "\\");
+
         } catch (Exception e) {
-            return "Error al procesar la respuesta de la IA";
+            return "Error al procesar la respuesta de la IA: " + e.getMessage();
         }
     }
 }
