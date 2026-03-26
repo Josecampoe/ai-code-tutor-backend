@@ -89,6 +89,38 @@ public class CachingAIDecorator implements AIServiceInterface {
     }
 
     /**
+     * Los enunciados de ejercicios no se cachean — cada generación es única.
+     */
+    @Override
+    public String generateExerciseStatement(String topicName, String category, String language) {
+        return wrapped.generateExerciseStatement(topicName, category, language);
+    }
+
+    /**
+     * Los códigos de inicio no se cachean — cada generación es única.
+     */
+    @Override
+    public String generateStarterCode(String topicName, String language) {
+        return wrapped.generateStarterCode(topicName, language);
+    }
+
+    /**
+     * Las pistas no se cachean — el estudiante puede pedir pistas distintas.
+     */
+    @Override
+    public String generateHint(String exerciseStatement, String language) {
+        return wrapped.generateHint(exerciseStatement, language);
+    }
+
+    /**
+     * Las evaluaciones no se cachean — cada solución del estudiante es diferente.
+     */
+    @Override
+    public String evaluateSolution(String exerciseStatement, String solutionCode, String language) {
+        return wrapped.evaluateSolution(exerciseStatement, solutionCode, language);
+    }
+
+    /**
      * Limpia toda la caché — útil cuando el estudiante cambia de proyecto.
      */
     public void clearCache() {

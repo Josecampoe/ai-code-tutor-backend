@@ -29,6 +29,7 @@ public class AIService implements AIServiceInterface {
     /**
      * Explica el código del estudiante de forma clara para principiantes.
      */
+    @Override
     public String explainCode(String code, String language) {
         String prompt = "Eres un tutor de programación para principiantes. " +
                 "Explica de forma simple qué hace este código en " + language +
@@ -39,6 +40,7 @@ public class AIService implements AIServiceInterface {
     /**
      * Sugiere el siguiente paso para continuar el desarrollo.
      */
+    @Override
     public String suggestNextStep(String code, String language) {
         String prompt = "Eres un tutor de programación. El estudiante aprende " +
                 language + " y tiene este código: " + code +
@@ -46,9 +48,69 @@ public class AIService implements AIServiceInterface {
         return callGroqApi(prompt);
     }
 
+    // =========================================================
+    // MÉTODOS DEL MÓDULO "APRENDE CON IA"
+    // =========================================================
+
+    /**
+     * Genera el enunciado de un ejercicio práctico sobre un tema específico.
+     * El ejercicio debe ser claro, concreto y apropiado para principiantes.
+     */
+    @Override
+    public String generateExerciseStatement(String topicName, String category, String language) {
+        String prompt = "Eres un tutor de programación. Genera un ejercicio práctico sobre el tema '"
+                + topicName + "' (categoría: " + category + ") en el lenguaje " + language + ". "
+                + "El ejercicio debe ser claro, concreto y apropiado para principiantes. "
+                + "Incluye: qué debe implementar el estudiante, qué entradas y salidas se esperan. "
+                + "NO incluyas la solución. Solo el enunciado del ejercicio.";
+        return callGroqApi(prompt);
+    }
+
+    /**
+     * Genera un código de inicio (esqueleto) para que el estudiante complete el ejercicio.
+     * El esqueleto incluye la estructura básica pero deja los detalles para que el estudiante los implemente.
+     */
+    @Override
+    public String generateStarterCode(String topicName, String language) {
+        String prompt = "Eres un tutor de programación. Genera un código esqueleto en " + language
+                + " para un ejercicio sobre '" + topicName + "'. "
+                + "El esqueleto debe incluir: la estructura de la clase/función, comentarios indicando qué debe implementar el estudiante, "
+                + "y los métodos vacíos o con TODO. NO implementes la lógica, solo la estructura.";
+        return callGroqApi(prompt);
+    }
+
+    /**
+     * Genera una pista para el ejercicio sin revelar la solución completa.
+     * La pista debe orientar al estudiante sin darle la respuesta directa.
+     */
+    @Override
+    public String generateHint(String exerciseStatement, String language) {
+        String prompt = "Eres un tutor de programación. El estudiante está resolviendo este ejercicio en "
+                + language + ": " + exerciseStatement
+                + ". Da una pista útil que lo oriente sin revelar la solución completa. "
+                + "La pista debe ser breve y motivadora.";
+        return callGroqApi(prompt);
+    }
+
+    /**
+     * Evalúa la solución del estudiante y retorna retroalimentación detallada.
+     * Indica si es correcta, qué está bien y qué puede mejorar.
+     */
+    @Override
+    public String evaluateSolution(String exerciseStatement, String solutionCode, String language) {
+        String prompt = "Eres un tutor de programación. Evalúa la siguiente solución en " + language
+                + " para este ejercicio: " + exerciseStatement
+                + ". Solución del estudiante: " + solutionCode
+                + ". Indica si la solución es correcta o no. "
+                + "Explica qué está bien, qué puede mejorar y por qué. Usa lenguaje amigable para principiantes. "
+                + "Si es correcta, empieza con 'Correcto' o 'Bien hecho'.";
+        return callGroqApi(prompt);
+    }
+
     /**
      * Genera una guía de pasos iniciales para el proyecto descrito.
      */
+    @Override
     public String generateProjectGuide(String projectDescription) {
         String prompt = "Eres un tutor de programación para principiantes. " +
                 "El estudiante quiere desarrollar: " + projectDescription +

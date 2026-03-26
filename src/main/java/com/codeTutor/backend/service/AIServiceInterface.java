@@ -27,4 +27,28 @@ public interface AIServiceInterface {
      * Genera una guía de pasos iniciales para el proyecto descrito.
      */
     String generateProjectGuide(String projectDescription);
+
+    // =========================================================
+    // MÉTODOS DEL MÓDULO "APRENDE CON IA"
+    // =========================================================
+
+    /**
+     * Genera el enunciado de un ejercicio práctico sobre un tema y lenguaje específicos.
+     */
+    String generateExerciseStatement(String topicName, String category, String language);
+
+    /**
+     * Genera un código de inicio (esqueleto) para que el estudiante complete el ejercicio.
+     */
+    String generateStarterCode(String topicName, String language);
+
+    /**
+     * Genera una pista para el ejercicio sin revelar la solución completa.
+     */
+    String generateHint(String exerciseStatement, String language);
+
+    /**
+     * Evalúa la solución del estudiante y retorna retroalimentación detallada.
+     */
+    String evaluateSolution(String exerciseStatement, String solutionCode, String language);
 }
