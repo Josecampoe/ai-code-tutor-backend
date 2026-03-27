@@ -1,7 +1,5 @@
 package com.codeTutor.backend.service;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +11,6 @@ import java.util.Map;
  * Patrón Decorator: envuelve un AIServiceInterface y agrega comportamiento
  * de caché transparente sin modificar el servicio original.
  */
-@Component
 public class CachingAIDecorator implements AIServiceInterface {
 
     // Servicio envuelto — puede ser AIService, LoggingAIDecorator u otro decorador

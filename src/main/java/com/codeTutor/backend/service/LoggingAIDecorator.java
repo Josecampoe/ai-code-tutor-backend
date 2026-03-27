@@ -1,7 +1,5 @@
 package com.codeTutor.backend.service;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Decorador que agrega logging a cada llamada al servicio de IA.
  * Registra el tiempo de respuesta y los parámetros de cada operación
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Component;
  * Patrón Decorator: envuelve un AIServiceInterface y agrega comportamiento
  * de logging antes y después de cada llamada al servicio real.
  */
-@Component
 public class LoggingAIDecorator implements AIServiceInterface {
 
     // Servicio envuelto — puede ser AIService u otro decorador
