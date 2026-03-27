@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.codeTutor.backend.dto.request.CreateUserRequest;
@@ -25,6 +26,10 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
     @Autowired
     private UserRepository userRepository;
 
+    // Encoder BCrypt inyectado desde SecurityConfig
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     // =========================================================
     // IMPLEMENTACIÓN DEL PATRÓN TEMPLATE METHOD
     // =========================================================
@@ -43,14 +48,15 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
     }
 
     /**
-     * Paso 2 — Construye el objeto User a partir del request.
+     * Paso 2 — Construye el objeto User encriptando la contraseña con BCrypt antes de guardar.
      */
     @Override
     protected User buildEntity(CreateUserRequest request) {
         return User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                // BCrypt genera un hash único con salt — nunca se guarda la contraseña en texto plano
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
     }
 
@@ -118,13 +124,14 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
 
     /**
      * Verifica las credenciales del usuario y retorna sus datos si son correctas.
-     * Lanza excepción si el email no existe o la contraseña no coincide.
+     * Usa BCrypt.matches() para comparar la contraseña ingresada con el hash guardado.
      */
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("No existe una cuenta con ese email"));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        // matches() compara el texto plano con el hash — nunca desencripta
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
