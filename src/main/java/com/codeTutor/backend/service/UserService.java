@@ -1,14 +1,17 @@
 package com.codeTutor.backend.service;
 
-import com.codeTutor.backend.dto.request.CreateUserRequest;
-import com.codeTutor.backend.dto.response.UserResponse;
-import com.codeTutor.backend.model.User;
-import com.codeTutor.backend.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.codeTutor.backend.dto.request.CreateUserRequest;
+import com.codeTutor.backend.dto.request.LoginRequest;
+import com.codeTutor.backend.dto.response.LoginResponse;
+import com.codeTutor.backend.dto.response.UserResponse;
+import com.codeTutor.backend.model.User;
+import com.codeTutor.backend.repository.UserRepository;
 
 /**
  * Servicio que gestiona las operaciones relacionadas con los usuarios de la plataforma.
@@ -27,12 +30,15 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
     // =========================================================
 
     /**
-     * Paso 1 — Valida que el email no esté ya registrado en el sistema.
+     * Paso 1 — Valida que el email y el username no estén ya registrados en el sistema.
      */
     @Override
     protected void validate(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con el email: " + request.getEmail());
+        }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Ya existe un usuario con el nombre: " + request.getUsername());
         }
     }
 
@@ -108,5 +114,25 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Verifica las credenciales del usuario y retorna sus datos si son correctas.
+     * Lanza excepción si el email no existe o la contraseña no coincide.
+     */
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("No existe una cuenta con ese email"));
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        return LoginResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .message("Inicio de sesión exitoso")
+                .build();
     }
 }

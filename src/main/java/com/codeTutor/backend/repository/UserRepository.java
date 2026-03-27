@@ -1,9 +1,11 @@
 package com.codeTutor.backend.repository;
 
-import com.codeTutor.backend.model.User;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
+
+import com.codeTutor.backend.model.User;
 
 /**
  * Repository interface for User entity.
@@ -20,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Check if a user with that email already exists
     boolean existsByEmail(String email);
+
+    // Check if a user with that username already exists
+    boolean existsByUsername(String username);
 }

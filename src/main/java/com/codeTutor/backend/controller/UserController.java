@@ -1,15 +1,25 @@
 package com.codeTutor.backend.controller;
 
-import com.codeTutor.backend.dto.request.CreateUserRequest;
-import com.codeTutor.backend.dto.response.UserResponse;
-import com.codeTutor.backend.service.UserService;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.codeTutor.backend.dto.request.CreateUserRequest;
+import com.codeTutor.backend.dto.request.LoginRequest;
+import com.codeTutor.backend.dto.response.LoginResponse;
+import com.codeTutor.backend.dto.response.UserResponse;
+import com.codeTutor.backend.service.UserService;
+
+import jakarta.validation.Valid;
 
 /**
  * Controlador REST para la gestión de usuarios.
@@ -61,6 +71,16 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> response = userService.getAllUsers();
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/users/login
+     * Verifica las credenciales del usuario y retorna sus datos si son correctas.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = userService.login(request);
         return ResponseEntity.ok(response);
     }
 }
