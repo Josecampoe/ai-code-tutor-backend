@@ -12,15 +12,7 @@ import lombok.*;
 @Builder
 public class EvaluationResponse {
 
-    // Si la solución es correcta o no
     private boolean correct;
-
-    // Retroalimentación detallada de la IA
     private String feedback;
-
-    // Sugerencia de mejora (si aplica)
-    private String improvement;
-
-    // Progreso actualizado del estudiante
-    private Integer exercisesCompleted;
+    private Integer score;            // 0-100, calculado según la evaluación de la IA
 }

@@ -18,5 +18,8 @@ public class GenerateExerciseRequest {
     private Long topicId;
 
     @NotBlank(message = "El lenguaje es obligatorio")
-    private String language; // "java", "python", "javascript", "typescript"
+    private String language;
+
+    // userId opcional — para registrar progreso al generar
+    private Long userId;
 }

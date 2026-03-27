@@ -127,11 +127,11 @@ public class ProjectController {
                 .projectId(project.getId())
                 .projectName(project.getName())
                 .description(project.getDescription())
-                .programmingLanguage(project.getProgrammingLanguage())
+                .language(project.getProgrammingLanguage())
                 .userId(project.getUserId())
                 .username(project.getUsername())
                 .currentCode(currentCode)
-                .currentVersion(currentVersion)
+                .versionNumber(currentVersion)
                 .versionLabel(versionLabel)
                 .build();
 

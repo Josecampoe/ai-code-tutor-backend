@@ -145,7 +145,7 @@ public class LearningService {
         // Pedir a la IA que evalúe la solución
         String rawFeedback = aiService.evaluateSolution(
                 exercise.getStatement(),
-                request.getSolutionCode(),
+                request.getUserCode(),
                 request.getLanguage()
         );
 
@@ -155,17 +155,16 @@ public class LearningService {
                 rawFeedback.toLowerCase().contains("bien hecho") ||
                 rawFeedback.toLowerCase().contains("excelente");
 
-        // Pedir sugerencia de mejora si la solución es correcta pero mejorable
-        String improvement = aiService.suggestNextStep(request.getSolutionCode(), request.getLanguage());
+        // Calcular score: 100 si correcto, 50 si parcial, 0 si incorrecto
+        int score = isCorrect ? 100 : (rawFeedback.toLowerCase().contains("parcial") ? 50 : 0);
 
         // Actualizar el progreso del estudiante si la solución es correcta
-        int exercisesCompleted = updateProgress(user, exercise.getTopic(), isCorrect);
+        updateProgress(user, exercise.getTopic(), isCorrect);
 
         return EvaluationResponse.builder()
                 .correct(isCorrect)
                 .feedback(rawFeedback)
-                .improvement(improvement)
-                .exercisesCompleted(exercisesCompleted)
+                .score(score)
                 .build();
     }
 
@@ -194,15 +193,15 @@ public class LearningService {
                 .orElse(null);
 
         if (progress == null) {
-            // Si no hay progreso aún, retornar uno vacío
             LearningTopic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + topicId));
+            int total = exerciseRepository.findByTopicId(topicId).size();
             return StudentProgressResponse.builder()
-                    .userId(userId)
                     .topicId(topicId)
                     .topicName(topic.getName())
                     .topicCategory(topic.getCategory())
-                    .exercisesCompleted(0)
+                    .completedExercises(0)
+                    .totalExercises(total)
                     .status("NOT_STARTED")
                     .build();
         }
@@ -269,15 +268,16 @@ public class LearningService {
      * Convierte un StudentProgress a su DTO de respuesta.
      */
     private StudentProgressResponse toProgressResponse(StudentProgress progress) {
+        int completed = progress.getExercisesCompleted();
+        int total = exerciseRepository.findByTopicId(progress.getTopic().getId()).size();
+
         return StudentProgressResponse.builder()
-                .id(progress.getId())
-                .userId(progress.getUser().getId())
                 .topicId(progress.getTopic().getId())
                 .topicName(progress.getTopic().getName())
                 .topicCategory(progress.getTopic().getCategory())
-                .exercisesCompleted(progress.getExercisesCompleted())
+                .completedExercises(completed)
+                .totalExercises(total)
                 .status(progress.getStatus())
-                .lastActivity(progress.getLastActivity())
                 .build();
     }
 }
