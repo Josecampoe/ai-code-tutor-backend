@@ -75,6 +75,13 @@ public class DataSeeder implements CommandLineRunner {
                 .difficulty("INTERMEDIATE")
                 .build(),
 
+            LearningTopic.builder()
+                .name("AVL Tree")
+                .category("DATA_STRUCTURE")
+                .description("Árbol binario de búsqueda auto-balanceado. Garantiza O(log n) en inserción, búsqueda y eliminación.")
+                .difficulty("ADVANCED")
+                .build(),
+
             // ── PATRONES DE DISEÑO ────────────────────────────────────
             LearningTopic.builder()
                 .name("Singleton")
