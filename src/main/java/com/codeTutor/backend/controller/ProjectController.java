@@ -1,18 +1,27 @@
 package com.codeTutor.backend.controller;
 
-import com.codeTutor.backend.dto.request.CreateProjectRequest;
-import com.codeTutor.backend.dto.request.SaveCodeSnapshotRequest;
-import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
-import com.codeTutor.backend.dto.response.ProjectResponse;
-import com.codeTutor.backend.service.CodeSnapshotService;
-import com.codeTutor.backend.service.ProjectService;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.codeTutor.backend.dto.request.CreateProjectRequest;
+import com.codeTutor.backend.dto.request.SaveCodeSnapshotRequest;
+import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
+import com.codeTutor.backend.dto.response.EditorLoadResponse;
+import com.codeTutor.backend.dto.response.ProjectResponse;
+import com.codeTutor.backend.service.CodeSnapshotService;
+import com.codeTutor.backend.service.ProjectService;
+
+import jakarta.validation.Valid;
 
 /**
  * Controlador REST para la gestión de proyectos y su historial de versiones.
@@ -88,6 +97,44 @@ public class ProjectController {
     @GetMapping("/{id}/snapshots/latest")
     public ResponseEntity<CodeSnapshotResponse> getLatestSnapshot(@PathVariable Long id) {
         CodeSnapshotResponse response = codeSnapshotService.getLatestSnapshot(id);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/projects/{id}/editor
+     * Carga el proyecto con su último código en una sola llamada.
+     * Usado por el editor al abrir un proyecto.
+     */
+    @GetMapping("/{id}/editor")
+    public ResponseEntity<EditorLoadResponse> loadEditor(@PathVariable Long id) {
+        ProjectResponse project = projectService.getProjectById(id);
+
+        // Intentar obtener el último snapshot — puede no existir aún
+        String currentCode = null;
+        Integer currentVersion = null;
+        String versionLabel = null;
+
+        try {
+            CodeSnapshotResponse latest = codeSnapshotService.getLatestSnapshot(id);
+            currentCode = latest.getContent();
+            currentVersion = latest.getVersionNumber();
+            versionLabel = latest.getVersionLabel();
+        } catch (RuntimeException ignored) {
+            // No hay snapshots aún — el editor arranca vacío
+        }
+
+        EditorLoadResponse response = EditorLoadResponse.builder()
+                .projectId(project.getId())
+                .projectName(project.getName())
+                .description(project.getDescription())
+                .programmingLanguage(project.getProgrammingLanguage())
+                .userId(project.getUserId())
+                .username(project.getUsername())
+                .currentCode(currentCode)
+                .currentVersion(currentVersion)
+                .versionLabel(versionLabel)
+                .build();
+
         return ResponseEntity.ok(response);
     }
 }
