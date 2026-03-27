@@ -155,11 +155,20 @@ public class AIService implements AIServiceInterface {
      */
     private String callGroqApi(String prompt) {
         try {
+            // Sanitizar el prompt para que sea JSON válido
+            String safePrompt = prompt
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\r\n", "\\n")
+                    .replace("\r", "\\n")
+                    .replace("\n", "\\n")
+                    .replace("\t", "\\t");
+
             // Construir el body en formato OpenAI chat completions
             String requestBody = "{"
                     + "\"model\": \"" + MODEL + "\","
                     + "\"messages\": [{\"role\": \"user\", \"content\": \""
-                    + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+                    + safePrompt
                     + "\"}],"
                     + "\"max_tokens\": 1024"
                     + "}";
