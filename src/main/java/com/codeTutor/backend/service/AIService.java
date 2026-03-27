@@ -1,12 +1,12 @@
 package com.codeTutor.backend.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * Servicio principal de inteligencia artificial.
@@ -105,6 +105,37 @@ public class AIService implements AIServiceInterface {
                 + "Explica qué está bien, qué puede mejorar y por qué. Usa lenguaje amigable para principiantes. "
                 + "Si es correcta, empieza con 'Correcto' o 'Bien hecho'.";
         return callGroqApi(prompt);
+    }
+
+    /**
+     * Responde al mensaje del estudiante en el chat conversacional.
+     * Usa el historial y el código actual como contexto para dar respuestas coherentes.
+     */
+    @Override
+    public String chat(String message, String conversationHistory, String currentCode, String language) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Eres CodeTutor, un tutor de programación amigable y motivador para estudiantes. ");
+        prompt.append("Tu personalidad: cercano, paciente, entusiasta con la programación. ");
+        prompt.append("Cuando el estudiante te saluda, responde presentándote y pregunta en qué puedes ayudarle hoy. ");
+        prompt.append("Cuando haga preguntas de programación, explica de forma clara y simple. ");
+        prompt.append("Cuando pida ayuda con código, analiza el código del editor si está disponible. ");
+        prompt.append("Responde siempre en el mismo idioma que el estudiante. ");
+        prompt.append("Sé conciso pero completo. Usa emojis ocasionalmente para ser más amigable.\n\n");
+
+        // Incluir historial de conversación para mantener contexto
+        if (conversationHistory != null && !conversationHistory.isBlank()) {
+            prompt.append("Historial de la conversación:\n").append(conversationHistory).append("\n\n");
+        }
+
+        // Incluir código del editor si está disponible
+        if (currentCode != null && !currentCode.isBlank()) {
+            prompt.append("Código actual del estudiante en el editor (").append(language).append("):\n");
+            prompt.append(currentCode).append("\n\n");
+        }
+
+        prompt.append("Mensaje del estudiante: ").append(message);
+
+        return callGroqApi(prompt.toString());
     }
 
     /**

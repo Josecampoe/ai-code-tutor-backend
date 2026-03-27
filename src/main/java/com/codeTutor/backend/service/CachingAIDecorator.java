@@ -118,6 +118,14 @@ public class CachingAIDecorator implements AIServiceInterface {
     }
 
     /**
+     * El chat no se cachea — cada conversación es única y depende del contexto.
+     */
+    @Override
+    public String chat(String message, String conversationHistory, String currentCode, String language) {
+        return wrapped.chat(message, conversationHistory, currentCode, language);
+    }
+
+    /**
      * Limpia toda la caché — útil cuando el estudiante cambia de proyecto.
      */
     public void clearCache() {

@@ -51,4 +51,10 @@ public interface AIServiceInterface {
      * Evalúa la solución del estudiante y retorna retroalimentación detallada.
      */
     String evaluateSolution(String exerciseStatement, String solutionCode, String language);
+
+    /**
+     * Responde al mensaje del estudiante en el chat conversacional.
+     * Mantiene el contexto del historial y del código actual en el editor.
+     */
+    String chat(String message, String conversationHistory, String currentCode, String language);
 }

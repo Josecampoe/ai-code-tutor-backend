@@ -120,4 +120,16 @@ public class LoggingAIDecorator implements AIServiceInterface {
         System.out.println("[AI-LOG] evaluateSolution completado en " + (System.currentTimeMillis() - start) + "ms");
         return result;
     }
+
+    /**
+     * Loggea la llamada y delega al servicio envuelto para el chat conversacional.
+     */
+    @Override
+    public String chat(String message, String conversationHistory, String currentCode, String language) {
+        long start = System.currentTimeMillis();
+        System.out.println("[AI-LOG] chat llamado | mensaje: " + message.substring(0, Math.min(50, message.length())));
+        String result = wrapped.chat(message, conversationHistory, currentCode, language);
+        System.out.println("[AI-LOG] chat completado en " + (System.currentTimeMillis() - start) + "ms");
+        return result;
+    }
 }
