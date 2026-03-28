@@ -109,26 +109,41 @@ public class AIService implements AIServiceInterface {
 
     /**
      * Responde al mensaje del estudiante en el chat conversacional.
-     * Usa el historial y el código actual como contexto para dar respuestas coherentes.
+     * Detecta si es una petición de ayuda con ejercicio y ajusta el comportamiento.
      */
     @Override
     public String chat(String message, String conversationHistory, String currentCode, String language) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("Eres CodeTutor, un tutor de programación amigable y motivador para estudiantes. ");
-        prompt.append("Tu personalidad: cercano, paciente, entusiasta con la programación. ");
-        prompt.append("Cuando el estudiante te saluda, responde presentándote y pregunta en qué puedes ayudarle hoy. ");
-        prompt.append("Cuando haga preguntas de programación, explica de forma clara y simple. ");
-        prompt.append("Cuando pida ayuda con código, analiza el código del editor si está disponible. ");
-        prompt.append("Responde siempre en el mismo idioma que el estudiante. ");
-        prompt.append("Sé conciso pero completo. Usa emojis ocasionalmente para ser más amigable.\n\n");
+
+        // Detectar si el estudiante pide ayuda con un ejercicio específico
+        boolean isExerciseHelp = message.contains("Necesito ayuda con este ejercicio:");
+
+        if (isExerciseHelp) {
+            // System prompt orientador — nunca da la solución completa
+            prompt.append("Eres CodeTutor, un tutor de programación. ");
+            prompt.append("Cuando un estudiante pide ayuda con un ejercicio, ");
+            prompt.append("debes orientarlo sin darle la solución completa. ");
+            prompt.append("Explica el concepto, da pistas, haz preguntas que lo guíen a pensar. ");
+            prompt.append("Si el código está vacío, explica la estructura general que debería tener sin escribir el código. ");
+            prompt.append("Responde siempre en español. No uses emojis.\n\n");
+        } else {
+            // System prompt general para conversación normal
+            prompt.append("Eres CodeTutor, un tutor de programación amigable y motivador para estudiantes. ");
+            prompt.append("Tu personalidad: cercano, paciente, entusiasta con la programación. ");
+            prompt.append("Cuando el estudiante te saluda, responde presentándote y pregunta en qué puedes ayudarle hoy. ");
+            prompt.append("Cuando haga preguntas de programación, explica de forma clara y simple. ");
+            prompt.append("Cuando pida ayuda con código, analiza el código del editor si está disponible. ");
+            prompt.append("Responde siempre en el mismo idioma que el estudiante. ");
+            prompt.append("Sé conciso pero completo. Usa emojis ocasionalmente para ser más amigable.\n\n");
+        }
 
         // Incluir historial de conversación para mantener contexto
         if (conversationHistory != null && !conversationHistory.isBlank()) {
             prompt.append("Historial de la conversación:\n").append(conversationHistory).append("\n\n");
         }
 
-        // Incluir código del editor si está disponible
-        if (currentCode != null && !currentCode.isBlank()) {
+        // Incluir código del editor si está disponible y no viene ya en el mensaje
+        if (!isExerciseHelp && currentCode != null && !currentCode.isBlank()) {
             prompt.append("Código actual del estudiante en el editor (").append(language).append("):\n");
             prompt.append(currentCode).append("\n\n");
         }
