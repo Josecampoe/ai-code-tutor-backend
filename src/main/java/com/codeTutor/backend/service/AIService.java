@@ -118,16 +118,14 @@ public class AIService implements AIServiceInterface {
         boolean isExerciseHelp = message.contains("Necesito ayuda con este ejercicio:");
 
         if (isExerciseHelp) {
-            prompt.append("Eres un tutor de programación. Tu trabajo es ayudar al estudiante a entender y resolver el ejercicio por su cuenta. ")
-                  .append("Da pistas y explica conceptos, pero nunca escribas la solución completa. ")
-                  .append("Si el código está vacío, explica por dónde empezar sin escribir el código. ")
-                  .append("Responde en español, de forma clara y directa.\n\n");
+            prompt.append("Eres un tutor de programación. Da una pista corta y concreta, máximo 3 oraciones. ")
+                  .append("Nunca des la solución completa. Haz una pregunta al final para guiar al estudiante. ")
+                  .append("Responde en español.\n\n");
         } else {
             prompt.append("Eres CodeTutor, un asistente de programación. ")
-                  .append("Responde de forma clara, directa y natural. ")
-                  .append("Si el estudiante saluda, salúdalo y pregunta en qué puedes ayudarle. ")
-                  .append("Si pregunta sobre código o programación, explica de forma simple. ")
-                  .append("Responde siempre en el idioma del estudiante.\n\n");
+                  .append("Responde de forma muy corta y directa, máximo 4 oraciones. ")
+                  .append("Si la respuesta necesita código, muestra solo el fragmento esencial. ")
+                  .append("Responde en el idioma del estudiante.\n\n");
         }
 
         // Historial para mantener contexto de la conversación
@@ -178,7 +176,7 @@ public class AIService implements AIServiceInterface {
                     + "\"messages\": [{\"role\": \"user\", \"content\": \""
                     + safePrompt
                     + "\"}],"
-                    + "\"max_tokens\": 1024"
+                    + "\"max_tokens\": 400"
                     + "}";
 
             HttpRequest request = HttpRequest.newBuilder()
