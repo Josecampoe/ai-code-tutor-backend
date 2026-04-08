@@ -3,7 +3,8 @@ package com.codeTutor.backend.dto.response;
 import lombok.*;
 
 /**
- * Respuesta al iniciar sesión exitosamente.
+ * Response returned after successful login.
+ * Includes JWT token for subsequent authenticated requests.
  */
 @Getter
 @Setter
@@ -15,5 +16,6 @@ public class LoginResponse {
     private Long id;
     private String username;
     private String email;
+    private String token;
     private String message;
 }

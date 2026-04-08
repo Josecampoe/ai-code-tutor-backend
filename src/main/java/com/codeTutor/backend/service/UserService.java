@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.codeTutor.backend.security.JwtService;
+import com.codeTutor.backend.exception.ConflictException;
+import com.codeTutor.backend.exception.ResourceNotFoundException;
+import com.codeTutor.backend.exception.UnauthorizedException;
+
 import com.codeTutor.backend.dto.request.CreateUserRequest;
 import com.codeTutor.backend.dto.request.LoginRequest;
 import com.codeTutor.backend.dto.response.LoginResponse;
@@ -30,6 +35,9 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
     // =========================================================
     // IMPLEMENTACIÓN DEL PATRÓN TEMPLATE METHOD
     // =========================================================
@@ -40,10 +48,10 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
     @Override
     protected void validate(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + request.getEmail());
+            throw new ConflictException("Ya existe un usuario con el email: " + request.getEmail());
         }
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Ya existe un usuario con el nombre: " + request.getUsername());
+            throw new ConflictException("Ya existe un usuario con el nombre: " + request.getUsername());
         }
     }
 
@@ -128,17 +136,19 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
      */
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("No existe una cuenta con ese email"));
+                .orElseThrow(() -> new ResourceNotFoundException("No existe una cuenta con ese email"));
 
-        // matches() compara el texto plano con el hash — nunca desencripta
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Contraseña incorrecta");
+            throw new UnauthorizedException("Contraseña incorrecta");
         }
+
+        String token = jwtService.generateToken(user.getId(), user.getEmail());
 
         return LoginResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .token(token)
                 .message("Inicio de sesión exitoso")
                 .build();
     }

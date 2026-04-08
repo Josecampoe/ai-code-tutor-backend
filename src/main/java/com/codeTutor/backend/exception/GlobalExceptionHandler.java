@@ -2,94 +2,51 @@ package com.codeTutor.backend.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Manejador global de excepciones para toda la API.
- * Intercepta errores y retorna respuestas JSON consistentes en lugar de stack traces.
+ * Centralized exception handler.
+ * Returns friendly error messages without exposing internal details.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Maneja errores de validación (@Valid) — campos faltantes o inválidos en el request.
-     * Retorna 400 con un mapa de campo → mensaje de error.
-     */
+    // Validation errors (@NotBlank, @Email, etc.) → 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        // Recopilar todos los errores de validación por campo
-        Map<String, String> fieldErrors = new HashMap<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            fieldErrors.put(error.getField(), error.getDefaultMessage());
-        }
-
-        Map<String, Object> body = buildBody(HttpStatus.BAD_REQUEST, "Error de validación", null);
-        body.put("errors", fieldErrors);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    public ResponseEntity<String> handleValidation(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(e -> e.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
-    /**
-     * Maneja RuntimeException — recursos no encontrados, duplicados, etc.
-     * Retorna 404 si el mensaje contiene "no encontrado", 409 si contiene "ya existe", 400 en otros casos.
-     */
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
-        String message = ex.getMessage() != null ? ex.getMessage() : "Error interno del servidor";
-
-        HttpStatus status;
-        if (message.toLowerCase().contains("no encontrado")) {
-            status = HttpStatus.NOT_FOUND;
-        } else if (message.toLowerCase().contains("ya existe")) {
-            status = HttpStatus.CONFLICT;
-        } else {
-            status = HttpStatus.BAD_REQUEST;
-        }
-
-        return ResponseEntity.status(status).body(buildBody(status, message, null));
+    // Not found errors → 404
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    /**
-     * Maneja IllegalArgumentException — argumentos inválidos en los servicios.
-     * Retorna 400.
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
-        String message = ex.getMessage() != null ? ex.getMessage() : "Argumento inválido";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(buildBody(HttpStatus.BAD_REQUEST, message, null));
+    // Conflict errors (duplicate email/username) → 409
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<String> handleConflict(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    /**
-     * Captura cualquier excepción no manejada explícitamente.
-     * Retorna 500 con mensaje genérico para no exponer detalles internos.
-     */
+    // Unauthorized errors → 401
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorized(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    // Generic fallback — never expose internal details → 500
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+    public ResponseEntity<String> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(buildBody(HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Error interno del servidor. Intenta de nuevo más tarde.", null));
-    }
-
-    /**
-     * Construye el cuerpo estándar de respuesta de error.
-     */
-    private Map<String, Object> buildBody(HttpStatus status, String message, String path) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now().toString());
-        body.put("status", status.value());
-        body.put("error", status.getReasonPhrase());
-        body.put("message", message);
-        if (path != null) {
-            body.put("path", path);
-        }
-        return body;
+                .body("Ha ocurrido un error inesperado. Por favor intenta de nuevo.");
     }
 }
