@@ -17,9 +17,14 @@ import com.codeTutor.backend.dto.request.CreateProjectRequest;
 import com.codeTutor.backend.dto.request.SaveCodeSnapshotRequest;
 import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
 import com.codeTutor.backend.dto.response.EditorLoadResponse;
+import com.codeTutor.backend.dto.response.ProjectContextResponse;
 import com.codeTutor.backend.dto.response.ProjectResponse;
+import com.codeTutor.backend.service.ChatSessionService;
 import com.codeTutor.backend.service.CodeSnapshotService;
 import com.codeTutor.backend.service.ProjectService;
+import com.codeTutor.backend.repository.ProjectStepRepository;
+import com.codeTutor.backend.repository.AiMessageRepository;
+import com.codeTutor.backend.repository.AiSessionRepository;
 
 import jakarta.validation.Valid;
 
@@ -32,13 +37,23 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 public class ProjectController {
 
-    // Servicio de proyectos inyectado
     @Autowired
     private ProjectService projectService;
 
-    // Servicio de snapshots inyectado
     @Autowired
     private CodeSnapshotService codeSnapshotService;
+
+    @Autowired
+    private ChatSessionService chatSessionService;
+
+    @Autowired
+    private ProjectStepRepository stepRepository;
+
+    @Autowired
+    private AiSessionRepository sessionRepository;
+
+    @Autowired
+    private AiMessageRepository messageRepository;
 
     /**
      * POST /api/projects
@@ -136,5 +151,52 @@ public class ProjectController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/projects/{id}/context
+     * Returns full project context for resuming: steps, last messages, current code.
+     */
+    @GetMapping("/{id}/context")
+    public ResponseEntity<ProjectContextResponse> getProjectContext(@PathVariable Long id) {
+        ProjectResponse project = projectService.getProjectById(id);
+
+        String currentCode = null;
+        try {
+            currentCode = codeSnapshotService.getLatestSnapshot(id).getContent();
+        } catch (RuntimeException ignored) {}
+
+        // Load steps
+        var steps = stepRepository.findByProjectIdOrderByStepNumberAsc(id)
+                .stream()
+                .map(s -> ProjectContextResponse.StepSummary.builder()
+                        .stepNumber(s.getStepNumber())
+                        .title(s.getTitle())
+                        .isCompleted(s.getIsCompleted())
+                        .build())
+                .toList();
+
+        // Load last 10 messages from latest session
+        var lastMessages = sessionRepository.findTopByProjectIdOrderByStartedAtDesc(id)
+                .map(session -> messageRepository.findTop10BySessionIdOrderByCreatedAtAsc(session.getId())
+                        .stream()
+                        .map(m -> ProjectContextResponse.MessageSummary.builder()
+                                .role(m.getRole())
+                                .content(m.getContent())
+                                .build())
+                        .toList())
+                .orElse(java.util.List.of());
+
+        ProjectContextResponse context = ProjectContextResponse.builder()
+                .projectId(project.getId())
+                .projectName(project.getName())
+                .description(project.getDescription())
+                .language(project.getProgrammingLanguage())
+                .currentCode(currentCode)
+                .steps(steps)
+                .lastMessages(lastMessages)
+                .build();
+
+        return ResponseEntity.ok(context);
     }
 }
