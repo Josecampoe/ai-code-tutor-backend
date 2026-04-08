@@ -19,7 +19,11 @@ public class ChatRequest {
     @NotBlank(message = "El mensaje es obligatorio")
     private String message;
 
-    // Historial de mensajes anteriores para mantener contexto
+    // Optional: project context for persistent session history
+    private Long projectId;
+    private Long userId;
+
+    // Fallback history from frontend if no projectId provided
     private List<ChatMessage> history;
 
     // Código actual en el editor (opcional, para contexto)
