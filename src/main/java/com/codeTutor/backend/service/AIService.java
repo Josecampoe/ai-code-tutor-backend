@@ -108,8 +108,8 @@ public class AIService implements AIServiceInterface {
     }
 
     /**
-     * Responde al mensaje del estudiante en el chat conversacional.
-     * Detecta si es una petición de ayuda con ejercicio y ajusta el comportamiento.
+     * Responds to student messages using a strict tutor system prompt.
+     * Restricts responses to programming topics only and enforces short, guiding answers.
      */
     @Override
     public String chat(String message, String conversationHistory, String currentCode, String language) {
@@ -117,25 +117,33 @@ public class AIService implements AIServiceInterface {
 
         boolean isExerciseHelp = message.contains("Necesito ayuda con este ejercicio:");
 
+        // System prompt — defines the AI's role and behavior rules
         if (isExerciseHelp) {
-            prompt.append("Eres un tutor de programación. Da una pista corta y concreta, máximo 3 oraciones. ")
-                  .append("Nunca des la solución completa. Haz una pregunta al final para guiar al estudiante. ")
-                  .append("Responde en español.\n\n");
+            prompt.append("Eres un tutor de programación integrado en CodeLearn. ")
+                  .append("Tu rol es GUIAR, nunca resolver. Da una pista corta (máximo 3 oraciones). ")
+                  .append("Nunca escribas la solución completa. Haz una pregunta al final para guiar al estudiante. ")
+                  .append("Si el código está vacío, explica la estructura general sin escribir el código. ")
+                  .append("Responde en español. Sin introducciones largas. Ve directo al punto.\n\n");
         } else {
-            prompt.append("Eres CodeTutor, un asistente de programación. ")
-                  .append("Responde de forma muy corta y directa, máximo 4 oraciones. ")
-                  .append("Si la respuesta necesita código, muestra solo el fragmento esencial. ")
+            prompt.append("Eres el tutor de programación de CodeLearn, un editor educativo. ")
+                  .append("SOLO respondes preguntas sobre programación, código, estructuras de datos, errores y desarrollo de software. ")
+                  .append("Si el estudiante pregunta algo fuera de esos temas, responde ÚNICAMENTE: ")
+                  .append("'Estoy aquí para ayudarte con tu código y tu proyecto. ¿En qué parte del desarrollo necesitas ayuda?' ")
+                  .append("Reglas de respuesta: máximo 3 oraciones para respuestas conversacionales, ")
+                  .append("máximo 5 líneas + código para explicaciones. ")
+                  .append("Sin introducciones como 'Claro, con gusto'. Ve directo al punto. ")
+                  .append("Tu rol es guiar, no resolver: sugiere el siguiente paso, no la solución completa. ")
                   .append("Responde en el idioma del estudiante.\n\n");
         }
 
-        // Historial para mantener contexto de la conversación
+        // Include conversation history for context
         if (conversationHistory != null && !conversationHistory.isBlank()) {
             prompt.append("Conversación anterior:\n").append(conversationHistory).append("\n\n");
         }
 
-        // Código del editor si está disponible y no viene ya en el mensaje
+        // Include current editor code if available
         if (!isExerciseHelp && currentCode != null && !currentCode.isBlank()) {
-            prompt.append("Código actual (").append(language).append("):\n")
+            prompt.append("Código actual del estudiante (").append(language).append("):\n")
                   .append(currentCode).append("\n\n");
         }
 
