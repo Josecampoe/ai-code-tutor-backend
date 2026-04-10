@@ -3,7 +3,6 @@ package com.codeTutor.backend.config;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +28,6 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
-    @Value("${app.cors.allowed-origin}")
-    private String allowedOrigin;
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         // Cost factor 12 as required by security standards
@@ -46,6 +42,7 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("OPTIONS", "/**").permitAll()
                 .requestMatchers("POST", "/api/users").permitAll()
                 .requestMatchers("POST", "/api/users/login").permitAll()
                 .requestMatchers("/api/learn/**").permitAll()
@@ -63,7 +60,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigin));
+        // Allow both the configured origin and localhost for development
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
