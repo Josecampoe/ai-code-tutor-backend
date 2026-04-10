@@ -2,12 +2,13 @@ package com.codeTutor.backend.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 /**
  * DTO for creating a new user.
- * Received from the frontend when a user registers.
+ * Validates username and password length and disallows spaces.
  */
 @Getter
 @Setter
@@ -16,15 +17,17 @@ import lombok.*;
 @Builder
 public class CreateUserRequest {
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Size(min = 3, max = 10, message = "El nombre de usuario debe tener entre 3 y 10 caracteres")
+    @Pattern(regexp = "^\\S+$", message = "El nombre de usuario no puede contener espacios")
     private String username;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email no es válido")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 6, max = 10, message = "La contraseña debe tener entre 6 y 10 caracteres")
+    @Pattern(regexp = "^\\S+$", message = "La contraseña no puede contener espacios")
     private String password;
 }
