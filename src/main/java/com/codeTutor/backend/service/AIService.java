@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIService implements AIServiceInterface {
 
-    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String MODEL = "llama-3.3-70b-versatile";
+    @Value("${groq.api.url}")
+    private String apiUrl;
 
-    // La key se inyecta desde variable de entorno GROQ_API_KEY
+    @Value("${groq.api.model}")
+    private String model;
+
+    // API key injected from environment variable GROQ_API_KEY
     @Value("${groq.api.key}")
     private String apiKey;
 
@@ -180,7 +183,7 @@ public class AIService implements AIServiceInterface {
 
             // Construir el body en formato OpenAI chat completions
             String requestBody = "{"
-                    + "\"model\": \"" + MODEL + "\","
+                    + "\"model\": \"" + model + "\","
                     + "\"messages\": [{\"role\": \"user\", \"content\": \""
                     + safePrompt
                     + "\"}],"
@@ -188,7 +191,7 @@ public class AIService implements AIServiceInterface {
                     + "}";
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL))
+                    .uri(URI.create(apiUrl))
                     .header("Content-Type", "application/json; charset=utf-8")
                     .header("Authorization", "Bearer " + apiKey)
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody, java.nio.charset.StandardCharsets.UTF_8))
