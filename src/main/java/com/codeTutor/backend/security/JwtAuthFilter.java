@@ -1,17 +1,18 @@
 package com.codeTutor.backend.security;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Intercepts every HTTP request and validates the JWT token from the Authorization header.
@@ -45,9 +46,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         // Allow public endpoints without token
-        boolean isPublic = PUBLIC_PATHS.stream().anyMatch(p ->
-                path.equals(p) || (path.equals("/api/users") && method.equals("POST"))
-        );
+        boolean isPublic = (path.equals("/api/users") && method.equals("POST"))
+                || path.equals("/api/users/login")
+                || (path.startsWith("/api/learn/topics") && method.equals("GET"));
 
         if (isPublic) {
             filterChain.doFilter(request, response);

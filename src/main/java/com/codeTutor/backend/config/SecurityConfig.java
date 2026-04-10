@@ -1,6 +1,7 @@
 package com.codeTutor.backend.config;
 
-import com.codeTutor.backend.security.JwtAuthFilter;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.codeTutor.backend.security.JwtAuthFilter;
 
 /**
  * Spring Security configuration.
@@ -47,6 +48,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("POST", "/api/users").permitAll()
                 .requestMatchers("POST", "/api/users/login").permitAll()
+                .requestMatchers("GET", "/api/learn/topics").permitAll()
                 .requestMatchers("GET", "/api/learn/topics/**").permitAll()
                 .anyRequest().authenticated()
             )
