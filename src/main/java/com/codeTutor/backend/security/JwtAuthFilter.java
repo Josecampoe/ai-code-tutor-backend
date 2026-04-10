@@ -41,7 +41,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Allow public endpoints without token
         boolean isPublic = (path.equals("/api/users") && method.equals("POST"))
                 || path.equals("/api/users/login")
-                || path.startsWith("/api/learn/");
+                || path.startsWith("/api/learn/")
+                || path.startsWith("/api/chat");
 
         if (isPublic) {
             filterChain.doFilter(request, response);
