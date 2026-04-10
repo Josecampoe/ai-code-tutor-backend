@@ -24,13 +24,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
-    // Public endpoints that do not require authentication
-    private static final List<String> PUBLIC_PATHS = List.of(
-            "/api/users/login",
-            "/api/users",
-            "/api/learn/topics"
-    );
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -48,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Allow public endpoints without token
         boolean isPublic = (path.equals("/api/users") && method.equals("POST"))
                 || path.equals("/api/users/login")
-                || (path.startsWith("/api/learn/topics") && method.equals("GET"));
+                || path.startsWith("/api/learn/");
 
         if (isPublic) {
             filterChain.doFilter(request, response);
