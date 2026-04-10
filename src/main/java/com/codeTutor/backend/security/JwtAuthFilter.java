@@ -24,33 +24,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
+    // Skip JWT validation for these public paths
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // Allow OPTIONS preflight requests (CORS)
-        if ("OPTIONS".equalsIgnoreCase(method)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Allow public endpoints without token
-        boolean isPublic = (path.equals("/api/users") && method.equals("POST"))
+        return "OPTIONS".equalsIgnoreCase(method)
+                || (path.equals("/api/users") && "POST".equals(method))
                 || path.equals("/api/users/login")
                 || path.startsWith("/api/learn/")
                 || path.startsWith("/api/chat")
                 || path.startsWith("/api/terminal");
+    }
 
-        if (isPublic) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Extract and validate JWT from Authorization header
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
