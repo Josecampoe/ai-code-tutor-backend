@@ -16,11 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIService implements AIServiceInterface {
 
-    @Value("${groq.api.url}")
-    private String apiUrl;
-
-    @Value("${groq.api.model}")
-    private String model;
+   
+   
 
     // API key injected from environment variable GROQ_API_KEY
     @Value("${groq.api.key}")
