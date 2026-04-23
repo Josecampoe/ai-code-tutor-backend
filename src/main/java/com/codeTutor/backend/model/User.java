@@ -36,6 +36,10 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    // Updated when the user successfully logs in
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
     // One user can have many projects
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Project> projects;

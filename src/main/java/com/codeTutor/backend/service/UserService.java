@@ -7,17 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.codeTutor.backend.security.JwtService;
-import com.codeTutor.backend.exception.ConflictException;
-import com.codeTutor.backend.exception.ResourceNotFoundException;
-import com.codeTutor.backend.exception.UnauthorizedException;
-
 import com.codeTutor.backend.dto.request.CreateUserRequest;
 import com.codeTutor.backend.dto.request.LoginRequest;
 import com.codeTutor.backend.dto.response.LoginResponse;
 import com.codeTutor.backend.dto.response.UserResponse;
+import com.codeTutor.backend.exception.ConflictException;
+import com.codeTutor.backend.exception.ResourceNotFoundException;
+import com.codeTutor.backend.exception.UnauthorizedException;
 import com.codeTutor.backend.model.User;
 import com.codeTutor.backend.repository.UserRepository;
+import com.codeTutor.backend.security.JwtService;
 
 /**
  * Servicio que gestiona las operaciones relacionadas con los usuarios de la plataforma.
@@ -141,6 +140,10 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new UnauthorizedException("Contraseña incorrecta");
         }
+
+        // Update last login timestamp
+        user.setLastLoginAt(java.time.LocalDateTime.now());
+        userRepository.save(user);
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
 

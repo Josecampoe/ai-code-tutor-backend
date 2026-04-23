@@ -34,6 +34,10 @@ public class CodeSnapshot {
     @Column(name = "version_number")
     private Integer versionNumber;
 
+    // Reason this snapshot was created
+    @Column(name = "snapshot_reason")
+    private String snapshotReason = "autosave"; // autosave, manual_save, step_completed, session_start
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

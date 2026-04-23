@@ -33,6 +33,18 @@ public class Project {
     @Column(name = "programming_language")
     private String programmingLanguage;
 
+    // Last saved code content — updated on autosave
+    @Column(name = "current_code", columnDefinition = "TEXT")
+    private String currentCode;
+
+    // Current step the student is working on
+    @Column(name = "current_step_number")
+    private Integer currentStepNumber = 0;
+
+    // Project status: active, completed, paused
+    @Column(name = "project_status")
+    private String projectStatus = "active";
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
