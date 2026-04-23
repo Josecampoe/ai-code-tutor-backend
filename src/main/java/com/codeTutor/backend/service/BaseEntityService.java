@@ -21,49 +21,22 @@ package com.codeTutor.backend.service;
  * @param <RES> Tipo del objeto response (DTO de salida)
  * @param <ENT> Tipo de la entidad JPA
  */
-public abstract class BaseEntityService<REQ, RES, ENT> {
+public abstract class BaseEntityService<REQUEST, RESPONSE, ENTITY> {
 
     /**
      * Template Method: define el esqueleto del algoritmo de creación.
      * Los pasos están fijos en este orden; las subclases implementan cada paso.
      * Este método es final para que ninguna subclase pueda cambiar el flujo.
      */
-    public final RES create(REQ request) {
-        // Paso 1: Validar el request antes de procesar
+    public final RESPONSE create(REQUEST request) {
         validate(request);
-
-        // Paso 2: Construir la entidad a partir del request
-        ENT entity = buildEntity(request);
-
-        // Paso 3: Persistir la entidad en la base de datos
-        ENT saved = persist(entity);
-
-        // Paso 4: Convertir la entidad guardada a DTO de respuesta
+        ENTITY entity = buildEntity(request);
+        ENTITY saved = persist(entity);
         return toResponse(saved);
     }
 
-    /**
-     * Paso 1 — Validar el request.
-     * Cada subclase define sus propias reglas de validación.
-     * Lanza RuntimeException o IllegalArgumentException si el request es inválido.
-     */
-    protected abstract void validate(REQ request);
-
-    /**
-     * Paso 2 — Construir la entidad JPA a partir del request.
-     * Cada subclase mapea los campos del DTO a la entidad correspondiente.
-     */
-    protected abstract ENT buildEntity(REQ request);
-
-    /**
-     * Paso 3 — Persistir la entidad en la base de datos.
-     * Cada subclase llama a su repositorio correspondiente.
-     */
-    protected abstract ENT persist(ENT entity);
-
-    /**
-     * Paso 4 — Convertir la entidad a DTO de respuesta.
-     * Cada subclase mapea los campos de la entidad al DTO de salida.
-     */
-    protected abstract RES toResponse(ENT entity);
+    protected abstract void validate(REQUEST request);
+    protected abstract ENTITY buildEntity(REQUEST request);
+    protected abstract ENTITY persist(ENTITY entity);
+    protected abstract RESPONSE toResponse(ENTITY entity);
 }

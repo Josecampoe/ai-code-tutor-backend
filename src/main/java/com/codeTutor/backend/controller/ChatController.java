@@ -1,16 +1,22 @@
 package com.codeTutor.backend.controller;
 
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.codeTutor.backend.dto.request.ChatRequest;
 import com.codeTutor.backend.dto.response.ChatResponse;
 import com.codeTutor.backend.model.AiSession;
 import com.codeTutor.backend.service.AIService;
 import com.codeTutor.backend.service.ChatSessionService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 /**
  * REST controller for the AI chat endpoint.
@@ -41,7 +47,7 @@ public class ChatController {
             conversationHistory = chatSessionService.getRecentHistoryAsText(request.getProjectId());
         } else if (request.getHistory() != null && !request.getHistory().isEmpty()) {
             conversationHistory = request.getHistory().stream()
-                    .map(m -> (m.getRole().equals("user") ? "Estudiante" : "Tutor") + ": " + m.getContent())
+                    .map(chatMessage -> (chatMessage.getRole().equals("user") ? "Estudiante" : "Tutor") + ": " + chatMessage.getContent())
                     .collect(Collectors.joining("\n"));
         } else {
             conversationHistory = "";

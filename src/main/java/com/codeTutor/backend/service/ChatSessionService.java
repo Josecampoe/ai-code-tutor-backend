@@ -1,5 +1,11 @@
 package com.codeTutor.backend.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.codeTutor.backend.model.AiMessage;
 import com.codeTutor.backend.model.AiSession;
 import com.codeTutor.backend.model.Project;
@@ -8,11 +14,6 @@ import com.codeTutor.backend.repository.AiMessageRepository;
 import com.codeTutor.backend.repository.AiSessionRepository;
 import com.codeTutor.backend.repository.ProjectRepository;
 import com.codeTutor.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Manages AI chat sessions and persists messages to the database.
@@ -77,7 +78,7 @@ public class ChatSessionService {
                     List<AiMessage> messages = messageRepository
                             .findTop10BySessionIdOrderByCreatedAtAsc(session.getId());
                     return messages.stream()
-                            .map(m -> (m.getRole().equals("user") ? "Estudiante" : "Tutor") + ": " + m.getContent())
+                            .map(aiMessage -> (aiMessage.getRole().equals("user") ? "Estudiante" : "Tutor") + ": " + aiMessage.getContent())
                             .collect(Collectors.joining("\n"));
                 })
                 .orElse("");

@@ -1,14 +1,14 @@
 package com.codeTutor.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Servicio de análisis de código que detecta el lenguaje, analiza la estructura del código
@@ -111,9 +111,9 @@ public class CodeAnalysisService implements CodeChangeObserver {
         @Override
         public String analyze(String code) {
             // Contar definiciones de funciones y clases en Python
-            int defCount = countOccurrences(code, "def ");
-            int classCount = countOccurrences(code, "class ");
-            return "Análisis Python: " + defCount + " función(es), " + classCount + " clase(s).";
+            int functionDefinitionCount = countOccurrences(code, "def ");
+            int classDefinitionCount = countOccurrences(code, "class ");
+            return "Análisis Python: " + functionDefinitionCount + " función(es), " + classDefinitionCount + " clase(s).";
         }
 
         private int countOccurrences(String text, String keyword) {
@@ -132,8 +132,8 @@ public class CodeAnalysisService implements CodeChangeObserver {
         public String analyze(String code) {
             // Contar funciones y declaraciones de variables en JavaScript
             int functionCount = countOccurrences(code, "function ") + countOccurrences(code, "=> ");
-            int varCount = countOccurrences(code, "const ") + countOccurrences(code, "let ") + countOccurrences(code, "var ");
-            return "Análisis JavaScript: " + functionCount + " función(es), " + varCount + " variable(s).";
+            int variableCount = countOccurrences(code, "const ") + countOccurrences(code, "let ") + countOccurrences(code, "var ");
+            return "Análisis JavaScript: " + functionCount + " función(es), " + variableCount + " variable(s).";
         }
 
         private int countOccurrences(String text, String keyword) {

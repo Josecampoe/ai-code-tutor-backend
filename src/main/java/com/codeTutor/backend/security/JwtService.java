@@ -1,14 +1,15 @@
 package com.codeTutor.backend.security;
 
+import java.security.Key;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.security.Key;
-import java.util.Date;
 
 /**
  * Handles JWT token generation and validation.
@@ -21,7 +22,7 @@ public class JwtService {
     private String secret;
 
     @Value("${jwt.expiration.ms}")
-    private long expirationMs;
+    private long expirationMilliseconds;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
@@ -33,7 +34,7 @@ public class JwtService {
                 .setSubject(String.valueOf(userId))
                 .claim("email", email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMilliseconds))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

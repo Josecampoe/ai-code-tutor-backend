@@ -19,12 +19,11 @@ import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
 import com.codeTutor.backend.dto.response.EditorLoadResponse;
 import com.codeTutor.backend.dto.response.ProjectContextResponse;
 import com.codeTutor.backend.dto.response.ProjectResponse;
-import com.codeTutor.backend.service.ChatSessionService;
-import com.codeTutor.backend.service.CodeSnapshotService;
-import com.codeTutor.backend.service.ProjectService;
-import com.codeTutor.backend.repository.ProjectStepRepository;
 import com.codeTutor.backend.repository.AiMessageRepository;
 import com.codeTutor.backend.repository.AiSessionRepository;
+import com.codeTutor.backend.repository.ProjectStepRepository;
+import com.codeTutor.backend.service.CodeSnapshotService;
+import com.codeTutor.backend.service.ProjectService;
 
 import jakarta.validation.Valid;
 
@@ -42,9 +41,6 @@ public class ProjectController {
 
     @Autowired
     private CodeSnapshotService codeSnapshotService;
-
-    @Autowired
-    private ChatSessionService chatSessionService;
 
     @Autowired
     private ProjectStepRepository stepRepository;
@@ -169,10 +165,10 @@ public class ProjectController {
         // Load steps
         var steps = stepRepository.findByProjectIdOrderByStepNumberAsc(id)
                 .stream()
-                .map(s -> ProjectContextResponse.StepSummary.builder()
-                        .stepNumber(s.getStepNumber())
-                        .title(s.getTitle())
-                        .isCompleted(s.getIsCompleted())
+                .map(projectStep -> ProjectContextResponse.StepSummary.builder()
+                        .stepNumber(projectStep.getStepNumber())
+                        .title(projectStep.getTitle())
+                        .isCompleted(projectStep.getIsCompleted())
                         .build())
                 .toList();
 
@@ -180,9 +176,9 @@ public class ProjectController {
         var lastMessages = sessionRepository.findTopByProjectIdOrderByStartedAtDesc(id)
                 .map(session -> messageRepository.findTop10BySessionIdOrderByCreatedAtAsc(session.getId())
                         .stream()
-                        .map(m -> ProjectContextResponse.MessageSummary.builder()
-                                .role(m.getRole())
-                                .content(m.getContent())
+                        .map(aiMessage -> ProjectContextResponse.MessageSummary.builder()
+                                .role(aiMessage.getRole())
+                                .content(aiMessage.getContent())
                                 .build())
                         .toList())
                 .orElse(java.util.List.of());
