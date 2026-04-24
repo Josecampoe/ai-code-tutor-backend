@@ -184,7 +184,7 @@ public class AIService implements AIServiceInterface {
                     + "\"messages\": [{\"role\": \"user\", \"content\": \""
                     + safePrompt
                     + "\"}],"
-                    + "\"max_tokens\": 400"
+                    + "\"max_tokens\": 300"
                     + "}";
 
             HttpRequest request = HttpRequest.newBuilder()
