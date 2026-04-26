@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeTutor.backend.dto.request.AnalyzeCodeRequest;
 import com.codeTutor.backend.dto.request.CreateProjectRequest;
 import com.codeTutor.backend.dto.request.SaveCodeSnapshotRequest;
 import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
@@ -50,6 +51,9 @@ public class ProjectController {
 
     @Autowired
     private AiMessageRepository messageRepository;
+
+    @Autowired
+    private com.codeTutor.backend.service.AIServiceInterface aiService;
 
     /**
      * POST /api/projects
@@ -194,5 +198,19 @@ public class ProjectController {
                 .build();
 
         return ResponseEntity.ok(context);
+    }
+
+    /**
+     * POST /api/projects/analyze
+     * Analiza el código del estudiante y retorna retroalimentación pedagógica estructurada.
+     */
+    @PostMapping("/analyze")
+    public ResponseEntity<String> analyzeCode(@Valid @RequestBody AnalyzeCodeRequest request) {
+        String analysis = aiService.analyzeCode(
+            request.getCode(),
+            request.getLanguage(),
+            request.getProjectDescription()
+        );
+        return ResponseEntity.ok(analysis);
     }
 }

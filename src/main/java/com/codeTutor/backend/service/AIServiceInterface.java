@@ -57,4 +57,10 @@ public interface AIServiceInterface {
      * Mantiene el contexto del historial y del código actual en el editor.
      */
     String chat(String message, String conversationHistory, String currentCode, String language);
+
+    /**
+     * Analiza el código del estudiante y retorna un análisis estructurado en formato JSON.
+     * Actúa como tutor pedagógico, guiando sin dar soluciones directas.
+     */
+    String analyzeCode(String code, String language, String projectDescription);
 }

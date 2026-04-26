@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIService implements AIServiceInterface {
 
-   
-   
+    @Value("${groq.api.url}")
+    private String apiUrl;
+
+    @Value("${groq.api.model}")
+    private String model;
 
     // API key injected from environment variable GROQ_API_KEY
     @Value("${groq.api.key}")
@@ -153,6 +156,125 @@ public class AIService implements AIServiceInterface {
     }
 
     /**
+     * Analiza el código del estudiante y retorna un análisis estructurado en formato JSON.
+     * Actúa como tutor pedagógico, guiando sin dar soluciones directas.
+     */
+    @Override
+    public String analyzeCode(String code, String language, String projectDescription) {
+        String prompt = buildAnalysisPrompt(code, language, projectDescription);
+        return callGroqApi(prompt, 1500); // Más tokens para respuesta JSON estructurada
+    }
+
+    /**
+     * Construye el prompt detallado para el análisis pedagógico del código.
+     */
+    private String buildAnalysisPrompt(String code, String language, String projectDescription) {
+        return "You are an intelligent code analysis assistant embedded in a learning-focused code editor." +
+                "Your job is to help students understand their own code and guide their next steps." +
+                "You are a tutor, not a code generator. Never write the solution for the student.\n\n" +
+                
+                "═══════════════════════════════════════════INPUT═══════════════════════════════════════════\n" +
+                "Language: " + language + "\n" +
+                "Project description: " + projectDescription + "\n" +
+                "Code:\n" + code + "\n\n" +
+                
+                "═══════════════════════════════════════════YOUR TEACHING PHILOSOPHY═══════════════════════════════════════════\n" +
+                "1. You are a TUTOR, not a code generator.\n" +
+                "   - Never write the next function or block of code for the student.\n" +
+                "   - Guide with questions and hints, not with solutions.\n\n" +
+                
+                "2. Be encouraging and constructive.\n" +
+                "   - Acknowledge what the student did well before pointing out issues.\n" +
+                "   - Use simple, friendly language.\n\n" +
+                
+                "3. Explanations must be:\n" +
+                "   - Specific to the code the student actually wrote.\n" +
+                "   - Short and scannable, not walls of text.\n" +
+                "   - Written as if talking to a student, not reading documentation.\n\n" +
+                
+                "4. Suggestions must be:\n" +
+                "   - The logical next step given what the student already wrote.\n" +
+                "   - Framed as challenges or questions, not instructions.\n" +
+                "   - A maximum of 3 suggestions at a time to avoid overwhelming.\n\n" +
+                
+                "5. If the code is empty or has only a few lines:\n" +
+                "   - Encourage the student to start.\n" +
+                "   - Suggest only the very first step.\n\n" +
+                
+                "6. If the code has errors:\n" +
+                "   - Point out the error clearly without fixing it.\n" +
+                "   - Give a hint about what to look for, not the fix itself.\n\n" +
+                
+                "═══════════════════════════════════════════OUTPUT FORMAT═══════════════════════════════════════════\n" +
+                "You MUST respond ONLY with a valid JSON object.\n" +
+                "- No markdown formatting\n" +
+                "- No code fences (no ```)\n" +
+                "- No text before or after the JSON\n" +
+                "- The JSON must be parseable as-is\n\n" +
+                
+                "The JSON structure is ALWAYS exactly this:\n" +
+                "{\n" +
+                "  \"summary\": \"string — one sentence describing what the current code does overall\",\n" +
+                "  \"blocks\": [\n" +
+                "    {\n" +
+                "      \"blockName\": \"string — name of the function, class, or block detected\",\n" +
+                "      \"blockType\": \"string — function | class | loop | conditional | variable | other\",\n" +
+                "      \"explanation\": \"string — plain English explanation of what this block does\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"codeQuality\": {\n" +
+                "    \"score\": number — integer from 1 to 5,\n" +
+                "    \"feedback\": \"string — one encouraging sentence about the overall code quality\"\n" +
+                "  },\n" +
+                "  \"suggestions\": [\n" +
+                "    {\n" +
+                "      \"order\": number — 1, 2 or 3,\n" +
+                "      \"title\": \"string — short label for the suggestion\",\n" +
+                "      \"description\": \"string — guiding challenge or question, never a direct solution\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"hasErrors\": boolean,\n" +
+                "  \"errorHint\": \"string or null — if hasErrors is true, a hint about what to look for\"\n" +
+                "}\n\n" +
+                
+                "═══════════════════════════════════════════BLOCKS DETECTION RULES═══════════════════════════════════════════\n" +
+                "- Detect every meaningful block in the code: functions, classes, loops, conditionals.\n" +
+                "- Ignore import statements and single variable declarations unless they are particularly important to explain.\n" +
+                "- If the code is too short to have named blocks, return an empty array for blocks and explain the code in the summary instead.\n" +
+                "- Maximum 8 blocks. If there are more, group minor ones.\n\n" +
+                
+                "═══════════════════════════════════════════SUGGESTIONS RULES═══════════════════════════════════════════\n" +
+                "- Always give between 1 and 3 suggestions. Never more than 3.\n" +
+                "- Order them from most immediate to least immediate.\n" +
+                "- Base suggestions on the project description provided by the student.\n" +
+                "  If the student said they are building a calculator, suggest calculator-related steps.\n" +
+                "- Frame every suggestion as a question or challenge, never as an instruction.\n\n" +
+                
+                "GOOD: \"Your add() method works well. What would happen if the user types a letter instead of a number? How could you handle that?\"\n" +
+                "BAD:  \"Add input validation to your add() method using a try-catch block.\"\n\n" +
+                
+                "═══════════════════════════════════════════SCORE RULES═══════════════════════════════════════════\n" +
+                "Score from 1 to 5 based on:\n" +
+                "1 — Code is just started or has major structural issues\n" +
+                "2 — Basic structure exists but has several problems\n" +
+                "3 — Code works for the happy path, needs error handling or cleanup\n" +
+                "4 — Code is clean and handles basic edge cases\n" +
+                "5 — Code is well structured, readable, and handles edge cases well\n\n" +
+                
+                "The feedback sentence must always be encouraging even at score 1 or 2.\n\n" +
+                
+                "═══════════════════════════════════════════VALIDATION CHECKLIST (apply before responding)═══════════════════════════════════════════\n" +
+                "[ ] Response is ONLY the JSON object, nothing else\n" +
+                "[ ] JSON is valid and parseable\n" +
+                "[ ] All required fields are present\n" +
+                "[ ] No suggestion gives away code or a direct solution\n" +
+                "[ ] Explanations are specific to the actual code, not generic\n" +
+                "[ ] errorHint is null when hasErrors is false\n" +
+                "[ ] suggestions array has between 1 and 3 items\n" +
+                "[ ] score is an integer between 1 and 5";
+    }
+
+    /**
      * Genera una guía de pasos iniciales para el proyecto descrito.
      */
     @Override
@@ -168,6 +290,13 @@ public class AIService implements AIServiceInterface {
      * Realiza la llamada HTTP a la API de Groq (compatible con OpenAI).
      */
     private String callGroqApi(String prompt) {
+        return callGroqApi(prompt, 300);
+    }
+
+    /**
+     * Realiza la llamada HTTP a la API de Groq con límite de tokens configurable.
+     */
+    private String callGroqApi(String prompt, int maxTokens) {
         try {
             // Sanitizar el prompt para que sea JSON válido
             String safePrompt = prompt
@@ -184,7 +313,7 @@ public class AIService implements AIServiceInterface {
                     + "\"messages\": [{\"role\": \"user\", \"content\": \""
                     + safePrompt
                     + "\"}],"
-                    + "\"max_tokens\": 300"
+                    + "\"max_tokens\": " + maxTokens
                     + "}";
 
             HttpRequest request = HttpRequest.newBuilder()

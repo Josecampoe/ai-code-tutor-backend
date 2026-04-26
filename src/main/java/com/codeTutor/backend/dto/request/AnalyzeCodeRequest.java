@@ -1,28 +1,26 @@
 package com.codeTutor.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * DTO recibido desde el frontend cuando el estudiante solicita análisis de su código.
+ * Request DTO para el análisis pedagógico de código.
  */
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AnalyzeCodeRequest {
 
-    // El código que el estudiante quiere analizar
     @NotBlank(message = "El código no puede estar vacío")
     private String code;
 
-    // El lenguaje de programación del código
-    @NotBlank(message = "El lenguaje es requerido")
+    @NotBlank(message = "El lenguaje de programación es requerido")
     private String language;
 
-    // El proyecto al que pertenece este análisis
-    @NotNull(message = "El ID del proyecto es requerido")
-    private Long projectId;
+    @NotBlank(message = "La descripción del proyecto es requerida")
+    private String projectDescription;
 }
