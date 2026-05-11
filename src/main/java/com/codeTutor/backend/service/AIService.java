@@ -332,7 +332,7 @@ public class AIService implements AIServiceInterface {
 
             return extractTextFromResponse(response.body());
 
-        } catch (Exception e) {
+        } catch (java.io.IOException | InterruptedException e) {
             return "Error al conectar con la IA: " + e.getMessage();
         }
     }
