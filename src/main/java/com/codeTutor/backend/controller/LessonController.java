@@ -61,7 +61,7 @@ public class LessonController {
      */
     @GetMapping("/topic/{topicId}")
     public ResponseEntity<Lesson> getLessonByTopicAndLanguageAndLevel(
-            @PathVariable UUID topicId,
+            @PathVariable Long topicId,
             @RequestParam String language,
             @RequestParam String level) {
         return lessonService.findByTopicIdAndLanguageAndLevel(topicId, language, level)

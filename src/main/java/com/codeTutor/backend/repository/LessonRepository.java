@@ -19,5 +19,5 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
      * Finds a lesson by topic, language, and level combination.
      * This combination is unique per the database constraint.
      */
-    Optional<Lesson> findByTopicIdAndLanguageAndLevel(UUID topicId, String language, String level);
+    Optional<Lesson> findByTopicIdAndLanguageAndLevel(Long topicId, String language, String level);
 }

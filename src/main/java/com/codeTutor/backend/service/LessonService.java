@@ -42,7 +42,7 @@ public class LessonService {
      * Finds a lesson by topic, language, and level.
      * Returns empty if not found.
      */
-    public Optional<Lesson> findByTopicIdAndLanguageAndLevel(UUID topicId, String language, String level) {
+    public Optional<Lesson> findByTopicIdAndLanguageAndLevel(Long topicId, String language, String level) {
         return lessonRepository.findByTopicIdAndLanguageAndLevel(topicId, language, level);
     }
 
