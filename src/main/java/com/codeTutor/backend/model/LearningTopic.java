@@ -39,9 +39,18 @@ public class LearningTopic {
     @Column(nullable = false)
     private String difficulty;
 
+    // Muchos temas pertenecen a una categoría (relación con entidad Category)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category categoryEntity;
+
     // Un tema tiene muchos ejercicios
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exercise> exercises;
+
+    // Un tema tiene muchas lecciones
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Lesson> lessons;
 
     // Un tema tiene muchos registros de progreso de estudiantes
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
