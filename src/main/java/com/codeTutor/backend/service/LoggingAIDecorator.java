@@ -132,4 +132,16 @@ public class LoggingAIDecorator implements AIServiceInterface {
         System.out.println("[AI-LOG] chat completado en " + (System.currentTimeMillis() - start) + "ms");
         return result;
     }
+
+    /**
+     * Loggea la llamada y delega al servicio envuelto para el análisis pedagógico de código.
+     */
+    @Override
+    public String analyzeCode(String code, String language, String projectDescription) {
+        long start = System.currentTimeMillis();
+        System.out.println("[AI-LOG] analyzeCode llamado | lenguaje: " + language);
+        String result = wrapped.analyzeCode(code, language, projectDescription);
+        System.out.println("[AI-LOG] analyzeCode completado en " + (System.currentTimeMillis() - start) + "ms");
+        return result;
+    }
 }

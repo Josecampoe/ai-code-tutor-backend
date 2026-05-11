@@ -126,6 +126,14 @@ public class CachingAIDecorator implements AIServiceInterface {
     }
 
     /**
+     * El análisis pedagógico no se cachea — cada análisis depende del estado actual del código.
+     */
+    @Override
+    public String analyzeCode(String code, String language, String projectDescription) {
+        return wrapped.analyzeCode(code, language, projectDescription);
+    }
+
+    /**
      * Limpia toda la caché — útil cuando el estudiante cambia de proyecto.
      */
     public void clearCache() {
