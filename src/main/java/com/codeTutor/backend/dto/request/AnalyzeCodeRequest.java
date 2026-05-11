@@ -21,6 +21,7 @@ public class AnalyzeCodeRequest {
     @NotBlank(message = "El lenguaje de programación es requerido")
     private String language;
 
-    @NotBlank(message = "La descripción del proyecto es requerida")
     private String projectDescription;
+
+    private Long projectId;
 }
