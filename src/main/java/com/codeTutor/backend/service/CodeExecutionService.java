@@ -29,29 +29,20 @@ public class CodeExecutionService {
             "cpp", 54
     );
 
-    @Value("${judge0.api.url:https://judge0-ce.p.rapidapi.com}")
+    @Value("${judge0.api.url:https://ce.judge0.com}")
     private String apiUrl;
-
-    @Value("${judge0.api.key:${JUDGE0_API_KEY:}}")
-    private String apiKey;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     /**
-     * Submits code to Judge0 and returns the execution result.
+     * Submits code to Judge0 CE public instance and returns the execution result.
+     * No API key required for the public instance.
      */
     public RunCodeResponse execute(RunCodeRequest request) {
         Integer languageId = LANGUAGE_IDS.get(request.getLanguage().toLowerCase());
         if (languageId == null) {
             return RunCodeResponse.builder()
                     .stderr("Lenguaje no soportado: " + request.getLanguage())
-                    .exitCode(1)
-                    .build();
-        }
-
-        if (apiKey == null || apiKey.isBlank()) {
-            return RunCodeResponse.builder()
-                    .stderr("API de ejecución no configurada. Configura JUDGE0_API_KEY en las variables de entorno.")
                     .exitCode(1)
                     .build();
         }
@@ -74,13 +65,12 @@ public class CodeExecutionService {
                     + "}";
 
             // Submit and wait for result (synchronous mode)
-            HttpRequest httpRequest = HttpRequest.newBuilder()
+            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl + "/submissions?base64_encoded=true&wait=true"))
                     .header("Content-Type", "application/json")
-                    .header("X-RapidAPI-Key", apiKey)
-                    .header("X-RapidAPI-Host", "judge0-ce.p.rapidapi.com")
-                    .POST(HttpRequest.BodyPublishers.ofString(body, java.nio.charset.StandardCharsets.UTF_8))
-                    .build();
+                    .POST(HttpRequest.BodyPublishers.ofString(body, java.nio.charset.StandardCharsets.UTF_8));
+
+            HttpRequest httpRequest = requestBuilder.build();
 
             HttpResponse<String> response = httpClient.send(httpRequest,
                     HttpResponse.BodyHandlers.ofString(java.nio.charset.StandardCharsets.UTF_8));
