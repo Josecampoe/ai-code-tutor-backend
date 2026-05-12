@@ -13,89 +13,100 @@ import com.codeTutor.backend.dto.request.RunCodeRequest;
 import com.codeTutor.backend.dto.response.RunCodeResponse;
 
 /**
- * Executes student code using Piston API (free, no API key required).
+ * Executes student code using Judge0 CE API via RapidAPI.
+ * Free tier: 50 submissions/day.
  * Supports Java, Python, JavaScript and TypeScript.
- * Piston docs: https://github.com/engineer-man/piston
  */
 @Service
 public class CodeExecutionService {
 
-    // Piston language identifiers and versions
-    private static final Map<String, String[]> LANGUAGE_CONFIG = Map.of(
-            "java",       new String[]{"java", "15.0.2"},
-            "python",     new String[]{"python", "3.10.0"},
-            "javascript", new String[]{"javascript", "18.15.0"},
-            "typescript", new String[]{"typescript", "5.0.3"}
+    // Judge0 language IDs
+    private static final Map<String, Integer> LANGUAGE_IDS = Map.of(
+            "java", 62,
+            "python", 71,
+            "javascript", 63,
+            "typescript", 74,
+            "cpp", 54
     );
 
-    @Value("${piston.api.url}")
+    @Value("${judge0.api.url:https://judge0-ce.p.rapidapi.com}")
     private String apiUrl;
+
+    @Value("${judge0.api.key:${JUDGE0_API_KEY:}}")
+    private String apiKey;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     /**
-     * Submits code to Piston and returns the execution result.
+     * Submits code to Judge0 and returns the execution result.
      */
     public RunCodeResponse execute(RunCodeRequest request) {
-        String[] config = LANGUAGE_CONFIG.get(request.getLanguage().toLowerCase());
-        if (config == null) {
+        Integer languageId = LANGUAGE_IDS.get(request.getLanguage().toLowerCase());
+        if (languageId == null) {
             return RunCodeResponse.builder()
                     .stderr("Lenguaje no soportado: " + request.getLanguage())
                     .exitCode(1)
                     .build();
         }
 
+        if (apiKey == null || apiKey.isBlank()) {
+            return RunCodeResponse.builder()
+                    .stderr("API de ejecución no configurada. Configura JUDGE0_API_KEY en las variables de entorno.")
+                    .exitCode(1)
+                    .build();
+        }
+
         try {
-            String language = config[0];
-            String version = config[1];
-            String stdin = request.getStdin() != null ? request.getStdin() : "";
+            // Base64 encode the source code
+            String encodedCode = java.util.Base64.getEncoder().encodeToString(
+                    request.getCode().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            String encodedStdin = "";
+            if (request.getStdin() != null && !request.getStdin().isBlank()) {
+                encodedStdin = java.util.Base64.getEncoder().encodeToString(
+                        request.getStdin().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            }
 
-            // Escape code for JSON embedding
-            String safeCode = request.getCode()
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\r\n", "\\n")
-                    .replace("\r", "\\n")
-                    .replace("\n", "\\n")
-                    .replace("\t", "\\t");
-
-            String safeStdin = stdin
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\n", "\\n");
-
+            // Build request body
             String body = "{"
-                    + "\"language\": \"" + language + "\","
-                    + "\"version\": \"" + version + "\","
-                    + "\"files\": [{\"content\": \"" + safeCode + "\"}],"
-                    + "\"stdin\": \"" + safeStdin + "\""
+                    + "\"language_id\": " + languageId + ","
+                    + "\"source_code\": \"" + encodedCode + "\","
+                    + "\"stdin\": \"" + encodedStdin + "\""
                     + "}";
 
+            // Submit and wait for result (synchronous mode)
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl + "/execute"))
+                    .uri(URI.create(apiUrl + "/submissions?base64_encoded=true&wait=true"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(body,
-                            java.nio.charset.StandardCharsets.UTF_8))
+                    .header("X-RapidAPI-Key", apiKey)
+                    .header("X-RapidAPI-Host", "judge0-ce.p.rapidapi.com")
+                    .POST(HttpRequest.BodyPublishers.ofString(body, java.nio.charset.StandardCharsets.UTF_8))
                     .build();
 
             HttpResponse<String> response = httpClient.send(httpRequest,
-                    HttpResponse.BodyHandlers.ofString());
+                    HttpResponse.BodyHandlers.ofString(java.nio.charset.StandardCharsets.UTF_8));
 
             if (response.statusCode() == 401 || response.statusCode() == 403) {
                 return RunCodeResponse.builder()
-                        .stderr("La API de ejecución de código requiere autorización. Configura PISTON_API_URL con una instancia propia.")
+                        .stderr("API key inválida o límite de uso alcanzado.")
                         .exitCode(1)
                         .build();
             }
 
-            if (response.statusCode() != 200) {
+            if (response.statusCode() == 429) {
+                return RunCodeResponse.builder()
+                        .stderr("Límite diario de ejecuciones alcanzado. Intenta mañana.")
+                        .exitCode(1)
+                        .build();
+            }
+
+            if (response.statusCode() != 200 && response.statusCode() != 201) {
                 return RunCodeResponse.builder()
                         .stderr("Error del servidor de ejecución: " + response.statusCode())
                         .exitCode(1)
                         .build();
             }
 
-            return parseResponse(response.body());
+            return parseJudge0Response(response.body());
 
         } catch (Exception e) {
             return RunCodeResponse.builder()
@@ -106,57 +117,80 @@ public class CodeExecutionService {
     }
 
     /**
-     * Parses Piston JSON response.
-     * Piston returns: { run: { stdout, stderr, code, signal } }
+     * Parses Judge0 JSON response.
+     * Judge0 returns: { stdout, stderr, status: { id, description }, compile_output }
      */
-    private RunCodeResponse parseResponse(String json) {
-        String stdout = extractNestedField(json, "run", "stdout");
-        String stderr = extractNestedField(json, "run", "stderr");
-        Integer exitCode = extractNestedInt(json, "run", "code");
+    private RunCodeResponse parseJudge0Response(String json) {
+        String stdout = decodeBase64Field(json, "stdout");
+        String stderr = decodeBase64Field(json, "stderr");
+        String compileOutput = decodeBase64Field(json, "compile_output");
+
+        // If there's a compile error, show it as stderr
+        if ((stderr == null || stderr.isBlank()) && compileOutput != null && !compileOutput.isBlank()) {
+            stderr = compileOutput;
+        }
+
+        // Extract status id to determine exit code
+        int exitCode = 0;
+        int statusId = extractStatusId(json);
+        if (statusId != 3) { // 3 = Accepted (success)
+            exitCode = 1;
+        }
 
         return RunCodeResponse.builder()
                 .stdout(stdout != null ? stdout : "")
                 .stderr(stderr != null ? stderr : "")
-                .exitCode(exitCode != null ? exitCode : 0)
+                .exitCode(exitCode)
                 .build();
     }
 
-    private String extractNestedField(String json, String parent, String field) {
+    private String decodeBase64Field(String json, String field) {
         try {
-            int parentIdx = json.indexOf("\"" + parent + "\"");
-            if (parentIdx == -1) return null;
-            String key = "\"" + field + "\": \"";
-            int start = json.indexOf(key, parentIdx);
-            if (start == -1) return null;
-            start += key.length();
+            String key = "\"" + field + "\":";
+            int idx = json.indexOf(key);
+            if (idx == -1) return null;
+
+            int valueStart = idx + key.length();
+            // Skip whitespace
+            while (valueStart < json.length() && json.charAt(valueStart) == ' ') valueStart++;
+
+            if (json.charAt(valueStart) == 'n') return null; // null value
+
+            // It's a string value
+            int start = json.indexOf("\"", valueStart) + 1;
             int end = start;
             while (end < json.length()) {
                 if (json.charAt(end) == '"' && json.charAt(end - 1) != '\\') break;
                 end++;
             }
-            return json.substring(start, end)
-                    .replace("\\n", "\n")
-                    .replace("\\t", "\t")
-                    .replace("\\\"", "\"");
+
+            String base64Value = json.substring(start, end);
+            if (base64Value.isEmpty()) return "";
+
+            // Remove escaped newlines that Judge0 might include
+            base64Value = base64Value.replace("\\n", "\n").replace("\n", "");
+
+            return new String(java.util.Base64.getDecoder().decode(base64Value),
+                    java.nio.charset.StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }
     }
 
-    private Integer extractNestedInt(String json, String parent, String field) {
+    private int extractStatusId(String json) {
         try {
-            int parentIdx = json.indexOf("\"" + parent + "\"");
-            if (parentIdx == -1) return null;
-            String key = "\"" + field + "\": ";
-            int start = json.indexOf(key, parentIdx);
-            if (start == -1) return null;
-            start += key.length();
-            int end = json.indexOf(",", start);
-            if (end == -1) end = json.indexOf("}", start);
-            String val = json.substring(start, end).trim();
-            return val.equals("null") ? null : Integer.parseInt(val);
+            int statusIdx = json.indexOf("\"status\"");
+            if (statusIdx == -1) return 0;
+            String idKey = "\"id\":";
+            int idIdx = json.indexOf(idKey, statusIdx);
+            if (idIdx == -1) return 0;
+            int start = idIdx + idKey.length();
+            while (start < json.length() && json.charAt(start) == ' ') start++;
+            int end = start;
+            while (end < json.length() && Character.isDigit(json.charAt(end))) end++;
+            return Integer.parseInt(json.substring(start, end));
         } catch (Exception e) {
-            return null;
+            return 0;
         }
     }
 }
