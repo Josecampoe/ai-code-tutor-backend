@@ -1,15 +1,16 @@
 package com.codeTutor.backend.service;
 
-import com.codeTutor.backend.dto.request.RunCodeRequest;
-import com.codeTutor.backend.dto.response.RunCodeResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.codeTutor.backend.dto.request.RunCodeRequest;
+import com.codeTutor.backend.dto.response.RunCodeResponse;
 
 /**
  * Executes student code using Piston API (free, no API key required).
@@ -58,11 +59,16 @@ public class CodeExecutionService {
                     .replace("\n", "\\n")
                     .replace("\t", "\\t");
 
+            String safeStdin = stdin
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n");
+
             String body = "{"
                     + "\"language\": \"" + language + "\","
                     + "\"version\": \"" + version + "\","
                     + "\"files\": [{\"content\": \"" + safeCode + "\"}],"
-                    + "\"stdin\": \"" + stdin + "\""
+                    + "\"stdin\": \"" + safeStdin + "\""
                     + "}";
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -74,6 +80,13 @@ public class CodeExecutionService {
 
             HttpResponse<String> response = httpClient.send(httpRequest,
                     HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 401 || response.statusCode() == 403) {
+                return RunCodeResponse.builder()
+                        .stderr("La API de ejecución de código requiere autorización. Configura PISTON_API_URL con una instancia propia.")
+                        .exitCode(1)
+                        .build();
+            }
 
             if (response.statusCode() != 200) {
                 return RunCodeResponse.builder()
