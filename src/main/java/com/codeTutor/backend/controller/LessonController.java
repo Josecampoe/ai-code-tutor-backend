@@ -66,7 +66,7 @@ public class LessonController {
      * Retrieves a lesson or generates one with AI if it doesn't exist.
      */
     @GetMapping("/topic/{topicId}")
-    public ResponseEntity<Lesson> getLessonByTopicAndLanguageAndLevel(
+    public ResponseEntity<?> getLessonByTopicAndLanguageAndLevel(
             @PathVariable Long topicId,
             @RequestParam String language,
             @RequestParam String level) {
@@ -82,7 +82,19 @@ public class LessonController {
             if (topic.isEmpty()) return ResponseEntity.notFound().build();
 
             String topicName = topic.get().getName();
+            System.out.println("[LessonController] Generating lesson for: " + topicName + " | " + language + " | " + level);
+
             String contentJson = aiService.generateLessonContent(topicName, language, level);
+            System.out.println("[LessonController] AI response length: " + (contentJson != null ? contentJson.length() : 0));
+
+            // Clean AI response — remove markdown fences if present
+            if (contentJson != null) {
+                contentJson = contentJson.trim();
+                if (contentJson.startsWith("```json")) contentJson = contentJson.substring(7);
+                if (contentJson.startsWith("```")) contentJson = contentJson.substring(3);
+                if (contentJson.endsWith("```")) contentJson = contentJson.substring(0, contentJson.length() - 3);
+                contentJson = contentJson.trim();
+            }
 
             Lesson lesson = Lesson.builder()
                     .topic(topic.get())
@@ -97,7 +109,9 @@ public class LessonController {
             Lesson saved = lessonService.save(lesson);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            System.err.println("[LessonController] Error generating lesson: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error generating lesson: " + e.getMessage());
         }
     }
 
