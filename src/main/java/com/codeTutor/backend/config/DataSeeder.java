@@ -29,7 +29,16 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        // Always re-seed: delete old data and recreate
+        // Check if data needs to be re-seeded (Languages category must exist with LANGUAGE type topics)
+        boolean needsReseed = categoryRepository.count() == 0
+                || topicRepository.count() == 0
+                || topicRepository.findAll().stream().noneMatch(t -> "LANGUAGE".equals(t.getCategory()));
+
+        if (!needsReseed) {
+            System.out.println("Database already has correct data, skipping seed.");
+            return;
+        }
+
         System.out.println("Seeding database...");
         topicRepository.deleteAll();
         categoryRepository.deleteAll();
