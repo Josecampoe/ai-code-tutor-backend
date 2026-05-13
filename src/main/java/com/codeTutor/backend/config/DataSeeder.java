@@ -41,9 +41,9 @@ public class DataSeeder implements CommandLineRunner {
             Category.builder().name("Languages").icon("code").orderIndex(1).build()
         );
         topicRepository.saveAll(List.of(
-            buildTopic("Python Basics", "DATA_STRUCTURE", "BEGINNER", languages, 1),
-            buildTopic("Java Basics", "DATA_STRUCTURE", "BEGINNER", languages, 2),
-            buildTopic("JavaScript Basics", "DATA_STRUCTURE", "BEGINNER", languages, 3)
+            buildTopic("Python Basics", "LANGUAGE", "BEGINNER", languages, 1),
+            buildTopic("Java Basics", "LANGUAGE", "BEGINNER", languages, 2),
+            buildTopic("JavaScript Basics", "LANGUAGE", "BEGINNER", languages, 3)
         ));
 
         // ═══ CATEGORY 2: Data Structures ═══
@@ -79,11 +79,11 @@ public class DataSeeder implements CommandLineRunner {
             Category.builder().name("OOP").icon("cube").orderIndex(4).build()
         );
         topicRepository.saveAll(List.of(
-            buildTopic("Classes and Objects", "DESIGN_PATTERN", "BEGINNER", oop, 1),
-            buildTopic("Inheritance", "DESIGN_PATTERN", "BEGINNER", oop, 2),
-            buildTopic("Polymorphism", "DESIGN_PATTERN", "INTERMEDIATE", oop, 3),
-            buildTopic("Encapsulation", "DESIGN_PATTERN", "BEGINNER", oop, 4),
-            buildTopic("Abstraction", "DESIGN_PATTERN", "INTERMEDIATE", oop, 5)
+            buildTopic("Classes and Objects", "OOP", "BEGINNER", oop, 1),
+            buildTopic("Inheritance", "OOP", "BEGINNER", oop, 2),
+            buildTopic("Polymorphism", "OOP", "INTERMEDIATE", oop, 3),
+            buildTopic("Encapsulation", "OOP", "BEGINNER", oop, 4),
+            buildTopic("Abstraction", "OOP", "INTERMEDIATE", oop, 5)
         ));
 
         // ═══ CATEGORY 5: Algorithms ═══
