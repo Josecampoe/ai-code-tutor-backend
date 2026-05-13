@@ -133,6 +133,11 @@ public class CachingAIDecorator implements AIServiceInterface {
         return wrapped.analyzeCode(code, language, projectDescription);
     }
 
+    @Override
+    public String generateLessonContent(String topicName, String language, String level) {
+        return wrapped.generateLessonContent(topicName, language, level);
+    }
+
     /**
      * Limpia toda la caché — útil cuando el estudiante cambia de proyecto.
      */

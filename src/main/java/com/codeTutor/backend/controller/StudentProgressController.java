@@ -25,6 +25,12 @@ public class StudentProgressController {
     @Autowired
     private LearningService learningService;
 
+    /** GET /api/progress — Returns empty completed topics list (placeholder) */
+    @GetMapping
+    public ResponseEntity<List<String>> getProgress() {
+        return ResponseEntity.ok(List.of());
+    }
+
     /** GET /api/progress/{userId} — Get full progress for a student across all topics */
     @GetMapping("/{userId}")
     public ResponseEntity<List<StudentProgressResponse>> getStudentProgress(

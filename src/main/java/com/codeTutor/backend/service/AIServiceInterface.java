@@ -63,4 +63,9 @@ public interface AIServiceInterface {
      * Actúa como tutor pedagógico, guiando sin dar soluciones directas.
      */
     String analyzeCode(String code, String language, String projectDescription);
+
+    /**
+     * Generates a complete lesson content in JSON format for a given topic, language, and level.
+     */
+    String generateLessonContent(String topicName, String language, String level);
 }

@@ -157,12 +157,27 @@ public class AIService implements AIServiceInterface {
 
     /**
      * Analiza el código del estudiante y retorna un análisis estructurado en formato JSON.
-     * Actúa como tutor pedagógico, guiando sin dar soluciones directas.
      */
     @Override
     public String analyzeCode(String code, String language, String projectDescription) {
         String prompt = buildAnalysisPrompt(code, language, projectDescription);
-        return callGroqApi(prompt, 1500); // Más tokens para respuesta JSON estructurada
+        return callGroqApi(prompt, 1500);
+    }
+
+    /**
+     * Generates a complete lesson in JSON format for a topic, language, and level.
+     */
+    @Override
+    public String generateLessonContent(String topicName, String language, String level) {
+        String prompt = "Generate a programming lesson about '" + topicName + "' in " + language +
+                " for a " + level + " student. Return ONLY valid JSON with this structure: " +
+                "{\"title\": \"string\", \"summary\": \"string\", \"estimatedMinutes\": number, " +
+                "\"sections\": [{\"type\": \"explanation|example|tip|exercise\", \"title\": \"string\", " +
+                "\"content\": \"string\", \"code\": \"string or null\", \"prompt\": \"string or null\", " +
+                "\"hints\": [\"string\"] or null}]}. " +
+                "Include 5 sections: 1 explanation, 1 example with code, 1 deeper explanation, 1 tip, 1 exercise with hints. " +
+                "Make it educational, clear, and practical. No markdown, no code fences, just raw JSON.";
+        return callGroqApi(prompt, 2000);
     }
 
     /**

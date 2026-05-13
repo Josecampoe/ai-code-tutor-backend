@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeTutor.backend.model.Lesson;
+import com.codeTutor.backend.repository.LearningTopicRepository;
+import com.codeTutor.backend.service.AIServiceInterface;
 import com.codeTutor.backend.service.LessonService;
 
 /**
@@ -29,9 +31,13 @@ import com.codeTutor.backend.service.LessonService;
 public class LessonController {
 
     private final LessonService lessonService;
+    private final LearningTopicRepository learningTopicRepository;
+    private final AIServiceInterface aiService;
 
-    public LessonController(LessonService lessonService) {
+    public LessonController(LessonService lessonService, LearningTopicRepository learningTopicRepository, AIServiceInterface aiService) {
         this.lessonService = lessonService;
+        this.learningTopicRepository = learningTopicRepository;
+        this.aiService = aiService;
     }
 
     /**
@@ -57,16 +63,42 @@ public class LessonController {
 
     /**
      * GET /api/lessons/topic/{topicId}?language=Java&level=beginner
-     * Retrieves or generates a lesson for a specific topic, language, and level.
+     * Retrieves a lesson or generates one with AI if it doesn't exist.
      */
     @GetMapping("/topic/{topicId}")
     public ResponseEntity<Lesson> getLessonByTopicAndLanguageAndLevel(
             @PathVariable Long topicId,
             @RequestParam String language,
             @RequestParam String level) {
-        return lessonService.findByTopicIdAndLanguageAndLevel(topicId, language, level)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        // Try to find existing lesson
+        var existing = lessonService.findByTopicIdAndLanguageAndLevel(topicId, language, level);
+        if (existing.isPresent()) {
+            return ResponseEntity.ok(existing.get());
+        }
+
+        // Generate with AI
+        try {
+            var topic = learningTopicRepository.findById(topicId);
+            if (topic.isEmpty()) return ResponseEntity.notFound().build();
+
+            String topicName = topic.get().getName();
+            String contentJson = aiService.generateLessonContent(topicName, language, level);
+
+            Lesson lesson = Lesson.builder()
+                    .topic(topic.get())
+                    .language(language)
+                    .level(level)
+                    .title(topicName + " - " + level)
+                    .summary("AI-generated lesson about " + topicName + " in " + language)
+                    .contentJson(contentJson)
+                    .estimatedMinutes(10)
+                    .build();
+
+            Lesson saved = lessonService.save(lesson);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /**
