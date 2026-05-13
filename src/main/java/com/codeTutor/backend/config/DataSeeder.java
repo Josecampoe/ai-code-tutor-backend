@@ -29,12 +29,10 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (categoryRepository.count() > 0) {
-            System.out.println("Database already has data, skipping seed.");
-            return;
-        }
-
+        // Always re-seed: delete old data and recreate
         System.out.println("Seeding database...");
+        topicRepository.deleteAll();
+        categoryRepository.deleteAll();
 
         // ═══ CATEGORY 1: Languages ═══
         Category languages = categoryRepository.save(
