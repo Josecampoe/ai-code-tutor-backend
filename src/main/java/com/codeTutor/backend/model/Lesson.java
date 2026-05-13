@@ -1,5 +1,6 @@
 package com.codeTutor.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class Lesson {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "exercises", "lessons", "progressRecords"})
     private LearningTopic topic;
 
     @Column(nullable = false)
