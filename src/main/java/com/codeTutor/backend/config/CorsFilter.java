@@ -20,6 +20,11 @@ import java.io.IOException;
 public class CorsFilter extends OncePerRequestFilter {
 
     @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false; // also run on error responses (400, 500) so CORS headers reach the browser
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
