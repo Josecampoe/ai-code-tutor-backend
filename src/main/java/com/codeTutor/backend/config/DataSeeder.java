@@ -50,7 +50,10 @@ public class DataSeeder implements CommandLineRunner {
         topicRepository.saveAll(List.of(
             buildTopic("Python Basics", "LANGUAGE", "BEGINNER", languages, 1),
             buildTopic("Java Basics", "LANGUAGE", "BEGINNER", languages, 2),
-            buildTopic("JavaScript Basics", "LANGUAGE", "BEGINNER", languages, 3)
+            buildTopic("JavaScript Basics", "LANGUAGE", "BEGINNER", languages, 3),
+            buildTopic("TypeScript Basics", "LANGUAGE", "BEGINNER", languages, 4),
+            buildTopic("C++ Basics", "LANGUAGE", "BEGINNER", languages, 5),
+            buildTopic("Kotlin Basics", "LANGUAGE", "BEGINNER", languages, 6)
         ));
 
         // ═══ CATEGORY 2: Data Structures ═══

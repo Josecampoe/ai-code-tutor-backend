@@ -169,15 +169,42 @@ public class AIService implements AIServiceInterface {
      */
     @Override
     public String generateLessonContent(String topicName, String language, String level) {
-        String prompt = "Generate a programming lesson about '" + topicName + "' in " + language +
-                " for a " + level + " student. Return ONLY valid JSON with this structure: " +
-                "{\"title\": \"string\", \"summary\": \"string\", \"estimatedMinutes\": number, " +
-                "\"sections\": [{\"type\": \"explanation|example|tip|exercise\", \"title\": \"string\", " +
-                "\"content\": \"string\", \"code\": \"string or null\", \"prompt\": \"string or null\", " +
-                "\"hints\": [\"string\"] or null}]}. " +
-                "Include 5 sections: 1 explanation, 1 example with code, 1 deeper explanation, 1 tip, 1 exercise with hints. " +
-                "Make it educational, clear, and practical. No markdown, no code fences, just raw JSON.";
-        return callGroqApi(prompt, 2000);
+        String levelGuidance = switch (level.toLowerCase()) {
+            case "beginner" -> "Use real-world analogies and everyday language. Avoid jargon. " +
+                    "Explain every concept as if the student has never coded before.";
+            case "intermediate" -> "Use standard programming terminology. Connect new concepts to things " +
+                    "the student already knows. Focus on correct usage and common patterns.";
+            case "advanced" -> "Discuss trade-offs, performance implications, and edge cases. " +
+                    "Compare alternative approaches. Assume solid programming fundamentals.";
+            default -> "Use clear, practical explanations appropriate for the level.";
+        };
+
+        String prompt = "You are an expert programming tutor. Generate a lesson about '" + topicName +
+                "' in " + language + " for a " + level + " student.\n\n" +
+                "LEVEL GUIDANCE: " + levelGuidance + "\n\n" +
+                "QUALITY RULES:\n" +
+                "- Section titles must be SPECIFIC and engaging, not generic. " +
+                "  BAD: 'Introduction'. GOOD: 'Why " + topicName + " solves real problems'.\n" +
+                "- Code examples must be max 20 lines, well commented, and directly illustrate the concept.\n" +
+                "- The tip section must describe the MOST COMMON MISTAKE students make with this topic.\n" +
+                "- The exercise must NOT give away the answer. The prompt asks the student to solve it themselves.\n" +
+                "- Hints must be guiding questions, not solutions. BAD: 'Use a for loop'. GOOD: 'What would happen if you iterated over each element?'\n" +
+                "- All content must be specific to " + topicName + ", never generic filler text.\n\n" +
+                "OUTPUT FORMAT: Return ONLY valid JSON, no markdown, no code fences, no text outside the JSON.\n\n" +
+                "JSON STRUCTURE (exactly 5 sections in this order):\n" +
+                "{\n" +
+                "  \"title\": \"string — specific, engaging lesson title\",\n" +
+                "  \"summary\": \"string — 1-2 sentences describing what the student will learn\",\n" +
+                "  \"estimatedMinutes\": number,\n" +
+                "  \"sections\": [\n" +
+                "    {\"type\": \"explanation\", \"title\": \"string\", \"content\": \"string\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
+                "    {\"type\": \"example\", \"title\": \"string\", \"content\": \"string\", \"code\": \"string — working " + language + " code\", \"prompt\": null, \"hints\": null},\n" +
+                "    {\"type\": \"explanation\", \"title\": \"string\", \"content\": \"string — deeper concept or common variation\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
+                "    {\"type\": \"tip\", \"title\": \"string\", \"content\": \"string — the most common mistake and how to avoid it\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
+                "    {\"type\": \"exercise\", \"title\": \"string\", \"content\": \"string — context/setup for the exercise\", \"code\": null, \"prompt\": \"string — clear task for the student to solve\", \"hints\": [\"string — guiding question 1\", \"string — guiding question 2\", \"string — guiding question 3\"]}\n" +
+                "  ]\n" +
+                "}";
+        return callGroqApi(prompt, 3000);
     }
 
     /**
