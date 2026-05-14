@@ -35,6 +35,6 @@ public class Category {
     @Column(name = "order_index")
     private Integer orderIndex = 0;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LearningTopic> topics;
 }

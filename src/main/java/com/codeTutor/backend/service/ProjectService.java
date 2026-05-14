@@ -182,6 +182,7 @@ public class ProjectService {
             versionHistory.add(lastCode);
         }
 
+        project.setCurrentCode(newCode);
         Project saved = projectRepository.save(project);
         return toResponse(saved);
     }
