@@ -165,46 +165,120 @@ public class AIService implements AIServiceInterface {
     }
 
     /**
-     * Generates a complete lesson in JSON format for a topic, language, and level.
+     * Generates a complete lesson in JSON format for a specific lesson.
      */
     @Override
-    public String generateLessonContent(String topicName, String language, String level) {
+    public String generateLessonContent(String language, String level, int lessonNumber, String title) {
         String levelGuidance = switch (level.toLowerCase()) {
             case "beginner" -> "Use real-world analogies and everyday language. Avoid jargon. " +
-                    "Explain every concept as if the student has never coded before.";
+                    "Explain every concept as if the student has never coded before. " +
+                    "Break down each idea into tiny, digestible pieces.";
             case "intermediate" -> "Use standard programming terminology. Connect new concepts to things " +
-                    "the student already knows. Focus on correct usage and common patterns.";
+                    "the student already knows. Focus on correct usage, common patterns, and best practices.";
             case "advanced" -> "Discuss trade-offs, performance implications, and edge cases. " +
                     "Compare alternative approaches. Assume solid programming fundamentals.";
             default -> "Use clear, practical explanations appropriate for the level.";
         };
 
-        String prompt = "You are an expert programming tutor. Generate a lesson about '" + topicName +
-                "' in " + language + " for a " + level + " student.\n\n" +
-                "LEVEL GUIDANCE: " + levelGuidance + "\n\n" +
-                "QUALITY RULES:\n" +
-                "- Section titles must be SPECIFIC and engaging, not generic. " +
-                "  BAD: 'Introduction'. GOOD: 'Why " + topicName + " solves real problems'.\n" +
-                "- Code examples must be max 20 lines, well commented, and directly illustrate the concept.\n" +
-                "- The tip section must describe the MOST COMMON MISTAKE students make with this topic.\n" +
-                "- The exercise must NOT give away the answer. The prompt asks the student to solve it themselves.\n" +
-                "- Hints must be guiding questions, not solutions. BAD: 'Use a for loop'. GOOD: 'What would happen if you iterated over each element?'\n" +
-                "- All content must be specific to " + topicName + ", never generic filler text.\n\n" +
-                "OUTPUT FORMAT: Return ONLY valid JSON, no markdown, no code fences, no text outside the JSON.\n\n" +
-                "JSON STRUCTURE (exactly 5 sections in this order):\n" +
-                "{\n" +
-                "  \"title\": \"string — specific, engaging lesson title\",\n" +
-                "  \"summary\": \"string — 1-2 sentences describing what the student will learn\",\n" +
-                "  \"estimatedMinutes\": number,\n" +
-                "  \"sections\": [\n" +
-                "    {\"type\": \"explanation\", \"title\": \"string\", \"content\": \"string\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
-                "    {\"type\": \"example\", \"title\": \"string\", \"content\": \"string\", \"code\": \"string — working " + language + " code\", \"prompt\": null, \"hints\": null},\n" +
-                "    {\"type\": \"explanation\", \"title\": \"string\", \"content\": \"string — deeper concept or common variation\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
-                "    {\"type\": \"tip\", \"title\": \"string\", \"content\": \"string — the most common mistake and how to avoid it\", \"code\": null, \"prompt\": null, \"hints\": null},\n" +
-                "    {\"type\": \"exercise\", \"title\": \"string\", \"content\": \"string — context/setup for the exercise\", \"code\": null, \"prompt\": \"string — clear task for the student to solve\", \"hints\": [\"string — guiding question 1\", \"string — guiding question 2\", \"string — guiding question 3\"]}\n" +
-                "  ]\n" +
-                "}";
-        return callGroqApi(prompt, 3000);
+        String prompt = """
+            You are an elite programming tutor crafting a single high-quality lesson for the "Learn with AI" platform.
+
+            TASK:
+            Language: __LANGUAGE__
+            Level: __LEVEL__
+            Lesson __LESSON_NUMBER__ of 10
+            Title: __LESSON_TITLE__
+
+            Generate a complete lesson about "__LESSON_TITLE__" in __LANGUAGE__ for a __LEVEL__ student.
+            The lesson must teach ONE specific concept deeply. Do not cover multiple unrelated topics.
+
+            LEVEL GUIDANCE:
+            __LEVEL_GUIDANCE__
+
+            OUTPUT FORMAT:
+            Return ONLY valid JSON. No markdown, no code fences (no ```), no text before or after the JSON.
+
+            JSON SCHEMA (exactly 5 sections in this order):
+            {
+              "title": "string — specific, engaging lesson title",
+              "summary": "string — one sentence about measurable learning outcome",
+              "estimatedMinutes": integer — between 5 and 20,
+              "sections": [
+                {"type": "explanation", "title": "string", "content": "string", "code": null, "prompt": null, "hints": null},
+                {"type": "example", "title": "string", "content": "string", "code": "string — working __LANGUAGE__ code", "prompt": null, "hints": null},
+                {"type": "explanation", "title": "string", "content": "string — deeper dive", "code": null, "prompt": null, "hints": null},
+                {"type": "tip", "title": "string", "content": "string — most common mistake", "code": null, "prompt": null, "hints": null},
+                {"type": "exercise", "title": "string", "content": "string — setup", "code": null, "prompt": "string — clear task", "hints": ["guiding q1", "guiding q2", "guiding q3"]}
+              ]
+            }
+
+            SECTION REQUIREMENTS:
+
+            1. FIRST EXPLANATION (type: "explanation"):
+            - Start with WHY this concept matters before HOW it works
+            - Use a real-world analogy the student can visualize
+            - Define every new term the first time you use it
+            - Maximum 150 words. NO code in this section.
+
+            2. CODE EXAMPLE (type: "example"):
+            - Write working __LANGUAGE__ code that the student could actually run
+            - Include comments to explain key lines
+            - Maximum 25 lines. Directly illustrate the concept from section 1.
+            - After the code, write 2-3 sentences explaining what the code does.
+
+            3. DEEP DIVE (type: "explanation"):
+            - Explore a variation, edge case, or more advanced usage
+            - Answer "what happens if..." or "how is this different from..."
+            - Maximum 150 words. NO code unless essential.
+
+            4. TIP — COMMON MISTAKE (type: "tip"):
+            - Identify the MOST COMMON mistake beginners make with this concept
+            - Explain why it fails conceptually and how to fix it
+            - Maximum 100 words.
+
+            5. EXERCISE (type: "exercise"):
+            - Give a clear, focused programming task that requires APPLYING the concept
+            - Must be solvable in 5-10 minutes
+            - Include exactly 3 hints. Each hint is a GUIDING QUESTION, never a solution.
+            - BAD hint: "Use a for loop"
+            - GOOD hint: "What if you needed to repeat this action for every element?"
+
+            QUALITY RULES:
+
+            1. Be SPECIFIC to __LANGUAGE__. Use __LANGUAGE__-specific syntax and conventions.
+               Bad: "Variables store data." Good: "Think of a variable as a labeled jar where you can store a single value."
+
+            2. Every code example must be syntactically correct for __LANGUAGE__.
+
+            3. Section titles must be engaging. Bad: "Introduction". Good: "What problem does X solve?"
+
+            4. If __LEVEL__ is "beginner", explain every term. Do not use jargon without definition.
+
+            5. If __LEVEL__ is "advanced", assume syntax knowledge and focus on deeper understanding.
+
+            6. The JSON title field should be captivating but informative.
+
+            7. All content must be in English.
+
+            8. estimatedMinutes must be realistic — 5 for simple concepts, up to 20 for complex ones.
+            """
+            .replace("__LANGUAGE__", language)
+            .replace("__LEVEL__", level)
+            .replace("__LESSON_NUMBER__", String.valueOf(lessonNumber))
+            .replace("__LESSON_TITLE__", title)
+            .replace("__LEVEL_GUIDANCE__", levelGuidance);
+
+        String response = callGroqApi(prompt, 3000);
+        return cleanJsonResponse(response);
+    }
+
+    private String cleanJsonResponse(String content) {
+        if (content == null) return null;
+        content = content.trim();
+        if (content.startsWith("```json")) content = content.substring(7);
+        else if (content.startsWith("```")) content = content.substring(3);
+        if (content.endsWith("```")) content = content.substring(0, content.length() - 3);
+        return content.trim();
     }
 
     /**

@@ -65,7 +65,7 @@ public interface AIServiceInterface {
     String analyzeCode(String code, String language, String projectDescription);
 
     /**
-     * Generates a complete lesson content in JSON format for a given topic, language, and level.
+     * Generates a complete lesson content in JSON format for a specific lesson.
      */
-    String generateLessonContent(String topicName, String language, String level);
+    String generateLessonContent(String language, String level, int lessonNumber, String title);
 }

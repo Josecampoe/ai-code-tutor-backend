@@ -146,10 +146,10 @@ public class LoggingAIDecorator implements AIServiceInterface {
     }
 
     @Override
-    public String generateLessonContent(String topicName, String language, String level) {
+    public String generateLessonContent(String language, String level, int lessonNumber, String title) {
         long start = System.currentTimeMillis();
-        System.out.println("[AI-LOG] generateLessonContent llamado | tema: " + topicName + " | lenguaje: " + language);
-        String result = wrapped.generateLessonContent(topicName, language, level);
+        System.out.println("[AI-LOG] generateLessonContent llamado | lenguaje: " + language + " | leccion: " + lessonNumber);
+        String result = wrapped.generateLessonContent(language, level, lessonNumber, title);
         System.out.println("[AI-LOG] generateLessonContent completado en " + (System.currentTimeMillis() - start) + "ms");
         return result;
     }

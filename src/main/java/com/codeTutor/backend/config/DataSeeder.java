@@ -7,11 +7,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codeTutor.backend.model.Category;
+import org.springframework.core.annotation.Order;
 import com.codeTutor.backend.model.LearningTopic;
 import com.codeTutor.backend.repository.CategoryRepository;
 import com.codeTutor.backend.repository.LearningTopicRepository;
 
 @Component
+@Order(1)
 public class DataSeeder implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
