@@ -29,7 +29,7 @@ public class Lesson {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "exercises", "lessons", "progressRecords"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "exercises", "lessons", "progressRecords", "categoryEntity"})
     private LearningTopic topic;
 
     @Column(nullable = false)
