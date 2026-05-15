@@ -27,7 +27,6 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/exercises")
-@CrossOrigin(origins = "*")
 public class ExerciseController {
 
     @Autowired

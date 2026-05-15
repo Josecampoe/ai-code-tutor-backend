@@ -19,7 +19,6 @@ import com.codeTutor.backend.service.LearningService;
  */
 @RestController
 @RequestMapping("/api/progress")
-@CrossOrigin(origins = "*")
 public class StudentProgressController {
 
     @Autowired

@@ -19,7 +19,6 @@ import com.codeTutor.backend.service.LearningService;
  */
 @RestController
 @RequestMapping("/api/topics")
-@CrossOrigin(origins = "*")
 public class LearningTopicController {
 
     @Autowired

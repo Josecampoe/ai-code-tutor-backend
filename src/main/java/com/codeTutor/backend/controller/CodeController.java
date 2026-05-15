@@ -17,7 +17,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/code")
-@CrossOrigin(origins = "*")
 public class CodeController {
 
     // Servicio de análisis inyectado

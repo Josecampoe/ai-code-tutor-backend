@@ -22,7 +22,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/learn")
-@CrossOrigin(origins = "*")
 public class LearningController {
 
     @Autowired

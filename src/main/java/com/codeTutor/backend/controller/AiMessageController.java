@@ -19,7 +19,6 @@ import com.codeTutor.backend.repository.AiMessageRepository;
  */
 @RestController
 @RequestMapping("/api/messages")
-@CrossOrigin(origins = "*")
 public class AiMessageController {
 
     @Autowired

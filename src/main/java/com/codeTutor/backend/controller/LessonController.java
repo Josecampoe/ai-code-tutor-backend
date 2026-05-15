@@ -27,7 +27,6 @@ import com.codeTutor.backend.service.LessonService;
  */
 @RestController
 @RequestMapping("/api/lessons")
-@CrossOrigin(origins = "*")
 public class LessonController {
 
     private final LessonService lessonService;
