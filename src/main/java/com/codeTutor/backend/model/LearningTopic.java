@@ -1,5 +1,6 @@
 package com.codeTutor.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,14 +46,17 @@ public class LearningTopic {
     private Category categoryEntity;
 
     // Un tema tiene muchos ejercicios
+    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exercise> exercises;
 
     // Un tema tiene muchas lecciones
+    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
     // Un tema tiene muchos registros de progreso de estudiantes
+    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProgress> progressRecords;
 }

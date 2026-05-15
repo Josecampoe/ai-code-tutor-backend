@@ -1,5 +1,6 @@
 package com.codeTutor.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,7 @@ public class Category {
     @Column(name = "order_index")
     private Integer orderIndex = 0;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LearningTopic> topics;
 }
