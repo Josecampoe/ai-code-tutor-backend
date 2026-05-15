@@ -46,9 +46,7 @@ public class DataSeeder implements CommandLineRunner {
             buildTopic("Python", "LANGUAGE", languages, 1),
             buildTopic("Java", "LANGUAGE", languages, 2),
             buildTopic("JavaScript", "LANGUAGE", languages, 3),
-            buildTopic("TypeScript", "LANGUAGE", languages, 4),
-            buildTopic("C++", "LANGUAGE", languages, 5),
-            buildTopic("Kotlin", "LANGUAGE", languages, 6)
+            buildTopic("TypeScript", "LANGUAGE", languages, 4)
         ));
 
         long catCount = categoryRepository.count();
