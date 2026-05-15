@@ -21,4 +21,6 @@ public interface LearningTopicRepository extends JpaRepository<LearningTopic, Lo
     Optional<LearningTopic> findByName(String name);
 
     Optional<LearningTopic> findByNameContainingIgnoreCase(String name);
+
+    Optional<LearningTopic> findByNameIgnoreCase(String name);
 }
