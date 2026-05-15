@@ -1,6 +1,6 @@
 package com.codeTutor.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"topics"})
 public class Category {
 
     @Id
@@ -36,7 +37,6 @@ public class Category {
     @Column(name = "order_index")
     private Integer orderIndex = 0;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LearningTopic> topics;
 }
