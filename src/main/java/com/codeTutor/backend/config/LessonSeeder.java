@@ -51,7 +51,7 @@ public class LessonSeeder implements CommandLineRunner {
             String capitalized = language.substring(0, 1).toUpperCase()
                 + language.substring(1);
             Optional<LearningTopic> topicOpt =
-                topicRepository.findByNameIgnoreCase(capitalized);
+                topicRepository.findByName(capitalized);
 
             if (topicOpt.isEmpty()) {
                 log.error("Cannot find topic for language: {}", language);
