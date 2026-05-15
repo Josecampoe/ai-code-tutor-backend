@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SeedingStatus {
-    private final AtomicBoolean complete = new AtomicBoolean(false);
+    private final AtomicBoolean complete = new AtomicBoolean(true);
 
     public boolean isComplete() {
         return complete.get();
