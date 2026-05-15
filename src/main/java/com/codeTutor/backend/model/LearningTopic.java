@@ -1,6 +1,6 @@
 package com.codeTutor.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,45 +18,35 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"exercises", "lessons", "progressRecords"})
 public class LearningTopic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Nombre del tema: "Stack", "Observer Pattern", "Binary Search"
     @Column(nullable = false, unique = true)
     private String name;
 
-    // Categoría: "DATA_STRUCTURE" o "DESIGN_PATTERN" o "ALGORITHM"
     @Column(nullable = false)
     private String category;
 
-    // Descripción breve del tema
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Nivel de dificultad: BEGINNER, INTERMEDIATE, ADVANCED
     @Column(nullable = false)
     private String difficulty;
 
-    // Muchos temas pertenecen a una categoría (relación con entidad Category)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category categoryEntity;
 
-    // Un tema tiene muchos ejercicios
-    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exercise> exercises;
 
-    // Un tema tiene muchas lecciones
-    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
-    // Un tema tiene muchos registros de progreso de estudiantes
-    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProgress> progressRecords;
 }
