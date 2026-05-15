@@ -25,7 +25,6 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/analysis")
-@CrossOrigin(origins = "*")
 public class AnalysisHistoryController {
 
     @Autowired

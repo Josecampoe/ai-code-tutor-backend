@@ -24,7 +24,6 @@ import com.codeTutor.backend.service.CategoryService;
  */
 @RestController
 @RequestMapping("/api/categories")
-@CrossOrigin(origins = "*")
 public class CategoryController {
 
     private final CategoryService categoryService;

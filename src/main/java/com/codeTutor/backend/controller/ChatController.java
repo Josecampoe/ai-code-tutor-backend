@@ -24,7 +24,6 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = "*")
 public class ChatController {
 
     @Autowired

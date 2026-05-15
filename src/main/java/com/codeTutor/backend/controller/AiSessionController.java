@@ -18,7 +18,6 @@ import com.codeTutor.backend.service.ChatSessionService;
  */
 @RestController
 @RequestMapping("/api/sessions")
-@CrossOrigin(origins = "*")
 public class AiSessionController {
 
     @Autowired

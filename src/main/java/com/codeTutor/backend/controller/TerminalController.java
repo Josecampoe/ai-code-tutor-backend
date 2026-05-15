@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/terminal")
-@CrossOrigin(origins = "*")
 public class TerminalController {
 
     @Autowired

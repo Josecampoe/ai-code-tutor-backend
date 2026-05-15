@@ -25,7 +25,6 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/snapshots")
-@CrossOrigin(origins = "*")
 public class CodeSnapshotController {
 
     @Autowired
