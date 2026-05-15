@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Control Flow",
+  "summary": "Make decisions in your code using if, else if, and else statements",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Control Flow as a Fork in the Road",
+      "content": "Life is full of decisions: if it's raining, take an umbrella; else, wear sunglasses. Java programs make similar decisions using control flow statements. The if-else structure is like arriving at a fork in a hiking trail. You check a condition — is the left trail marked 'summit'? If yes, go left. If no, go right. Your program evaluates a boolean condition (true or false) and takes one path or the other. This allows your program to react differently based on data or user input."
+    },
+    {
+      "type": "example",
+      "title": "Grade Checker Using if-else if-else",
+      "content": "This code assigns a letter grade based on a numerical exam score",
+      "code": "int score = 85;\n// Check the score range from highest to lowest\nif (score >= 90) {\n    // 90 or above gets an A\n    System.out.println(\"Grade: A\");\n} else if (score >= 80) {\n    // 80 to 89 gets a B\n    System.out.println(\"Grade: B\");\n} else if (score >= 70) {\n    // 70 to 79 gets a C\n    System.out.println(\"Grade: C\");\n} else {\n    // Below 70 fails\n    System.out.println(\"Grade: F\");\n}\n// Expected output:\n// Grade: B"
+    },
+    {
+      "type": "explanation",
+      "title": "Boolean Expressions and Logical Operators",
+      "content": "The conditions inside if statements are boolean expressions — they always evaluate to true or false. You can combine multiple conditions using logical operators. AND (&&) requires both conditions to be true — like needing both a ticket AND a reservation to board a flight. OR (||) requires at least one condition to be true — like needing a passport OR a driver's license to enter a building. NOT (!) flips true to false and vice versa. These let you express complex rules with simple building blocks."
+    },
+    {
+      "type": "tip",
+      "title": "Using = instead of == in conditions",
+      "content": "Most common mistake: if (age = 18) instead of if (age == 18). The single equals sign assigns a value, it does not compare. Java will not warn you about this if the variable is a boolean, but for numbers it will cause a compilation error. Fix: always use == for comparison. Wrong: if (score = 100) { ... }. Correct: if (score == 100) { ... }."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A movie theater charges different prices: seniors (65+) pay $7, adults (18-64) pay $12, children (3-17) pay $8, and babies (under 3) are free. Write code that takes an age variable and prints the correct ticket price.",
+      "hints": [
+        "Which age range should you check first to avoid overlap?",
+        "How many else-if branches do you need?",
+        "What operator checks if a value falls between two numbers?"
+      ]
+    }
+  ]
+}

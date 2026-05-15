@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Concurrency and Threads",
+  "summary": "Master the event loop, Promises, and async/await for non-blocking operations",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "JavaScript Is Single-Threaded — but Non-Blocking",
+      "content": "JavaScript runs on a single thread with one call stack, like a cashier serving one customer at a time. But unlike a slow cashier who makes everyone wait, JavaScript uses an event loop: long tasks (like API calls) are handed off to the background, and when they finish, a callback is queued. This is why setTimeout(() => console.log('later'), 0) runs after all synchronous code, even with a 0ms delay. Understanding the event loop is essential for predicting execution order."
+    },
+    {
+      "type": "example",
+      "title": "Event loop order of execution",
+      "content": "Demonstrates microtasks vs macrotasks and the event loop ordering",
+      "code": "console.log('1: Sync start');\n\nsetTimeout(() => {\n  console.log('2: setTimeout (macrotask)');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('3: Promise.then (microtask)');\n});\n\nqueueMicrotask(() => {\n  console.log('4: queueMicrotask (microtask)');\n});\n\nconsole.log('5: Sync end');\n\n// Expected output:\n// 1: Sync start\n// 5: Sync end\n// 3: Promise.then (microtask)\n// 4: queueMicrotask (microtask)\n// 2: setTimeout (macrotask)"
+    },
+    {
+      "type": "explanation",
+      "title": "Microtasks vs Macrotasks: The Priority Queue",
+      "content": "The event loop processes in phases. After each macrotask (setTimeout, setInterval, I/O), the loop drains the entire microtask queue (Promise.then, queueMicrotask, MutationObserver) before rendering or picking the next macrotask. This means microtasks have higher priority. A Promise that resolves synchronously inside a microtask can starve the event loop — a situation called microtask starvation. Understanding this distinction is critical for avoiding subtle timing bugs in production applications."
+    },
+    {
+      "type": "tip",
+      "title": "Blocking the event loop with synchronous CPU work",
+      "content": "The #1 mistake developers make is performing heavy synchronous computation on the main thread. Wrong: for (let i = 0; i < 1e10; i++) { result += i; } — blocks the event loop for seconds, freezing the UI or server. Correct: split work into chunks with setInterval, use Web Workers (browser) or worker_threads (Node.js), or offload to a dedicated service. The event loop is shared — be a good neighbor."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a function parallelFetch that takes an array of URLs and fetches them concurrently using Promise.all. Add error handling so that if one URL fails, the others still complete (use Promise.allSettled). Then write a retry wrapper that retries a failed fetch up to 3 times with exponential backoff (wait 1s, 2s, 4s before retrying).",
+      "hints": [
+        "What is the difference between Promise.all and Promise.allSettled regarding failures?",
+        "How do you create a delay (wait for N seconds) using a Promise?",
+        "How do you recursively retry: retry(fn, attempts) calls fn, catches, waits, then calls retry(fn, attempts - 1)?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Testing",
+  "summary": "Write automated unit and integration tests using JUnit 5 and Mockito",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Testing as a Safety Net for Tightrope Walkers",
+      "content": "A tightrope walker practices with a safety net below. If they fall, the net catches them. Automated tests are your safety net as a developer. When you refactor code, add features, or fix bugs, tests instantly tell you if you broke something. JUnit 5 is the standard testing framework for Java. A test is simply a method annotated with @Test that calls your production code and asserts the result is what you expect. Tests are cheap insurance: writing a test takes minutes; debugging a production bug can take hours. The discipline of Test-Driven Development (TDD) says write the test before the production code — like deciding what success looks like before starting the work."
+    },
+    {
+      "type": "example",
+      "title": "JUnit 5 Test with Assertions",
+      "content": "This test class verifies a Calculator class handles both normal cases and edge cases",
+      "code": "import org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CalculatorTest {\n    \n    private Calculator calc = new Calculator();\n    \n    @Test  // This annotation marks it as a test method\n    void testAddition() {\n        // Arrange: set up the inputs\n        int result = calc.add(3, 5);\n        // Act & Assert: check the output equals expected\n        assertEquals(8, result, \"3 + 5 should equal 8\");\n    }\n    \n    @Test\n    void testDivisionByZero() {\n        // Test that an exception is thrown\n        assertThrows(ArithmeticException.class, () -> {\n            calc.divide(10, 0);\n        });\n    }\n    \n    @Test\n    void testAdditionWithNegatives() {\n        assertEquals(-2, calc.add(-5, 3));\n    }\n}\n// Expected: all three tests pass (green bar in IDE)"
+    },
+    {
+      "type": "explanation",
+      "title": "Mocks, Stubs, and Test Boundaries",
+      "content": "A unit test should test one class in isolation, not its dependencies. If you're testing an OrderService that uses a PaymentGateway and an EmailService, you don't want your tests to depend on real payment processing or email delivery. That's where mocking frameworks like Mockito come in. A mock is a fake object that records how it's called and returns predefined responses. You can verify that OrderService called paymentGateway.charge() exactly once with the correct amount. This keeps tests fast, reliable, and focused on one unit of code. The boundary is between your code and the external world: mock everything outside the class under test, test real logic inside."
+    },
+    {
+      "type": "tip",
+      "title": "Testing implementation details instead of behavior",
+      "content": "Most common mistake: writing tests that check internal method calls or private field values instead of testing observable behavior. These 'brittle tests' break every time you refactor, even if the behavior stays correct. Fix: test only public methods and their return values or side effects visible to callers. Wrong: assertThat(myService.getInternalCache().size()).isEqualTo(5);. Correct: assertThat(myService.processData(input)).isEqualTo(expectedOutput);"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write JUnit 5 tests for a ShoppingCart class with methods: addItem(String name, double price), removeItem(String name), getTotal(), and applyDiscount(double percentage). Your tests should cover: adding items, removing an item that exists, removing an item that doesn't exist (should throw), total calculation with multiple items, and discount application edge cases (0%, 100%, negative).",
+      "hints": [
+        "What assertion checks that two doubles are equal with a tolerance?",
+        "What assertion verifies that an exception is thrown?",
+        "How do you set up a fresh ShoppingCart before each test?"
+      ]
+    }
+  ]
+}

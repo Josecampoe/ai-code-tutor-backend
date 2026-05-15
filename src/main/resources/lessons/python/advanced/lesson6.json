@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 6,
+  "title": "Advanced OOP and SOLID",
+  "summary": "Design maintainable object-oriented systems using SOLID principles in Python",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "SOLID is a blueprint for maintainable OOP",
+      "context": "SOLID is an acronym for five design principles that make object-oriented systems easier to maintain, extend, and test. Single Responsibility: a class should have one reason to change — like a chef who only cooks, not also handles accounting. Open/Closed: classes should be open for extension but closed for modification — add features by creating new subclasses, not editing existing ones. Liskov Substitution: subclasses must be substitutable for their parent class without breaking the program. Interface Segregation: many small, specific interfaces are better than one large, general one. Dependency Inversion: depend on abstractions, not concrete implementations. Violating SOLID creates code that's fragile (breaks easily), rigid (hard to change), and immobile (hard to reuse)."
+    },
+    {
+      "type": "example",
+      "title": "Violating and fixing the Single Responsibility Principle",
+      "context": "A Report class that does too much vs properly separated responsibilities",
+      "code": "# Violation: one class has three responsibilities — data, formatting, and persistence\nclass Report:\n    def __init__(self, title, content):\n        self.title = title  # Report title\n        self.content = content  # Report body text\n\n    def format_html(self):\n        # Responsibility 1: formatting the report as HTML\n        return f\"<h1>{self.title}</h1><p>{self.content}</p>\"\n\n    def save_to_file(self, filename):\n        # Responsibility 2: persisting the report to disk (different concern!)\n        with open(filename, \"w\") as f:\n            f.write(self.format_html())\n\n# Fix: separate classes with single responsibilities\nclass Report:\n    # Only responsible for holding report data\n    def __init__(self, title, content):\n        self.title = title\n        self.content = content\n\nclass HTMLFormatter:\n    # Only responsible for formatting reports as HTML\n    def format(self, report: Report) -> str:\n        return f\"<h1>{report.title}</h1><p>{report.content}</p>\"\n\nclass FileStorage:\n    # Only responsible for saving data to files\n    def save(self, filename: str, data: str) -> None:\n        with open(filename, \"w\") as f:\n            f.write(data)\n\n# Usage — each class does one thing well\nreport = Report(\"Q3 Results\", \"Revenue increased 15%\")\nformatter = HTMLFormatter()\nstorage = FileStorage()\nhtml = formatter.format(report)\nstorage.save(\"report.html\", html)"
+    },
+    {
+      "type": "explanation",
+      "title": "Dependency Injection — the key to testable code",
+      "context": "Dependency Injection (DI) implements the Dependency Inversion principle: instead of a class creating its own dependencies (hard-coded), dependencies are passed in from outside (injected). This decouples the class from specific implementations and makes testing easy — you can inject mock objects. In Python, DI is often done through constructor injection (pass dependencies to __init__). Frameworks like FastAPI use DI extensively. Without DI, testing requires complex setup or monkey-patching. With DI, testing is as simple as passing a mock object. DI doesn't require a framework — manual DI (passing dependencies explicitly) is often clearer and simpler."
+    },
+    {
+      "type": "tip",
+      "title": "Liskov Substitution violations are subtle and dangerous",
+      "context": "A classic violation: a Square class inheriting from Rectangle. Rectangle has set_width(w) and set_height(h). Square overrides these to keep both equal — but now code that works for Rectangle breaks for Square. Wrong: def resize(rect: Rectangle): rect.set_width(5); rect.set_height(10); assert rect.area() == 50 — fails with Square. Fix: don't model Square as subclass of Rectangle. Use a common Shape interface instead. LSP violations often appear when subclasses weaken preconditions or strengthen postconditions of the parent."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Redesign a NotificationService class that currently directly creates EmailSender instances inside its methods. Apply Dependency Inversion: create a NotificationSender abstract base class, implement EmailSender and SMSSender as concrete classes, and inject the sender into NotificationService via the constructor. Then write a test that injects a mock sender to verify the service calls send() with the correct message.",
+      "hints": [
+        "What should the __init__ of NotificationService accept to follow Dependency Inversion?",
+        "How does injecting dependencies make the class testable without sending real emails?"
+      ]
+    }
+  ]
+}

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codeTutor.backend.config.SeedingStatus;
 import com.codeTutor.backend.model.Lesson;
 import com.codeTutor.backend.service.LessonService;
 
@@ -24,11 +23,9 @@ import com.codeTutor.backend.service.LessonService;
 public class LessonController {
 
     private final LessonService lessonService;
-    private final SeedingStatus seedingStatus;
 
-    public LessonController(LessonService lessonService, SeedingStatus seedingStatus) {
+    public LessonController(LessonService lessonService) {
         this.lessonService = lessonService;
-        this.seedingStatus = seedingStatus;
     }
 
     @GetMapping
@@ -44,27 +41,23 @@ public class LessonController {
     }
 
     @GetMapping("/topic/{topicId}")
-    public ResponseEntity<Lesson> getLessonByTopicAndLanguageAndLevel(
+    public ResponseEntity<Lesson> getLessonByTopicAndLevel(
             @PathVariable Long topicId,
-            @RequestParam String language,
             @RequestParam String level,
             @RequestParam Integer lessonNumber) {
-        return lessonService.findByTopicIdAndLanguageAndLevelAndLessonNumber(topicId, language, level, lessonNumber)
+        return lessonService.findByTopicIdAndLevelAndLessonNumber(topicId, level, lessonNumber)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
     }
 
     @GetMapping("/topic/{topicId}/level/{level}")
     public ResponseEntity<?> getLessonsByTopicAndLevel(
             @PathVariable Long topicId,
             @PathVariable String level) {
-        if (!seedingStatus.isComplete()) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Lessons are being generated. Please try again in a few minutes.");
-        }
         List<Lesson> lessons = lessonService.findByTopicIdAndLevel(topicId, level);
         if (lessons.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body("Lessons not available yet.");
         }
         return ResponseEntity.ok(lessons);
     }

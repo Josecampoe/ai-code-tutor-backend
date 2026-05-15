@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 8,
+  "title": "Databases and Persistence",
+  "summary": "Connect to databases, execute SQL queries, and use ORMs with connection pooling",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Databases are permanent, structured storage",
+      "context": "File-based storage (JSON, CSV) works for small projects but breaks down at scale. Databases provide concurrent access, data integrity, querying, and performance. SQLite is built into Python — perfect for local/single-user apps. PostgreSQL and MySQL are client-server databases for production web applications. Raw SQL gives you full control but requires manual connection management, escaping, and result parsing. SQLAlchemy is Python's most powerful database toolkit — it provides both raw SQL and an ORM (Object-Relational Mapper) that maps database tables to Python classes. An ORM lets you work with database records as if they're normal Python objects."
+    },
+    {
+      "type": "example",
+      "title": "SQLite with SQLAlchemy ORM",
+      "content": "Define models, create tables, insert and query records using an ORM",
+      "code": "from sqlalchemy import create_engine, Column, Integer, String, Float\nfrom sqlalchemy.orm import declarative_base, Session\n\n# Create database engine — connects to a SQLite file\nengine = create_engine(\"sqlite:///inventory.db\", echo=True)  # echo logs SQL\n# Declarative base — every model class inherits from this\nBase = declarative_base()\n\nclass Product(Base):\n    # Maps to the 'products' table in the database\n    __tablename__ = \"products\"  # Table name in the database\n\n    # Each Column maps to a database column with its type\n    id = Column(Integer, primary_key=True)  # Auto-incrementing primary key\n    name = Column(String(100), nullable=False)  # Name, max 100 chars, required\n    price = Column(Float, nullable=False)  # Price as floating-point number\n    quantity = Column(Integer, default=0)  # Stock count, defaults to 0\n\n# Create the table in the database (run once)\nBase.metadata.create_all(engine)  # Generates CREATE TABLE from model\n\n# Insert a new product using the ORM\nwith Session(engine) as session:  # Session = database transaction\n    # Create a Python object like any other class\n    new_product = Product(name=\"Wireless Mouse\", price=29.99, quantity=50)\n    session.add(new_product)  # Stage the insert (not yet in database)\n    session.commit()  # Actually execute the INSERT — persists to disk\n\n    # Query: find all products under $30\n    cheap_products = session.query(Product).filter(Product.price < 30).all()\n    for p in cheap_products:\n        print(f\"{p.name}: ${p.price}\")"
+    },
+    {
+      "type": "explanation",
+      "title": "Connection pooling, migrations, and raw SQL",
+      "context": "Creating a new database connection for every request is expensive (handshake, authentication). Connection pooling (built into SQLAlchemy's create_engine) maintains a pool of reusable connections. Alembic handles database migrations — version-controlled changes to your schema (adding columns, renaming tables) that can be applied and rolled back. For complex queries, raw SQL via session.execute(text(\"SELECT * FROM products WHERE price > :min_price\"), {\"min_price\": 100}) can be more performant and readable than ORM queries. Use raw SQL for reports and aggregations; use ORM for CRUD operations. Always use parameterized queries (:param), never string formatting with user input — SQL injection is still a real threat."
+    },
+    {
+      "type": "tip",
+      "title": "N+1 query problem — ORM's hidden performance killer",
+      "context": "The N+1 problem: querying a list of authors (1 query) then accessing each author's books (N queries) — 21 total queries for 20 authors. Wrong: for author in session.query(Author): print(author.books). Each loop triggers a new query. Fix use eager loading: session.query(Author).options(joinedload(Author.books)).all() — one JOIN query fetches everything. SQLAlchemy's joinedload or selectinload are your tools. Always check the actual SQL being generated with echo=True or logging."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create an SQLite database for a library system. Define two tables using SQLAlchemy ORM: Author (id, name, birth_year) and Book (id, title, year, author_id as foreign key). Insert 3 authors and 2 books per author (use session.add_all()). Then write a query that fetches all authors born after 1970 along with their books, using eager loading to avoid N+1. Print the results.",
+      "hints": [
+        "How do you define a foreign key relationship in SQLAlchemy using relationship()?",
+        "What loading strategy (joinedload or selectinload) prevents the N+1 problem?"
+      ]
+    }
+  ]
+}

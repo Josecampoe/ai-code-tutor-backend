@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Memory Management",
+  "summary": "Understand garbage collection, memory leaks, weak references, and use TypeScript patterns to write memory-efficient code",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Memory Management Is Like Organizing a Warehouse",
+      "content": "Your program's memory is like a warehouse. Every time you create an object (a new box), it takes up shelf space. JavaScript's garbage collector is the cleanup crew that looks for boxes no longer reachable — objects that nothing references anymore — and reclaims that shelf space. The key insight is: an object is 'alive' as long as there is a reference to it somewhere. If you accidentally keep references (like storing DOM elements in a global array), those objects never get cleaned up, causing a 'memory leak' — like shelves filling up with boxes labeled 'maybe useful someday' that never get thrown away. TypeScript cannot prevent memory leaks at compile time, but good patterns can."
+    },
+    {
+      "type": "example",
+      "title": "Memory Leak via Accumulating Event Listeners",
+      "content": "Demonstrates a common memory leak pattern and how to fix it with proper cleanup",
+      "code": "// LEAKY VERSION: listeners accumulate in a Map\nclass EventBusLeaky {\n  // This Map retains references to all callbacks forever\n  private listeners: Map<string, Function[]> = new Map();\n  on(event: string, cb: Function): void {\n    if (!this.listeners.has(event)) {\n      this.listeners.set(event, []);\n    }\n    this.listeners.get(event)!.push(cb);\n  }\n  // Never removing — memory grows unboundedly\n}\n// FIXED VERSION: add an off method to remove listeners\nclass EventBusFixed {\n  private listeners: Map<string, Function[]> = new Map();\n  on(event: string, cb: Function): void {\n    if (!this.listeners.has(event)) {\n      this.listeners.set(event, []);\n    }\n    this.listeners.get(event)!.push(cb);\n    // Return an unsubscribe function for convenience\n    return () => this.off(event, cb);\n  }\n  off(event: string, cb: Function): void {\n    const cbs = this.listeners.get(event);\n    if (cbs) {\n      this.listeners.set(event, cbs.filter(fn => fn !== cb));\n    }\n  }\n}\n// Always unsubscribe when the listener is no longer needed"
+    },
+    {
+      "type": "explanation",
+      "title": "WeakRef, WeakMap, and WeakSet — Letting Go Gracefully",
+      "content": "Standard Map and Set hold strong references, preventing garbage collection of their keys and values. WeakMap and WeakSet hold 'weak' references — if the only reference to an object is through a WeakMap key, the garbage collector can still reclaim it. This is useful for caching, metadata, or private data attached to objects without preventing their cleanup. Imagine a library that stamps each borrowed book with a due date using invisible ink — when the book is returned and destroyed, the stamp disappears automatically. WeakMap keys must be objects (not primitives). Use WeakMap for storing per-instance private data in classes or caching computed results tied to object lifetimes."
+    },
+    {
+      "type": "tip",
+      "title": "Creating a Circular Reference That Prevents Garbage Collection",
+      "content": "The #1 advanced mistake is creating circular references between objects that prevent cleanup, especially in older JavaScript engines (modern engines handle simple cycles fine). Wrong approach: 'parent.children = [child]; child.parent = parent;' — in engines with mark-and-sweep GC this is fine, but the real issue is leaking the root reference. The actual danger is not cycles but forgetting to nullify references in global caches or long-lived objects. Correct: always clean up references to objects you no longer need — set to null, remove from arrays, delete from Maps. If you cache objects, implement a maximum size or TTL (time-to-live) policy."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A real-time analytics system tracks user sessions. Each session object is stored in a Map<string, Session> keyed by session ID. Sessions should be automatically removed after 30 minutes of inactivity. Implement a 'SessionManager' that: (1) uses a Map to store sessions, (2) has a method 'getOrCreate(sessionId: string)' that creates a new session or returns existing one while updating a 'lastAccessed' timestamp, and (3) has a cleanup method that removes sessions where 'Date.now() - lastAccessed > 1800000'. Bonus: discuss whether WeakMap would be appropriate here.",
+      "hints": [
+        "Why would a WeakMap not work for this scenario — what kind of keys does it require?",
+        "How does the cleanup method iterate and remove expired entries safely?",
+        "What would happen if two operations tried to create the same session ID simultaneously?"
+      ]
+    }
+  ]
+}

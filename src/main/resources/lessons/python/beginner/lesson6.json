@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 6,
+  "title": "Functions",
+  "summary": "Create reusable blocks of code with functions that accept inputs and return results",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functions are like recipes",
+      "content": "A function is a reusable recipe stored in your programming cookbook. Instead of writing the same steps every time you bake a cake, you write the recipe once and say 'bake cake' whenever you need it. In Python, you define a function with def, give it a name, list any ingredients (parameters) inside parentheses, and describe the steps (indented). When you need that recipe, you call the function by name and pass the ingredients. Functions keep your code organized, shorter, and fixable in one place instead of a hundred."
+    },
+    {
+      "type": "example",
+      "title": "A function that calculates a discounted price",
+      "content": "This function takes an original price and discount percent, then returns the final price",
+      "code": "# Define a function called apply_discount with two parameters\n# Parameters are placeholders for values you'll pass when calling\ndef apply_discount(original_price, discount_percent):\n    # Calculate the discount amount by multiplying price by percentage\n    discount_amount = original_price * (discount_percent / 100)\n    # Subtract discount from original to get the final price\n    final_price = original_price - discount_amount\n    # Return sends the result back to wherever the function was called\n    return final_price\n\n# Call the function with specific values — these are called arguments\nsale_price = apply_discount(80, 25)  # 25% off an $80 item\nprint(\"Sale price:\", sale_price)  # Display the calculated result\n# Expected output:\n# Sale price: 60.0"
+    },
+    {
+      "type": "explanation",
+      "title": "Parameters, arguments, and return values",
+      "content": "Parameters are the placeholder names you list when defining a function — they're like empty boxes waiting for values. Arguments are the actual values you put in those boxes when you call the function. If a function is a vending machine, parameters are the button labels and arguments are which buttons you press. The return statement sends a value back from the function to the caller — like the vending machine dropping your snack into the tray. Not all functions need to return something; some just perform an action (like printing a receipt)."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to return a value",
+      "content": "A common mistake is expecting a function to return a result when it doesn't have a return statement. Wrong: def add(a, b): result = a + b. Then print(add(2, 3)) prints None, because the function didn't return anything. Correct: def add(a, b): return a + b. If you need the result for later use, always include return."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A restaurant calculates a 15% tip on the bill. Write a function called calculate_tip that takes the bill amount as a parameter and returns the tip amount. Then call it with a $45.50 bill and print the result.",
+      "hints": [
+        "What keyword starts the function definition?",
+        "How do you make the function give back the calculated tip so you can print it?"
+      ]
+    }
+  ]
+}

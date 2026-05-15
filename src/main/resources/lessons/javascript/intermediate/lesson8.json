@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Interfaces and Abstractions",
+  "summary": "Use duck typing and structural typing to create flexible, decoupled code",
+  "estimatedMinutes": 13,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "JavaScript Has No Formal Interfaces — It Has Duck Typing",
+      "content": "Unlike Java or TypeScript, JavaScript has no interface keyword. Instead, it uses duck typing: 'If it walks like a duck and quacks like a duck, it is a duck.' If an object has the methods you expect, treat it as that type regardless of its class hierarchy. This makes JavaScript extremely flexible but shifts the responsibility to the developer to document expected shapes. Use JSDoc or TypeScript for larger projects to regain the safety of formal interfaces."
+    },
+    {
+      "type": "example",
+      "title": "Duck typing in practice",
+      "content": "A function works with any object that has a quack method, regardless of its class",
+      "code": "// Both classes have a quack method — same 'interface'\nclass Duck {\n  quack() {\n    return 'Quack!';\n  }\n}\n\nclass RobotDuck {\n  constructor(battery) {\n    this.battery = battery;\n  }\n  quack() {\n    return 'Beep Quack! Battery at ' + this.battery + '%';\n  }\n}\n\n// This function accepts anything with a quack method\nfunction makeItQuack(animal) {\n  if (typeof animal.quack !== 'function') {\n    throw new Error('No quack method found');\n  }\n  console.log(animal.quack());\n}\n\nmakeItQuack(new Duck());\n// Expected output: Quack!\nmakeItQuack(new RobotDuck(85));\n// Expected output: Beep Quack! Battery at 85%"
+    },
+    {
+      "type": "explanation",
+      "title": "Programming to an Interface, Not an Implementation",
+      "content": "This principle means you write code that depends on behaviors (methods), not specific classes. A payment processor should accept any object with a charge(amount) method — whether it is StripePayment, PayPalPayment, or CashPayment. This decoupling lets you swap implementations without changing the code that uses them. In JavaScript, document the expected interface with JSDoc @typedef or use TypeScript interfaces for compile-time checking."
+    },
+    {
+      "type": "tip",
+      "title": "Checking method existence incorrectly",
+      "content": "The #1 mistake developers make is using instanceof to check if an object supports an interface. Wrong: if (obj instanceof Duck) — tightly couples your code to a specific class. Correct: if (typeof obj.quack === 'function') — checks for the capability, not the class. This allows any compatible object to be used, implementing true duck typing."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a notification system that sends different types of messages. Implement three classes (EmailNotification, SMSNotification, PushNotification) each with a send(message) method. Write a function notifyAll(notifiers, message) that accepts an array of any notifiers and calls send on each, without knowing their specific types.",
+      "hints": [
+        "What common method name must all notification classes share?",
+        "How does notifyAll verify each item in the array has the expected method?",
+        "If a new SlackNotification class is added later, would notifyAll need to change?"
+      ]
+    }
+  ]
+}

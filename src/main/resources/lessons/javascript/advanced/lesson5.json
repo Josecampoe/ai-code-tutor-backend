@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Performance and Optimization",
+  "summary": "Profile, identify bottlenecks, and optimize JavaScript code for production",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Measure Before You Optimize",
+      "content": "Performance optimization without measurement is like trying to fix a car engine with a blindfold. You might replace a perfectly good spark plug while ignoring a broken fuel line. The golden rule: measure first. Use performance.now() for precise timing, Chrome DevTools Performance tab for flame charts, and console.time() for quick benchmarks. Once you have data, focus on the slowest operations. Often, the bottleneck is not what you expect — a database query, an inefficient DOM update, or a runaway loop."
+    },
+    {
+      "type": "example",
+      "title": "Comparing loop performance",
+      "content": "Benchmarks three ways to sum an array and identifies the fastest approach",
+      "code": "const size = 1000000;\nconst data = Array.from({ length: size }, (_, i) => i);\n\nconsole.time('for-loop');\nlet sum1 = 0;\nfor (let i = 0; i < data.length; i++) {\n  sum1 += data[i];\n}\nconsole.timeEnd('for-loop');\n\nconsole.time('for-of');\nlet sum2 = 0;\nfor (const n of data) {\n  sum2 += n;\n}\nconsole.timeEnd('for-of');\n\nconsole.time('reduce');\nlet sum3 = data.reduce((a, b) => a + b, 0);\nconsole.timeEnd('reduce');\n\nconsole.log({ sum1, sum2, sum3 });\n// Results vary by engine — always measure in your target environment"
+    },
+    {
+      "type": "explanation",
+      "title": "V8 Hidden Classes and Inline Caching",
+      "content": "V8 (Node.js and Chrome engine) optimizes JavaScript by creating hidden classes — internal representations of object shapes. When you add properties to an object after creation (obj.newProp = 5), V8 creates a new hidden class transition, slowing down property access. Similarly, inline caching optimizes repeated accesses to the same property on the same shape. To maximize performance: create objects with all properties in the constructor, keep property order consistent, and avoid deleting properties."
+    },
+    {
+      "type": "tip",
+      "title": "Premature optimization without profiling",
+      "content": "The #1 mistake developers make is optimizing code before measuring. Wrong: spending hours micro-optimizing a sort function that runs 2ms while ignoring a database query that takes 2 seconds. Correct: profile first, identify the actual bottleneck, then optimize intelligently. Use the 80/20 rule: 80% of execution time is spent in 20% of the code. Find that 20% first. As Knuth said, 'Premature optimization is the root of all evil.'"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You have a function that processes a CSV string of 100,000 rows. Each row is split, trimmed, and converted to an object. Profile three implementations: using split/map, using a for loop with index assignment, and using a generator function that yields rows one at a time. Measure memory usage with process.memoryUsage() and speed with performance.now(). Which is fastest and which uses the least memory?",
+      "hints": [
+        "What global function gives high-resolution timestamps for measuring duration?",
+        "How do you access heapUsed from process.memoryUsage() before and after?",
+        "What advantage does a generator have over creating an array of 100,000 objects in memory?"
+      ]
+    }
+  ]
+}

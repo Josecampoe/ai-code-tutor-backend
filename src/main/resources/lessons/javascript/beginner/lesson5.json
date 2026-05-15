@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Loops",
+  "summary": "Repeat actions efficiently using for and while loops",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Loops Are Assembly Lines",
+      "content": "A loop is like an assembly line in a factory: the same action repeats on every item that passes by. Instead of writing the same code ten times for ten items, you write a loop that runs once per item. JavaScript has two main loops: for (when you know how many times to repeat) and while (when you repeat until a condition changes). Both save you from repetitive, error-prone manual coding."
+    },
+    {
+      "type": "example",
+      "title": "Counting with a for loop",
+      "content": "Prints numbers 1 through 5 using a for loop with a counter variable",
+      "code": "// for loop: start at 1; run while i <= 5; add 1 each time\nfor (let i = 1; i <= 5; i++) {\n  console.log('Count:', i);\n}\n// Expected output:\n// Count: 1\n// Count: 2\n// Count: 3\n// Count: 4\n// Count: 5\n\n// Same logic with a while loop\nlet j = 1;\nwhile (j <= 5) {\n  console.log('While count:', j);\n  j++;\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Loop Flow: Start, Check, Run, Update",
+      "content": "Every loop follows the same four steps in a cycle. First, the initial setup runs (like let i = 0). Next, the condition is checked (i < 5). If true, the code block runs. After the block finishes, the update step runs (i++), and then the condition is checked again. This continues until the condition becomes false. Understanding this cycle helps you avoid infinite loops — when the condition never becomes false and your program runs forever."
+    },
+    {
+      "type": "tip",
+      "title": "Creating an infinite loop",
+      "content": "The #1 mistake beginners make is forgetting to update the loop variable, causing an infinite loop. Wrong: let i = 0; while (i < 5) { console.log(i); } — i is never incremented, so i < 5 is always true. Correct: let i = 0; while (i < 5) { console.log(i); i++; }. Always verify your loop variable changes toward the exit condition."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A bakery bakes 12 cookies per batch. Use a loop to print the total number of cookies after each batch from batch 1 to batch 5. The output should show 'After batch 1: 12 cookies', 'After batch 2: 24 cookies', and so on.",
+      "hints": [
+        "Should you use a for loop or a while loop here — which one fits 'I know exactly how many times'?",
+        "How do you calculate the running total inside the loop?",
+        "What is the relationship between the batch number and the formula for total cookies?"
+      ]
+    }
+  ]
+}

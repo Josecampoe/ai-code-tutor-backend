@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 2,
+  "title": "Concurrency and Threads",
+  "summary": "Write concurrent Python code using threads, asyncio, and multiprocessing",
+  "estimatedMinutes": 22,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Concurrency is like cooking multiple dishes",
+      "context": "Imagine cooking a three-course meal. One approach: cook the appetizer, finish it, cook the main, finish it, cook dessert — sequential. Faster approach: while the main course is in the oven (I/O wait), prep the dessert ingredients. Python offers three concurrency models. Threading (threading module) is good for I/O-bound tasks — waiting for network responses, file reads, database queries. Multiprocessing (multiprocessing module) bypasses the GIL by using separate processes, ideal for CPU-bound work like image processing. Asyncio (asyncio module) provides cooperative multitasking for high I/O concurrency with a single thread — single-threaded but non-blocking."
+    },
+    {
+      "type": "example",
+      "title": "Threading for I/O-bound network requests",
+      "content": "Download multiple web pages concurrently instead of sequentially",
+      "code": "import threading  # For running tasks in parallel threads\nimport time  # For measuring duration and simulating delays\nimport urllib.request  # For making HTTP requests to URLs\n\ndef download_url(url):\n    # Simulate downloading a webpage\n    print(f\"Starting: {url}\")  # Log when thread begins\n    # urllib.request.urlopen fetches the URL content\n    response = urllib.request.urlopen(url)  # This blocks while waiting\n    data = response.read()  # Read the response body\n    print(f\"Finished: {url} ({len(data)} bytes)\")  # Log completion\n\n# List of URLs to download\nurls = [\n    \"https://www.python.org\",\n    \"https://www.wikipedia.org\",\n    \"https://www.github.com\",\n]\n\nstart = time.time()  # Record the start time\n\n# Create and start a thread for each URL — they run concurrently\nthreads = []  # Keep track of all created threads\nfor url in urls:\n    t = threading.Thread(target=download_url, args=(url,))\n    threads.append(t)  # Store for later joining\n    t.start()  # Start the thread — it begins executing\n\n# Wait for all threads to complete before continuing\nfor t in threads:\n    t.join()  # Blocks until this thread finishes\n\nprint(f\"Total time: {time.time() - start:.2f}s\")"
+    },
+    {
+      "type": "explanation",
+      "title": "The GIL, asyncio, and multiprocessing — choosing the right tool",
+      "context": "The Global Interpreter Lock (GIL) is Python's most infamous limitation: only one thread executes Python bytecode at a time. This means threading doesn't speed up CPU-bound tasks (like calculating prime numbers). For I/O-bound work, threads are fine because the GIL is released during I/O waits. For CPU-bound work, use multiprocessing — each process has its own GIL and Python interpreter. Asyncio provides coroutines (async/await) for high-concurrency I/O without threads or processes — best for thousands of simultaneous connections (web servers, chat applications). Rule of thumb: I/O-bound + many connections = asyncio; I/O-bound + few connections = threading; CPU-bound = multiprocessing."
+    },
+    {
+      "type": "tip",
+      "title": "Thread safety — shared data needs locks",
+      "content": "Multiple threads modifying the same variable creates race conditions. Wrong: counter += 1 in two threads at once — the increment isn't atomic and loses updates. Correct: use threading.Lock to synchronize access: with lock: counter += 1. For asyncio, use asyncio.Lock. For multiprocessing, use multiprocessing.Lock. Even simple operations aren't safe without synchronization."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a program that uses multiprocessing to calculate the sum of squares for numbers 1 to 10,000,000. Split the work evenly across 4 processes (each process handles 2,500,000 numbers). Use multiprocessing.Pool or multiprocessing.Process to parallelize. Compare the execution time vs a single-threaded version.",
+      "hints": [
+        "How do you split a large range into equal chunks for each process?",
+        "Which multiprocessing class lets you distribute tasks across worker processes?"
+      ]
+    }
+  ]
+}

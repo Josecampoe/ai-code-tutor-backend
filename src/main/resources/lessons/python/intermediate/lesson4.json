@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 4,
+  "title": "File I/O",
+  "summary": "Read from and write to files using Python's built-in file handling with context managers",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Files are the program's memory between runs",
+      "content": "Variables disappear when your program ends — like writing notes on a whiteboard and then erasing them. Files are like a notebook where you can store information permanently. Python makes file handling straightforward: you open a file, read or write its contents, then close it. The 'with' statement (context manager) is the recommended approach — it automatically closes the file even if an error occurs, just like a responsible hiker who always closes the campsite food container to keep bears out. Files can be read as text (strings) or binary (bytes)."
+    },
+    {
+      "type": "example",
+      "title": "Writing and reading a configuration file",
+      "content": "Write settings to a file, then read them back",
+      "code": "# Configuration settings for an application\nconfig = {\n    \"theme\": \"dark\",  # UI color scheme preference\n    \"language\": \"en\",  # Language code for localization\n    \"font_size\": 14  # Base font size in pixels\n}\n\n# Write each config key-value pair to a file\nwith open(\"config.txt\", \"w\") as file:  # \"w\" mode creates/overwrites the file\n    for key, value in config.items():  # Iterate over dictionary items\n        # Write each setting as \"key=value\" followed by a newline\n        file.write(f\"{key}={value}\\n\")  # \\n starts a new line\n    # File is automatically closed when the 'with' block ends\n\n# Now read the file back and reconstruct the dictionary\nloaded_config = {}  # Start with an empty dictionary\nwith open(\"config.txt\", \"r\") as file:  # \"r\" mode opens for reading\n    for line in file:  # Iterates through the file line by line\n        # Strip whitespace and split on \"=\" — unpack into two variables\n        key, value = line.strip().split(\"=\")  # \"theme=dark\" -> [\"theme\", \"dark\"]\n        # Store in the dictionary (value stays as string for now)\n        loaded_config[key] = value\n\nprint(loaded_config)\n# Expected output:\n# {'theme': 'dark', 'language': 'en', 'font_size': '14'}"
+    },
+    {
+      "type": "explanation",
+      "title": "File modes and best practices",
+      "content": "The open() function's mode determines what you can do: 'r' for reading (default), 'w' for writing (overwrites existing content), 'a' for appending (adds to end), 'r+' for reading and writing. Always use 'with open(...) as file:' — it's the context manager that guarantees the file handle is closed, even if an exception occurs. Never call .read() on entire files without checking size first — large files (GBs) can exhaust memory. Instead, iterate line by line or read in chunks. Use 'b' with the mode for binary files (images, executables): 'rb', 'wb'."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to close files causes data loss",
+      "content": "Writing without 'with' and forgetting .close() may not actually save your data to disk. Python buffers writes in memory and flushes when the file is closed. Wrong: f = open('data.txt', 'w'); f.write('hello') — if the program crashes before f.close(), the file is empty. Correct: use 'with open('data.txt', 'w') as f: f.write('hello')' — it closes automatically. Also, 'w' mode overwrites silently — use 'x' mode to create a new file (raises FileExistsError if it already exists) when you want to avoid accidental overwrites."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a program that reads a file called 'scores.txt' where each line contains a student name and a score separated by a comma (e.g., 'Alice,85'). Read all lines, calculate the average score, and write the average to a new file called 'average.txt' in the format 'Average score: 82.5'. Create the scores.txt file yourself with 5 students first.",
+      "hints": [
+        "What happens if the file doesn't exist when you try to open it?",
+        "How do you split each line by comma to get the name and score separately?"
+      ]
+    }
+  ]
+}

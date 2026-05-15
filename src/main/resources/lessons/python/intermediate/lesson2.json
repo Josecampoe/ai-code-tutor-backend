@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 2,
+  "title": "Error Handling",
+  "summary": "Catch and handle errors gracefully using try-except blocks instead of crashing",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Errors happen — plan for them",
+      "content": "Imagine driving a car that explodes the moment you hit a pothole instead of absorbing the bump with a shock absorber. Error handling is your program's shock absorber. Real-world programs face unexpected situations: a file might be missing, user input could be garbage, a network request could fail. Python's try-except mechanism lets you anticipate specific errors, respond to them intelligently, and keep running. Without error handling, one bad input takes down your entire application. With it, you can log the issue, show a helpful message, and continue."
+    },
+    {
+      "type": "example",
+      "title": "Handling division by zero and invalid input",
+      "content": "This function safely divides two numbers and handles common errors",
+      "code": "def safe_divide(a, b):\n    try:\n        # This block contains code that might cause an error\n        result = a / b  # Division: could raise ZeroDivisionError or TypeError\n    except ZeroDivisionError:\n        # Runs specifically when someone tries to divide by zero\n        print(\"Error: Cannot divide by zero\")\n        return None  # Return a safe value instead of crashing\n    except TypeError:\n        # Runs when the inputs are the wrong type (e.g., string instead of number)\n        print(\"Error: Both inputs must be numbers\")\n        return None\n    else:\n        # Runs only if NO exception occurred -- the happy path\n        print(\"Division successful!\")\n        return result\n    finally:\n        # Runs no matter what -- even if there was a return in try/except\n        print(\"Operation attempted\")  # Good for cleanup actions\n\n# Test with valid input\nprint(\"Result:\", safe_divide(10, 2))\nprint(\"Result:\", safe_divide(10, 0))\n# Expected output:\n# Division successful!\n# Operation attempted\n# Result: 5.0\n# Error: Cannot divide by zero\n# Operation attempted\n# Result: None"
+    },
+    {
+      "type": "explanation",
+      "title": "The try-except-else-finally anatomy",
+      "content": "A try block encloses code that might fail. Immediately after try, you need at least one except block that catches specific exception types. You can have multiple except blocks for different errors. The else block runs only if no exception occurred — it's for code that should execute on success. The finally block always runs, regardless of success or failure — perfect for releasing resources like closing files or database connections. Never use bare except: (without an exception type) — it catches everything including SystemExit and KeyboardInterrupt, masking serious issues and making debugging nearly impossible."
+    },
+    {
+      "type": "tip",
+      "title": "Bare except clauses hide bugs",
+      "content": "Catching all exceptions with a bare 'except:' is dangerous. Wrong: try: x = int(data) except: print(\"Bad input\") — This also catches KeyboardInterrupt (Ctrl+C), making your program unkillable. Correct: except ValueError: — catch only the specific error you expect. If other errors occur, they should crash so you discover and fix them."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a function called get_integer() that keeps asking the user for a number until they enter a valid integer. Use try-except to handle the ValueError that occurs when int() receives non-numeric input. Return the valid integer once entered. Hint: combine with a while loop to keep retrying.",
+      "hints": [
+        "What exception does int() raise when given a string that can't be converted?",
+        "How can you keep prompting the user until they provide valid input?"
+      ]
+    }
+  ]
+}

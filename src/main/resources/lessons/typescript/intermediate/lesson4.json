@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "File I/O",
+  "summary": "Read from and write to files using Node.js fs module with TypeScript type definitions",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "File I/O Is Like a Digital Filing Cabinet",
+      "content": "Reading and writing files is like opening a filing cabinet, taking out a folder, reading the papers inside, or adding new ones. Node.js provides the 'fs' (file system) module for this. In TypeScript, you install '@types/node' to get type definitions for all Node APIs. There are two styles: synchronous (blocking) where your code waits for the file operation to finish, and asynchronous (non-blocking) using callbacks or promises. For most applications, asynchronous is preferred because your program can do other work while waiting for the disk — like answering another customer while the photocopier runs."
+    },
+    {
+      "type": "example",
+      "title": "Reading and Writing a Configuration File",
+      "content": "Uses fs.promises to read a JSON config file asynchronously and write an updated version",
+      "code": "import { readFile, writeFile } from 'fs/promises';\nimport { join } from 'path';\nasync function updateConfig(): Promise<void> {\n  try {\n    // Read the file as a string with UTF-8 encoding\n    const filePath: string = join(__dirname, 'config.json');\n    const data: string = await readFile(filePath, 'utf-8');\n    // Parse JSON string into an object\n    const config: Record<string, unknown> = JSON.parse(data);\n    // Update a property\n    config.theme = 'dark' as unknown;\n    // Write back as formatted JSON\n    await writeFile(filePath, JSON.stringify(config, null, 2), 'utf-8');\n    console.log('Config updated successfully');\n  } catch (error: unknown) {\n    if (error instanceof Error) {\n      console.error('File operation failed:', error.message);\n    }\n  }\n}\nupdateConfig();\n// Expected: Config updated successfully (or error message if file missing)"
+    },
+    {
+      "type": "explanation",
+      "title": "Working Directory, Paths, and Cross-Platform Compatibility",
+      "content": "File paths differ between Windows (backslashes) and Mac/Linux (forward slashes). The 'path' module handles this automatically — 'path.join()' builds correct paths for any OS. The special variable '__dirname' gives the directory of the current file. For user-provided file paths, always validate them to prevent directory traversal attacks. When reading files, specify the encoding ('utf-8') to get a string instead of a raw Buffer. For large files, use streams instead of readFile to avoid loading the entire file into memory at once — like sipping from a firehose through a straw rather than trying to catch the whole stream in a bucket."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to Handle File Not Found Errors",
+      "content": "The #1 intermediate mistake is assuming a file exists and not wrapping readFile in try-catch. Wrong approach: 'const data = await readFile(\"settings.json\", \"utf-8\");' with no error handling — if the file is missing, the entire program crashes. Correct approach: wrap in try-catch and check if the error.code is 'ENOENT' (Error NO ENTry) for a missing file, then either create a default file or show a user-friendly message. Always assume files can be missing, corrupted, or permission-denied. File operations fail more often than you expect."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a simple note-taking app that saves notes to files. Write an async function 'saveNote(filename: string, content: string)' that writes to a 'notes/' directory (create it first). Write another async function 'readNote(filename: string)' that reads and prints a note. Handle the case where the note file does not exist by printing 'Note not found' instead of crashing. Use path.join for cross-platform paths.",
+      "hints": [
+        "How do you ensure the notes/ directory exists before writing — what method creates directories?",
+        "What error code does Node.js use for 'file not found'?",
+        "Why should you use path.join instead of string concatenation for file paths?"
+      ]
+    }
+  ]
+}

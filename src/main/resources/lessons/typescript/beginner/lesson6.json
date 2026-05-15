@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functions",
+  "summary": "Write reusable functions with typed parameters and return values to organize your code into logical blocks",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functions Are Like Recipes",
+      "content": "A function is a reusable recipe. It lists ingredients (parameters), gives step-by-step instructions (the code body), and produces a dish (the return value). Instead of rewriting the same instructions every time you cook, you just follow the recipe. In TypeScript, you specify what type each ingredient must be (string, number, etc.) and what type the final dish will be. This prevents you from accidentally passing a name where a price belongs. Functions make your code shorter, more organized, and easier to fix — change the recipe once, and every place that uses it gets the fix."
+    },
+    {
+      "type": "example",
+      "title": "A Function that Calculates a Discounted Price",
+      "content": "Defines a function that applies a percentage discount to a price and returns the new value",
+      "code": "// Function: calculateDiscountedPrice\n// Parameters: originalPrice (number), discountPercent (number)\n// Return type: number (the final price after discount)\nfunction calculateDiscountedPrice(\n  originalPrice: number,\n  discountPercent: number\n): number {\n  // Calculate the discount amount\n  const discountAmount: number = originalPrice * (discountPercent / 100);\n  // Subtract discount from original to get final price\n  const finalPrice: number = originalPrice - discountAmount;\n  // Return the calculated value\n  return finalPrice;\n}\n// Calling the function with a $50 item at 20% off\nconst salePrice: number = calculateDiscountedPrice(50, 20);\nconsole.log('Sale price:', salePrice);\n// Expected: Sale price: 40"
+    },
+    {
+      "type": "explanation",
+      "title": "Parameters, Return Types, and Void Functions",
+      "content": "Every function can have zero or more parameters — each with its own type annotation. The return type appears after the parameter list with a colon. If a function does not return a value, its return type is 'void' — think of it as a recipe that describes a technique without producing a physical dish. Functions can also have default parameter values, like 'function greet(name: string = \"Guest\")'. Optional parameters use a question mark: 'function logMessage(message?: string)'. TypeScript ensures callers provide the right number and types of arguments."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to Return a Value",
+      "content": "The #1 beginner mistake is writing a function that calculates a result but never uses the 'return' keyword, leaving the caller with 'undefined'. Wrong approach: 'function add(a: number, b: number): number { const sum = a + b; }' — this computes sum but returns nothing. Correct approach: 'function add(a: number, b: number): number { return a + b; }' — always explicitly return the result. If you declare a non-void return type, TypeScript helps by warning you about missing returns. Use the 'return' keyword every time you want to give a value back to the caller."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A bakery needs a program to calculate the cost of a custom cake order. Write a function called 'calculateCakeCost' that takes basePrice (number), numberOfLayers (number), and hasCustomDecoration (boolean) as parameters. Each layer adds $8. Custom decoration adds $15. Return the total cost. Then call the function with a 2-layer cake with custom decoration and a base price of $30. Print the result.",
+      "hints": [
+        "What return type should your function have?",
+        "How do you conditionally add the $15 decoration fee using the boolean parameter?",
+        "What is the formula that combines base price, layers, and the decoration fee?"
+      ]
+    }
+  ]
+}

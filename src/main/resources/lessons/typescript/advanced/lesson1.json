@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Design Patterns in Practice",
+  "summary": "Implement Singleton, Factory, Observer, and Strategy patterns in TypeScript with proper typing and real-world use cases",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Design Patterns Are Proven Architectural Blueprints",
+      "content": "Design patterns are reusable solutions to common software problems — like architectural blueprints that have been refined over decades. The Singleton pattern ensures a class has exactly one instance (like a single database connection manager). The Factory pattern creates objects without specifying the exact class (like a car factory that can produce different models on the same assembly line). The Observer pattern lets one object notify many others when its state changes (like a YouTube channel notifying subscribers). The Strategy pattern lets you swap algorithms at runtime (like choosing between Google Maps driving/walking/biking routes). TypeScript's type system makes implementing these patterns safer and more explicit than in plain JavaScript."
+    },
+    {
+      "type": "example",
+      "title": "Strategy Pattern for Shipping Cost Calculation",
+      "content": "Implements the Strategy pattern where shipping cost algorithms can be swapped at runtime",
+      "code": "// Strategy interface: all shipping calculators must follow this\ninterface ShippingStrategy {\n  calculate(weightKg: number, distanceKm: number): number;\n}\n// Concrete strategy: Standard shipping ($0.50 per kg per 100km)\nclass StandardShipping implements ShippingStrategy {\n  calculate(weightKg: number, distanceKm: number): number {\n    return weightKg * 0.5 * (distanceKm / 100);\n  }\n}\n// Concrete strategy: Express shipping (flat $20 + $1 per kg)\nclass ExpressShipping implements ShippingStrategy {\n  calculate(weightKg: number, distanceKm: number): number {\n    return 20 + weightKg * 1.0;\n  }\n}\n// Context: uses a strategy without knowing its implementation\nclass ShippingCalculator {\n  constructor(private strategy: ShippingStrategy) {}\n  setStrategy(strategy: ShippingStrategy): void {\n    this.strategy = strategy;\n  }\n  getCost(weightKg: number, distanceKm: number): number {\n    return this.strategy.calculate(weightKg, distanceKm);\n  }\n}\nconst calc = new ShippingCalculator(new StandardShipping());\nconsole.log('Standard:', calc.getCost(5, 200));\ncalc.setStrategy(new ExpressShipping());\nconsole.log('Express:', calc.getCost(5, 200));\n// Expected: Standard: 5, Express: 25"
+    },
+    {
+      "type": "explanation",
+      "title": "When Patterns Become Anti-Patterns — Knowing the Trade-offs",
+      "content": "Design patterns are tools, not rules. Over-applying them leads to unnecessary complexity — a pattern hangover where simple problems get over-engineered solutions. Singleton, for example, makes unit testing difficult because it introduces global state. The Observer pattern can cause memory leaks if subscribers are not properly unregistered. Factory patterns add indirection that may not be justified for simple object creation. The key is to ask: 'does this pattern solve a real problem I have right now, or am I adding it because I think I should?' Start simple, extract patterns when you see duplication or rigidity emerging — never add a pattern before you need it."
+    },
+    {
+      "type": "tip",
+      "title": "Using Singleton When a Regular Module Export Would Suffice",
+      "content": "The #1 advanced mistake is implementing a Singleton class when TypeScript modules are already singletons by default. Wrong approach: creating a class with a private constructor and static getInstance() for what is essentially a set of utility functions. Correct: 'export const db = new DatabaseConnection(\"config\");' — ES modules are singletons; the first import creates the instance, subsequent imports reuse it. Only use the Singleton pattern when you need lazy initialization, strict instantiation control, or the instance is determined at runtime. For most cases, a module-level exported instance is simpler, testable, and does not require the ceremony of a class-based Singleton."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "An e-commerce checkout system needs different discount strategies. Create a DiscountStrategy interface with a method 'apply(price: number): number'. Implement: PercentageDiscount(percent), BuyOneGetOneFree (applies to every second item — takes item count in constructor), and LoyaltyDiscount (5% off for members — takes isMember boolean in constructor). Then write a Checkout class that uses a DiscountStrategy and calculates the final price. Test with a $100 item: 10% off, then BOGO with 3 items, then loyalty for members.",
+      "hints": [
+        "How does the Checkout class stay decoupled from the discount implementation?",
+        "Can strategies be chained or composed — does Checkout support multiple discounts?",
+        "What should apply() return for a BOGO scenario with an odd number of items?"
+      ]
+    }
+  ]
+}

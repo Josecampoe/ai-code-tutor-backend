@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Working with APIs",
+  "summary": "Build and consume RESTful APIs using Express and TypeScript, with input validation, error handling, and typed responses",
+  "estimatedMinutes": 19,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "APIs Are Like Restaurant Service",
+      "content": "An API is like a restaurant: you (the client) place an order (HTTP request), the kitchen (server) prepares your meal, and the waiter brings it (HTTP response). RESTful APIs follow conventions: GET retrieves (like checking the menu), POST creates (ordering a custom dish), PUT replaces (sending back a dish for a full remake), PATCH updates (adding extra sauce), and DELETE removes (canceling an order). The API has a URL structure (endpoints) and returns data in JSON format. TypeScript shines here by typing both requests and responses, ensuring that your server sends exactly the shape of data your client expects. This is like having a printed menu with prices — no surprises when the bill arrives."
+    },
+    {
+      "type": "example",
+      "title": "Building a Typed REST Endpoint with Express",
+      "content": "Creates an Express endpoint for managing a task list with full TypeScript typing",
+      "code": "import express, { Request, Response } from 'express';\nconst app = express();\napp.use(express.json());\n// Define a typed Task interface\ninterface Task {\n  id: number;\n  title: string;\n  completed: boolean;\n}\n// In-memory store (would be a database in production)\nlet tasks: Task[] = [\n  { id: 1, title: 'Learn TypeScript', completed: false },\n];\nlet nextId: number = 2;\n// GET /api/tasks — list all tasks\napp.get('/api/tasks', (_req: Request, res: Response) => {\n  res.json(tasks); // Response is automatically typed as JSON\n});\n// POST /api/tasks — create a new task\napp.post('/api/tasks', (req: Request, res: Response) => {\n  const { title } = req.body as { title: string };\n  if (!title || typeof title !== 'string') {\n    res.status(400).json({ error: 'Title is required' });\n    return;\n  }\n  const newTask: Task = { id: nextId++, title, completed: false };\n  tasks.push(newTask);\n  res.status(201).json(newTask);\n});\napp.listen(3000, () => console.log('API running on port 3000'));"
+    },
+    {
+      "type": "explanation",
+      "title": "Input Validation, Error Handling Middleware, and Type-Safe Clients",
+      "content": "Never trust user input. Even with TypeScript on the server, the JSON body arrives as 'any' — validation libraries like Zod or Joi restore type safety at runtime by parsing and validating against a schema. Zod integrates especially well with TypeScript: you define a schema, Zod infers the type, and you get validated data with zero trust. Error handling should use Express middleware — a function that catches errors and returns consistent JSON responses like '{ error: string, code: number }' instead of raw stack traces. On the client side, generate TypeScript types from your OpenAPI spec to keep frontend and backend types in sync — one source of truth, zero type drift."
+    },
+    {
+      "type": "tip",
+      "title": "Not Validating Request Bodies — Assuming TypeScript Protects at Runtime",
+      "content": "The #1 advanced API mistake is assuming TypeScript's compile-time types provide runtime validation. Wrong approach: 'function createTask(req: Request<{}, {}, Task>, res: Response) { tasks.push(req.body); }' — TypeScript trusts the 'Task' annotation, but the actual request body could be anything (null, missing fields, extra fields). Correct: use Zod to validate the request body at runtime: 'const parsed = taskSchema.parse(req.body);' — this throws a detailed error if the data is malformed. TypeScript types are erased at compile time; they provide zero runtime protection. Always validate external input with a schema validator."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Extend the tasks API with: (1) PUT /api/tasks/:id to update a task's title and completed status, (2) DELETE /api/tasks/:id to remove a task, and (3) GET /api/tasks?completed=true to filter by status. Add Zod validation for the request body of PUT. Add error handling middleware that catches all errors and returns { error: string, status: number }. Handle edge cases: task not found (404), invalid ID format (400), and malformed JSON body (400).",
+      "hints": [
+        "How does Express access URL parameters like :id — what property of the request object?",
+        "What Zod methods validate that a value is a boolean or an optional string?",
+        "How does Express error-handling middleware differ from regular middleware — what's the signature?"
+      ]
+    }
+  ]
+}

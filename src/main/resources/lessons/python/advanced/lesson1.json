@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 1,
+  "title": "Design Patterns in Practice",
+  "summary": "Apply Gang of Four design patterns — Singleton, Factory, Strategy, Observer — in real Python projects",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Design patterns are proven blueprints for common problems",
+      "content": "Design patterns are reusable solutions to recurring design problems — like architectural templates for common building layouts. They're not code you copy-paste but strategies you adapt. The Singleton pattern ensures a class has exactly one instance (like a single database connection pool). The Factory pattern decouples object creation from usage (like a car factory that produces different models based on options). The Strategy pattern lets you swap algorithms at runtime (like a GPS choosing different route strategies: fastest, shortest, or scenic). The Observer pattern notifies multiple objects when something changes (like a YouTube channel notifying subscribers of new videos). Using patterns gives you a shared vocabulary with other developers."
+    },
+    {
+      "type": "example",
+      "title": "Strategy pattern for pricing calculations",
+      "content": "Different pricing strategies that can be swapped at runtime for an e-commerce system",
+      "code": "from abc import ABC, abstractmethod\n\nclass PricingStrategy(ABC):\n    # Strategy interface — all strategies must implement calculate()\n    @abstractmethod\n    def calculate(self, base_price: float) -> float:\n        pass\n\nclass RegularPricing(PricingStrategy):\n    # Standard pricing — no discount applied\n    def calculate(self, base_price: float) -> float:\n        return base_price  # Full price, no modifications\n\nclass HolidayPricing(PricingStrategy):\n    # 20% discount during holiday season\n    def calculate(self, base_price: float) -> float:\n        return base_price * 0.80  # Apply 20% seasonal discount\n\nclass ClearancePricing(PricingStrategy):\n    # 50% discount for clearance items\n    def calculate(self, base_price: float) -> float:\n        return base_price * 0.50  # Half off to clear inventory\n\nclass PriceCalculator:\n    # Context class that uses a strategy — can swap strategies anytime\n    def __init__(self, strategy: PricingStrategy):\n        # Accept any strategy that follows the PricingStrategy interface\n        self._strategy = strategy  # Store the initial pricing strategy\n\n    def set_strategy(self, strategy: PricingStrategy):\n        # Change strategy at runtime — like switching from regular to holiday\n        self._strategy = strategy  # Swap to a different pricing model\n\n    def calculate_price(self, base_price: float) -> float:\n        return self._strategy.calculate(base_price)\n\n# Usage — strategies are interchangeable objects\ncalc = PriceCalculator(RegularPricing())\nprint(f\"Regular: ${calc.calculate_price(100):.2f}\")\ncalc.set_strategy(HolidayPricing())\nprint(f\"Holiday: ${calc.calculate_price(100):.2f}\")\n# Expected output:\n# Regular: $100.00\n# Holiday: $80.00"
+    },
+    {
+      "type": "explanation",
+      "title": "Pattern selection — don't force it",
+      "content": "The biggest risk with design patterns is over-application — using a pattern because you learned it, not because the problem needs it. Singleton is controversial: many developers consider it an anti-pattern because it introduces global state and makes testing difficult. In Python, modules are already singletons (imported once), so you often don't need a Singleton class. Factory patterns shine when object creation is complex (multiple steps, configuration-based, or conditional). Strategy is ideal when you have multiple algorithms for the same task that might change at runtime. Observer is essential for event-driven systems. Always ask: 'does this simplify or complicate my code?'"
+    },
+    {
+      "type": "tip",
+      "title": "Singleton in Python is often unnecessary",
+      "content": "Many developers overuse Singleton when a module-level variable suffices. Wrong: class Database(metaclass=SingletonMeta): — complex metaclass for global state. Better: in database.py, define connection = create_connection() at module level. Python modules are imported once and cached, naturally acting as singletons. Use a class-based Singleton only when you need lazy initialization or when a framework requires it."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Implement the Observer pattern for a stock price notification system. Create a Stock class (the subject) that maintains a list of observers. Observers implement an update(stock_name, price) method. Create two observers: EmailNotifier and SMSNotifier. When the stock price changes (using a setter), all observers should be notified automatically. Test by changing a stock price and verifying both observers are called.",
+      "hints": [
+        "How do you manage the list of observers that need to be notified?",
+        "What method in the subject should iterate and notify all observers?"
+      ]
+    }
+  ]
+}

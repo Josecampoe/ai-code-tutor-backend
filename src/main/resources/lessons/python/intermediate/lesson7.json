@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 7,
+  "title": "Recursion",
+  "summary": "Solve problems by having functions call themselves with simpler inputs",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Recursion is a function that calls itself",
+      "content": "Imagine standing between two mirrors — you see an infinite reflection of yourself, each one smaller than the last. Recursion works similarly: a function solves a big problem by breaking it into smaller versions of the same problem, calling itself with progressively simpler inputs until reaching a base case (the smallest version that has an immediate answer). Every recursive function needs two parts: the base case that stops the recursion (like 'if there's only one item, return it'), and the recursive case that moves toward the base case. Without a base case, the function calls itself forever — just like mirrors facing each other."
+    },
+    {
+      "type": "example",
+      "title": "Calculating factorial with recursion",
+      "content": "Factorial (5!) = 5 * 4 * 3 * 2 * 1 — solved by reducing the problem step by step",
+      "code": "def factorial(n):\n    # Base case: factorial of 0 or 1 is 1 — no more recursion needed\n    if n <= 1:\n        return 1  # Smallest version — answer is known immediately\n    # Recursive case: n! = n * (n-1)! — call factorial with smaller n\n    return n * factorial(n - 1)\n    # For n=4: return 4 * factorial(3)\n    #   factorial(3) = 3 * factorial(2)\n    #     factorial(2) = 2 * factorial(1)\n    #       factorial(1) = 1 (base case!) -> unwinds: 2*1, 3*2, 4*6 = 24\n\ndef fibonacci(n):\n    # Base cases: first two numbers in the sequence are 0 and 1\n    if n <= 0:\n        return 0\n    if n == 1:\n        return 1\n    # Recursive case: fib(n) = fib(n-1) + fib(n-2)\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(\"Factorial of 5:\", factorial(5))\nprint(\"Fibonacci of 7:\", fibonacci(7))\n# Expected output:\n# Factorial of 5: 120\n# Fibonacci of 7: 13"
+    },
+    {
+      "type": "explanation",
+      "title": "When to use recursion vs iteration",
+      "content": "Recursion shines for problems with a naturally recursive structure: tree traversal (file systems, HTML DOM), divide-and-conquer algorithms (quick sort, merge sort), and mathematical sequences (factorial, Fibonacci). The code is often shorter and more elegant than iterative alternatives. However, recursion has costs: each call consumes stack memory, and Python has a default recursion limit (1000). Deep recursion hits this limit, causing RecursionError. Iteration (loops) uses constant stack space and is usually faster. Use recursion when the recursive solution is clearly simpler; use iteration when performance matters or depth is unpredictable."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the base case causes RecursionError",
+      "content": "Without a base case, recursion never stops and eventually hits Python's recursion limit. Wrong: def countdown(n): print(n); countdown(n-1) — infinite recursion! Correct: add if n <= 0: return before the recursive call. Always define the base case first and make sure every recursive call moves toward it."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a recursive function called sum_digits(n) that takes a positive integer and returns the sum of its digits. For example, sum_digits(123) should return 1 + 2 + 3 = 6. Hint: use the modulo operator (%) to get the last digit and integer division (//) to remove the last digit in the recursive call.",
+      "hints": [
+        "What is the base case — when should the recursion stop?",
+        "How can you extract the last digit and the remaining number separately?"
+      ]
+    }
+  ]
+}

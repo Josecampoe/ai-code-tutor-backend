@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Generics",
+  "summary": "Write reusable, type-safe functions and classes using TypeScript generics",
+  "estimatedMinutes": 13,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Generics Are Like Adjustable Wrenches",
+      "content": "A generic is an adjustable wrench — it fits any bolt size, unlike a fixed wrench that only fits one. In TypeScript, generics let you write functions, classes, and interfaces that work with any type while preserving type information. Instead of function identity(value: any): any (loses type info), you write function identity<T>(value: T): T (preserves the exact type). Generics are essential for data structures like arrays, promises, and maps."
+    },
+    {
+      "type": "example",
+      "title": "Generic function and generic constraint",
+      "content": "Writes a generic function that works with any type and one constrained to objects with a name",
+      "code": "// Generic identity function — preserves the exact type\nfunction firstElement<T>(arr: T[]): T | undefined {\n  return arr[0];\n}\n\nlet num = firstElement([1, 2, 3]);\n// TypeScript infers: number\nconsole.log(num);\n// Expected output: 1\n\nlet str = firstElement(['a', 'b', 'c']);\n// TypeScript infers: string\nconsole.log(str);\n// Expected output: a\n\n// Constrained generic — T must have a name property\nfunction greet<T extends { name: string }>(obj: T): string {\n  return 'Hello, ' + obj.name;\n}\n\nconsole.log(greet({ name: 'Alice', age: 30 }));\n// Expected output: Hello, Alice"
+    },
+    {
+      "type": "explanation",
+      "title": "Generic Constraints with extends",
+      "content": "The extends keyword in generics restricts what types are allowed. Instead of accepting any type, you can require that T has certain properties. function process<T extends HasId>(item: T) ensures only objects with an id property are passed. This gives you the best of both worlds: flexibility (works with many types) and safety (guarantees required members exist). Common constraints include extends { id: string }, extends Record<string, unknown>, or extends any[]."
+    },
+    {
+      "type": "tip",
+      "title": "Using any instead of a proper generic",
+      "content": "The #1 mistake TypeScript developers make is falling back to any when they should use a generic. Wrong: function identity(value: any): any — disables all type checking. Correct: function identity<T>(value: T): T — preserves type information. If you need to access a property, use a constraint: <T extends { length: number }> instead of any. Every any bypass counts as a surrender of type safety."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a generic Queue<T> class with enqueue(item: T), dequeue(): T | undefined, and isEmpty(): boolean. The class should work with strings, numbers, or objects. Then create a Queue<number>, add three numbers, dequeue one, and print the remaining two. Add a constraint that T must have a property called priority for a PriorityQueue variant.",
+      "hints": [
+        "What internal data structure (array) should store the queue items?",
+        "What is the type of the class field — is it T[] or something else?",
+        "How does the extends constraint differ between Queue and PriorityQueue?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 4,
+  "title": "Control Flow",
+  "summary": "Make decisions in your code using if, elif, and else statements",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Your code needs a GPS",
+      "content": "So far your code runs every line in order, like following a straight road. But real-world programs need to make turns — like a GPS deciding whether to suggest a different route based on traffic. Control flow statements (if, elif, else) let your program check conditions and choose different paths. The word 'if' works exactly like in everyday English: 'IF it's raining, take an umbrella.' Python checks the condition, and if it's True, it runs the indented block underneath."
+    },
+    {
+      "type": "example",
+      "title": "Temperature advice with if-elif-else",
+      "content": "This program checks the temperature and suggests appropriate clothing",
+      "code": "# Store today's temperature in Celsius\ntemperature = 28  # A warm summer day\nif temperature > 30:  # First condition — extremely hot\n    print(\"Stay indoors and drink water\")  # Runs only if temp > 30\nelif temperature > 20:  # Second condition — checked if first was False\n    print(\"Wear light clothing\")  # Runs if 20 < temp <= 30\nelif temperature > 10:  # Third condition\n    print(\"Bring a jacket\")  # Runs if 10 < temp <= 20\nelse:  # Catches everything else (temp <= 10)\n    print(\"Wear a heavy coat\")  # Runs if no condition above was True\n# Expected output:\n# Wear light clothing"
+    },
+    {
+      "type": "explanation",
+      "title": "How Python evaluates conditions",
+      "content": "Python evaluates conditions from top to bottom. The moment it finds a True condition, it runs that block and skips the rest — like a multiple-choice question where you pick the first correct answer. The elif keyword is short for 'else if' and lets you chain multiple conditions. The else block is optional but acts as a safety net for anything that doesn't match. Indentation (4 spaces) is mandatory — Python uses it to know which lines belong to which block; unlike other languages that use curly braces."
+    },
+    {
+      "type": "tip",
+      "title": "Don't forget the colon",
+      "content": "Every if, elif, and else line MUST end with a colon (:). Beginners often forget it. Wrong: if x > 5 print(\"big\"). Correct: if x > 5: print(\"big\"). The colon tells Python 'the condition is done — here comes the block of code.' Forgetting it causes a SyntaxError every time."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A theme park has height requirements: under 120cm cannot ride, 120-140cm needs an adult, over 140cm can ride alone. Write code that checks a person's height and prints the correct access message.",
+      "hints": [
+        "Which condition should you check first — the shortest or the tallest?",
+        "How do you write a condition that checks if a value falls between two numbers?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Strings",
+  "summary": "Manipulate text data using string methods, template literals, and understand TypeScript's string type",
+  "estimatedMinutes": 13,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Strings Are Not Just Text — They Are Toolboxes",
+      "content": "A string is text enclosed in quotes, but think of it as a toolbox full of useful gadgets. You can ask a string how long it is (.length), cut pieces out of it (.slice), change its casing (.toUpperCase), check if it contains certain words (.includes), and much more. In TypeScript, strings are 'immutable' — none of these methods change the original string; they return a new one. This is like ordering a modified copy of a document instead of scribbling on the original. TypeScript also supports 'template literals' using backticks (`) which let you embed variables directly inside strings with ${variableName}."
+    },
+    {
+      "type": "example",
+      "title": "Formatting a Customer Email Confirmation",
+      "content": "Uses string methods and template literals to create a formatted email confirmation message",
+      "code": "// Customer order details\nconst customerName: string = 'alice johnson';\nconst product: string = 'Wireless Keyboard';\nconst orderId: string = 'ORD-3847';\n// Capitalize the customer name properly\nconst formattedName: string =\n  customerName.charAt(0).toUpperCase() + customerName.slice(1);\n// But that only capitalizes 'A', not 'J' — a real function would split by space\n// Use a template literal to build the email body\nconst emailBody: string = `Hi ${formattedName}, thank you for your order of ${product}. Your order number is ${orderId}.`;\nconsole.log(emailBody);\n// Check if the order ID contains 'ORD'\nconst isStandardOrder: boolean = orderId.includes('ORD');\nconsole.log('Standard order:', isStandardOrder);\n// Expected:\n// Hi Alice johnson, thank you for your order of Wireless Keyboard. Your order number is ORD-3847.\n// Standard order: true"
+    },
+    {
+      "type": "explanation",
+      "title": "Template Literals vs String Concatenation",
+      "content": "Before template literals, developers combined strings and variables using the + operator: 'Hello ' + name + ', you have ' + count + ' messages.' This gets messy quickly — like trying to build a sandwich by stacking ingredients on your forearm instead of using a plate. Template literals (backticks with ${}) keep everything readable: `Hello ${name}, you have ${count} messages.` You can even embed expressions inside ${}, like `${price * quantity}` to calculate inline. TypeScript fully supports both approaches, but template literals are the modern standard for any string that includes variables."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting That Strings Are Immutable",
+      "content": "The #1 beginner mistake is calling a string method and expecting the original variable to change. Wrong approach: 'let name = \"john\"; name.toUpperCase(); console.log(name);' — this prints 'john' because toUpperCase returns a new string without changing the original. Correct approach: 'let name = \"john\"; name = name.toUpperCase(); console.log(name);' — reassign the result back to the variable. Strings in TypeScript (and JavaScript) never change in place. Every method returns a modified copy. If you want to keep the change, store the return value."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A newsletter system needs to format subscriber names. You have a messy input string: '  mike@example.com;JANE@EXAMPLE.COM; Bob@Example.com  '. Clean it by trimming whitespace, converting everything to lowercase, and printing each email on its own line. Also count how many emails are from 'example.com'.",
+      "hints": [
+        "What method removes whitespace from both ends of a string?",
+        "How can you split a single string into an array of separate emails?",
+        "How do you check if each email ends with a specific domain?"
+      ]
+    }
+  ]
+}

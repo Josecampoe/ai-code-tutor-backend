@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Introduction and Hello World",
+  "summary": "Write and run your first TypeScript program using Node.js and understand what TypeScript is and why it matters",
+  "estimatedMinutes": 12,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "What is TypeScript?",
+      "content": "Think of TypeScript as a smart assistant for your JavaScript code. If JavaScript is like writing instructions on a sticky note, TypeScript is like typing those same instructions into a spell-checker that catches mistakes before you print. TypeScript adds type annotations — labels that describe what kind of data (numbers, text, etc.) your code expects. This catches errors at writing time instead of when your program runs. Every valid JavaScript program is also valid TypeScript, so you can adopt it gradually."
+    },
+    {
+      "type": "example",
+      "title": "Your First TypeScript Program",
+      "content": "A classic Hello World program showing how to print text to the console in TypeScript",
+      "code": "// This is a single-line comment in TypeScript\n// The 'console.log' function prints text to the terminal\n// TypeScript can infer types, but we specify ': string' for clarity\n// The 'const' keyword means this value cannot be reassigned\nconst greeting: string = 'Hello, World!';\n// Without the type annotation, TypeScript would still know it's a string\nconst inferredGreeting = 'Hello from TypeScript!';\n// Calling the function to display our message\nconsole.log(greeting);\n// Another log call showing the inferred variable\nconsole.log(inferredGreeting);\n// Expected output:\n// Hello, World!\n// Hello from TypeScript!"
+    },
+    {
+      "type": "explanation",
+      "title": "How TypeScript and JavaScript Work Together",
+      "content": "TypeScript is a superset of JavaScript, meaning everything JavaScript offers is available in TypeScript plus more. Your TypeScript code gets compiled (transpiled) into plain JavaScript that runs anywhere JavaScript runs — browsers, servers, phones. The compilation step is where TypeScript checks your types and catches mismatches. Think of it like a preview before printing: you review the digital document (TypeScript) and only print (run) the final paper (JavaScript) once it looks correct. This catches mismatches like trying to use a price as if it were a person's name."
+    },
+    {
+      "type": "tip",
+      "title": "Ignoring TypeScript Errors",
+      "content": "The #1 beginner mistake is ignoring red squiggly underlines in the editor. Beginners treat them like warnings and compile anyway. Wrong approach: writing 'const age: number = \"twenty\";' (assigning a string to a number type). Correct approach: 'const age: number = 20;' or 'const age: string = \"twenty\";' — always match the type you declared. The red underline is trying to help you, not annoy you."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You are building a digital business card. Create a program that stores your name (string), age (number), and whether you are a student (boolean). Print each value on its own line. Use type annotations for every variable.",
+      "hints": [
+        "What keyword declares a variable that cannot be reassigned?",
+        "What type annotation would you use for a true/false value?",
+        "How do you print a variable's value to the console?"
+      ]
+    }
+  ]
+}

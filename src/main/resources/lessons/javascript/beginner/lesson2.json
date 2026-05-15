@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Variables and Data Types",
+  "summary": "Store information in variables and understand the different kinds of data JavaScript works with",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Variables Are Like Labeled Boxes",
+      "content": "Think of a variable as a box with a label on it. You put a value inside the box, write a name on the outside, and later you can peek inside or replace what is stored. In JavaScript, you create boxes with three keywords: let (for values that change), const (for values that stay the same), and var (older style, rarely used today). Each box also has a type — like a number, a piece of text, or a true/false value."
+    },
+    {
+      "type": "example",
+      "title": "Declaring variables of different types",
+      "content": "Creates four variables showing the main data types in JavaScript",
+      "code": "// String — text wrapped in quotes\nlet studentName = 'Alice';\n\n// Number — integer or decimal, no quotes\nconst age = 25;\n\n// Boolean — true or false\nlet isEnrolled = true;\n\n// Undefined — declared but no value yet\nlet futureGrade;\nconsole.log(futureGrade);\n// Expected output: undefined\n\nconsole.log(studentName, age, isEnrolled);\n// Expected output: Alice 25 true"
+    },
+    {
+      "type": "explanation",
+      "title": "Dynamic Typing Means Flexibility",
+      "content": "JavaScript is dynamically typed — the same variable can hold a string now and a number later. This is like a box that can hold books one day and toys the next. Other languages like Java force you to declare what the box can hold permanently. JavaScript's flexibility makes it easier to start with, but it also means you must keep track of what type a variable currently holds, especially when doing operations like addition."
+    },
+    {
+      "type": "tip",
+      "title": "Using const when you mean let",
+      "content": "The #1 mistake beginners make is using const for values they intend to change later. const means 'constant' — the variable cannot be reassigned. If you write const score = 10; and later try score = 15;, JavaScript throws an error. Wrong: const score = 10; score = 15;. Correct: let score = 10; score = 15;. Use const by default and switch to let only when you know the value needs to change."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You are tracking inventory for a small bookstore. Declare variables for: the store name 'Page Turner', total books in stock (250), the store is open (true), and the owner's name (leave undefined). Print all four to the console.",
+      "hints": [
+        "Which of these values will never change — should those use let or const?",
+        "How do you create a variable without giving it a value yet?",
+        "What data type is each value — string, number, or boolean?"
+      ]
+    }
+  ]
+}

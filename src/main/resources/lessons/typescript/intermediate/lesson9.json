@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Generics",
+  "summary": "Write reusable, type-safe code using generics — type parameters that work with any data type without sacrificing safety",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Generics Are Like Adjustable Wrenches",
+      "content": "A regular function is like a fixed-size wrench — it only works with one size (one type). A generic function is like an adjustable wrench — it works with any size but still fits securely. Generics use type parameters inside angle brackets (<T>) that act as placeholders for the actual type, determined when the function is called. This lets you write a single function that works with numbers, strings, or custom types while keeping full type safety. Without generics, you would need either duplicated functions (one per type) or lose type checking by using 'any'. TypeScript's generics give you the best of both: reusability plus safety."
+    },
+    {
+      "type": "example",
+      "title": "A Generic Function that Returns the First Element of an Array",
+      "content": "Shows a reusable function that works with any type while preserving type information",
+      "code": "// Generic function with type parameter T\n// T is a placeholder — it will be replaced with the actual type at call time\nfunction getFirstElement<T>(array: T[]): T | undefined {\n  // If the array is not empty, return the first element\n  if (array.length > 0) {\n    return array[0];\n  }\n  // Return undefined for empty arrays\n  return undefined;\n}\n// TypeScript infers T as string from the argument\nconst firstString: string | undefined = getFirstElement(['a', 'b', 'c']);\n// TypeScript infers T as number\nconst firstNumber: number | undefined = getFirstElement([10, 20, 30]);\n// TypeScript infers T as a custom object type\nconst firstProduct = getFirstElement([\n  { id: 1, name: 'Laptop' },\n  { id: 2, name: 'Mouse' },\n]);\nconsole.log(firstString, firstNumber, firstProduct?.name);\n// Expected: a 10 Laptop"
+    },
+    {
+      "type": "explanation",
+      "title": "Generic Constraints — Limiting Without Losing Flexibility",
+      "content": "Sometimes you want generics but need to guarantee the type has certain properties. A generic constraint using 'extends' says 'T must at least have these features'. For example, 'function getLength<T extends { length: number }>(item: T): number { return item.length; }' works with strings and arrays (both have .length) but rejects numbers. Constraints let you write generic code that still accesses specific properties safely. This is like saying 'I will accept any vehicle, but it must have a steering wheel' — you stay flexible but can rely on the steering wheel being there. TypeScript enforces constraints at compile time."
+    },
+    {
+      "type": "tip",
+      "title": "Using 'any' Instead of Generics and Losing Type Safety",
+      "content": "The #1 intermediate mistake is using 'any' to make a function reusable instead of using generics. Wrong approach: 'function identity(value: any): any { return value; }' — the return type is any, so callers lose all type checking. Correct approach: 'function identity<T>(value: T): T { return value; }' — the return type matches the input type precisely. When you use 'any', you are telling TypeScript 'do not check this' — essentially turning off the very feature you added TypeScript for. If you find yourself writing 'any', pause and ask: can I use a generic or at least 'unknown' (which requires type narrowing) instead?"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A cache system needs to store values of any type but with a consistent interface. Write a generic class 'Cache<T>' that stores key-value pairs where keys are strings and values are type T. Implement methods: 'set(key: string, value: T): void', 'get(key: string): T | undefined', and 'clear(): void'. Then create a Cache<number> for storing user IDs by session and a Cache<string[]> for storing a user's shopping cart items.",
+      "hints": [
+        "What internal data structure should Cache use to store the key-value pairs?",
+        "How does the generic type parameter T get specified when creating a new Cache instance?",
+        "What should get() return if the key does not exist in the cache?"
+      ]
+    }
+  ]
+}

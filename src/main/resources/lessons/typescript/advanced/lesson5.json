@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Performance and Optimization",
+  "summary": "Profile TypeScript code, identify bottlenecks, and apply optimization techniques without sacrificing readability",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Performance Is About Measuring, Not Guessing",
+      "content": "Never guess what is slow — measure first. Human intuition about performance bottlenecks is notoriously wrong, like guessing which part of your commute takes the longest versus actually timing each segment. Use profiling tools: Node.js's built-in '--prof' flag, Chrome DevTools Performance tab, or the 'perf_hooks' module for precise timing. TypeScript itself adds zero runtime performance cost — all type information is erased during compilation. The performance characteristics of your code are identical to the equivalent JavaScript. Bottlenecks typically fall into three categories: algorithmic (wrong data structure), synchronous (blocking the event loop), or memory (excessive GC pressure). Fix the right one."
+    },
+    {
+      "type": "example",
+      "title": "Profiling and Optimizing a Slow Data Processing Function",
+      "content": "Compares O(n²) nested loops with an O(n) Map-based approach for finding duplicates",
+      "code": "// SLOW VERSION: O(n²) — nested loops\nfunction findDuplicatesSlow(ids: number[]): number[] {\n  const duplicates: number[] = [];\n  for (let i = 0; i < ids.length; i++) {\n    for (let j = i + 1; j < ids.length; j++) {\n      if (ids[i] === ids[j] && !duplicates.includes(ids[i])) {\n        duplicates.push(ids[i]);\n      }\n    }\n  }\n  return duplicates;\n}\n// FAST VERSION: O(n) — single pass with a Set\nfunction findDuplicatesFast(ids: number[]): number[] {\n  const seen: Set<number> = new Set();\n  const duplicates: Set<number> = new Set();\n  for (const id of ids) {\n    if (seen.has(id)) {\n      duplicates.add(id);\n    } else {\n      seen.add(id);\n    }\n  }\n  return [...duplicates];\n}\n// With 10,000 items, the slow version takes ~1000x longer\n// Always prefer O(n) Set/Map over O(n²) nested loops for lookups"
+    },
+    {
+      "type": "explanation",
+      "title": "Bundle Size, Tree Shaking, and Dead Code Elimination",
+      "content": "For frontend TypeScript, performance also means bundle size — how much JavaScript the browser must download. Tree shaking is a build process that removes unused exports, like pruning dead branches from a tree. To benefit, use named exports (not default exports), import only what you need ('import { map } from \"lodash\"' instead of 'import _ from \"lodash\"'), and configure your bundler (Vite, webpack, esbuild) for production mode. TypeScript's 'isolatedModules' and 'verbatimModuleSyntax' options help ensure your imports are clean. Also consider lazy loading: dynamically import() heavy modules only when needed, like loading the checkout page code only when the user clicks 'checkout'."
+    },
+    {
+      "type": "tip",
+      "title": "Premature Optimization Adding Complexity Without Data",
+      "content": "The #1 advanced mistake is spending hours optimizing code that runs once per day or handles negligible data volumes. Wrong approach: 'I will cache this function result because it MIGHT be called frequently' without measuring. Correct: write clean, correct code first. Profile to find the actual bottleneck. Optimize only the top 3 hot spots. This follows the 80/20 rule: 80% of execution time is spent in 20% of the code. Donald Knuth famously said 'premature optimization is the root of all evil.' This does not mean 'write slow code' — it means 'write sensible code first, then optimize what matters.' An hour of profiling can save days of optimizing the wrong thing."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A log processing system has a function that reads an array of log entries (each with a timestamp string) and counts how many entries fall into each hour of the day. The current implementation uses nested loops and string parsing. Profile it with a simulated 100,000 entries (generate them with a loop). Identify the bottleneck and rewrite it to be at least 10x faster. Measure both versions with console.time. The function signature is: 'countByHour(entries: { timestamp: string }[]): Record<number, number>' returning hour -> count.",
+      "hints": [
+        "What is the cost of parsing a timestamp string — can you parse it once per entry instead of multiple times?",
+        "What data structure gives O(1) lookup for accumulating counts by hour?",
+        "What type of loop is fastest in JavaScript/TypeScript — for-of, forEach, or a traditional for loop?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Interfaces and Abstractions",
+  "summary": "Design flexible systems using interfaces, abstract classes, and polymorphism",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Interfaces as Job Descriptions",
+      "content": "A job description says 'must be able to drive a car' but doesn't specify who the driver is — it could be an employee, a robot, or a delivery person. In Java, an interface is like that job description: it declares what methods an implementing class must have, but it doesn't say how those methods work. Any class that implements the interface promises to provide those methods. This allows completely different classes to be used interchangeably. When you write code that works against an interface, you can swap implementations without changing your code — like replacing a human driver with an autonomous car."
+    },
+    {
+      "type": "example",
+      "title": "Interface and Multiple Implementations",
+      "content": "This interface defines a payment method, and two different classes implement it differently",
+      "code": "// Interface: a contract that implementing classes must follow\ninterface PaymentMethod {\n    // All implementors must provide this method\n    void pay(double amount);\n}\n\n// CreditCard implements PaymentMethod in its own way\nclass CreditCard implements PaymentMethod {\n    public void pay(double amount) {\n        System.out.println(\"Charged $\" + amount + \" to credit card\");\n    }\n}\n\n// PayPal implements the same interface differently\nclass PayPal implements PaymentMethod {\n    public void pay(double amount) {\n        System.out.println(\"Processed $\" + amount + \" via PayPal\");\n    }\n}\n// Expected:\n// PaymentMethod pm = new CreditCard();\n// pm.pay(50.0);  -> Charged $50.0 to credit card"
+    },
+    {
+      "type": "explanation",
+      "title": "Abstract Classes vs Interfaces",
+      "content": "Abstract classes and interfaces both enable abstraction but serve different purposes. An abstract class is like a partially built house — it has some completed rooms (concrete methods) and some empty frames for you to finish (abstract methods). Use it when classes share common state (fields) or partial implementation. An interface is like a contract that specifies only what must be done, not how. Since Java 8, interfaces can have default methods with implementation, but they still can't hold instance state. The rule: use interfaces to define capabilities (a Bird CAN fly), use abstract classes to define identity (a Bird IS an Animal)."
+    },
+    {
+      "type": "tip",
+      "title": "Creating an interface when an abstract class would be better",
+      "content": "Most common mistake: defining an interface with 20 default methods and shared state needs. Interfaces can't have instance fields or constructors. If your classes share common fields (like name or id), use an abstract class instead. Fix: if you need shared state or constructors, use an abstract class. Wrong: interface Vehicle { String model; } (won't compile). Correct: abstract class Vehicle { String model; }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Design a notification system. Create an interface called Notifier with a method send(String message). Then create three classes — EmailNotifier, SMSNotifier, and PushNotifier — each implementing Notifier differently. Finally, write a method that takes a Notifier and a message and calls send, demonstrating polymorphic behavior.",
+      "hints": [
+        "What keyword does a class use to promise to follow an interface?",
+        "Do you need the @Override annotation on the implementing methods?",
+        "How do you write a method parameter that accepts any Notifier implementation?"
+      ]
+    }
+  ]
+}

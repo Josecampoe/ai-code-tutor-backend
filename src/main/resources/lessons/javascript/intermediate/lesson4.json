@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "File I/O",
+  "summary": "Read and write files using Node.js fs module with synchronous and asynchronous patterns",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "File Operations Are Like Library Checkout",
+      "content": "Reading and writing files in Node.js is like checking books in and out of a library. You open a file (take a book off the shelf), read or write its contents (flip through pages or write in it), and close it (return it to the shelf). Node.js provides the fs module with two styles: synchronous (blocking — the program waits until the book is returned) and asynchronous (non-blocking — the program does other things while waiting)."
+    },
+    {
+      "type": "example",
+      "title": "Reading and writing files asynchronously",
+      "content": "Uses fs.promises to read a JSON config file and write a log file",
+      "code": "const fs = require('fs/promises');\nconst path = require('path');\n\nasync function readConfig() {\n  let data = await fs.readFile(\n    path.join(__dirname, 'config.json'),\n    'utf-8'\n  );\n  return JSON.parse(data);\n}\n\nasync function writeLog(message) {\n  let entry = `[${new Date()}] ${message}\\n`;\n  await fs.appendFile('app.log', entry, 'utf-8');\n}\n\nreadConfig().then(config => {\n  console.log('Config loaded:', config);\n});\nwriteLog('Application started');\nconsole.log('Log file updated');"
+    },
+    {
+      "type": "explanation",
+      "title": "Synchronous vs Asynchronous: The Trade-off",
+      "content": "Synchronous file methods (readFileSync, writeFileSync) are simpler — the code reads top-to-bottom like a recipe. But they block Node.js's single thread, freezing all other operations. Asynchronous methods use callbacks, promises, or async/await to avoid blocking. For startup scripts that read configuration once, sync is acceptable. For server request handlers that read files, async is mandatory. The rule: never use sync methods in production request handlers."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting encoding causes buffer output",
+      "content": "The #1 mistake developers make with readFile is forgetting the encoding parameter. Wrong: fs.readFile('file.txt') — returns a Buffer object, not a string. Logging it shows <Buffer 48 65 6c...>. Correct: fs.readFile('file.txt', 'utf-8') returns a string. Always specify 'utf-8' for text files unless you intentionally want a Buffer for binary data."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a todo list CLI tool. Write functions to: read todos from a JSON file, add a new todo (append to the array and write back), and mark a todo as done. Handle the case where the file does not exist yet by starting with an empty array. Test by adding three todos and reading them back.",
+      "hints": [
+        "What happens if you try to readFile on a non-existent file — does try-catch help?",
+        "After reading the file, how do you convert the JSON string back to an array?",
+        "When writing back, what do you need to do to the array before writeFile?"
+      ]
+    }
+  ]
+}

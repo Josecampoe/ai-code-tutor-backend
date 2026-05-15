@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Control Flow",
+  "summary": "Make decisions in your code using if, else if, and else statements",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Control Flow Is Like Traffic Lights",
+      "content": "Control flow statements decide which path your code takes, just like a traffic light directs cars. When you write if (condition), you are saying: 'If the light is green, go.' If the condition is true, the code inside the if block runs. If it is false, JavaScript skips that block and optionally checks an else if or falls through to else. This allows your program to react differently depending on the data it receives."
+    },
+    {
+      "type": "example",
+      "title": "Checking a student's grade",
+      "content": "Uses if-else if-else to assign a letter grade based on a numeric score",
+      "code": "let score = 85;\nlet grade;\n\nif (score >= 90) {\n  grade = 'A';\n} else if (score >= 80) {\n  grade = 'B';\n} else if (score >= 70) {\n  grade = 'C';\n} else {\n  grade = 'F';\n}\n\nconsole.log('Grade:', grade);\n// Expected output: Grade: B"
+    },
+    {
+      "type": "explanation",
+      "title": "Truthy and Falsy Values",
+      "content": "Conditions do not need to be true or false — JavaScript treats every value as either 'truthy' or 'falsy'. Falsy values are: false, 0, '' (empty string), null, undefined, and NaN. Everything else is truthy, including non-empty strings, positive numbers, negative numbers, arrays, and objects. This means you can write if (username) to check if a username exists, instead of writing if (username !== '' && username !== undefined)."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting curly braces",
+      "content": "The #1 mistake beginners make is omitting curly braces after if or else. Without braces, only the very next line is part of the condition. Wrong: if (score > 50) console.log('Pass'); console.log('Done'); — 'Done' prints regardless. Correct: if (score > 50) { console.log('Pass'); } console.log('Done');. Always use braces even for single-line conditions."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A movie theater offers different ticket prices: $12 for adults (18+), $8 for children (under 12), and $10 for seniors (65+). Ages 12-17 pay the adult price. Write code that takes a person's age and prints the correct ticket price.",
+      "hints": [
+        "Which age range should you check first — the most specific or the most general?",
+        "What happens if age is exactly 12 — does that child rate or adult rate apply?",
+        "How many conditions do you need — if, else if, and else?"
+      ]
+    }
+  ]
+}

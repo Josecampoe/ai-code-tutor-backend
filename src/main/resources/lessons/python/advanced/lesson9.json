@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 9,
+  "title": "Deployment Basics",
+  "summary": "Package Python applications and deploy them using Docker and cloud platforms",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Shipping your code to users",
+      "context": "Developing on your machine is one thing; running reliably on someone else's server is another challenge entirely. Deployment means taking your application and making it available to users. This involves packaging dependencies (requirements.txt or pyproject.toml), managing environment variables for configuration, and ensuring the application starts automatically. Docker is the industry standard for deployment — it packages your application, its dependencies, and the system configuration into a container (like a shipping container that holds everything needed to run). Containers run the same way everywhere: your laptop, a test server, or a cloud provider. This eliminates the dreaded 'it works on my machine' problem."
+    },
+    {
+      "type": "example",
+      "title": "Dockerfile for a Python web application",
+      "content": "A production-ready Dockerfile for a FastAPI application",
+      "code": "# Dockerfile — instructions to build a container image\n# FROM specifies the base image — Python 3.11 slim for smaller size\nFROM python:3.11-slim\n\n# Set working directory inside the container — all commands run here\nWORKDIR /app\n\n# Copy only requirements first — leverages Docker layer caching\n# (Docker caches layers; if requirements.txt doesn't change, this is reused)\nCOPY requirements.txt .\n\n# Install Python dependencies — --no-cache-dir saves space\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copy the rest of the application code into the container\nCOPY . .\n\n# Set environment variables for the application\nENV PYTHONUNBUFFERED=1  # Force stdout/stderr to be unbuffered\nENV APP_PORT=8000  # Port the app listens on\n\n# Expose the port that the application uses (documentation only)\nEXPOSE 8000\n\n# Command to run when the container starts — uses JSON format (exec form)\nCMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n\n# Build: docker build -t my-app .\n# Run: docker run -p 8000:8000 my-app\n# Stop: docker stop <container-id>"
+    },
+    {
+      "type": "explanation",
+      "title": "Deployment environments and configuration management",
+      "context": "Applications should never hard-code environment-specific values (database URLs, API keys, secret keys). The Twelve-Factor App methodology dictates that configuration should be stored in environment variables. Use pydantic-settings or python-decouple to load configuration from environment variables with typed validation. Separate development, staging, and production configurations. For cloud deployment, platforms like Railway, Render, Fly.io, and AWS Elastic Beanstalk offer simple Python deployment — you point at a GitHub repo, and they build and run your Docker container. For serverless, consider AWS Lambda or Google Cloud Functions for event-driven workloads. Always use a process manager (supervisor, systemd) to restart your app if it crashes."
+    },
+    {
+      "type": "tip",
+      "title": ".dockerignore prevents bloated images",
+      "context": "Without a .dockerignore, your Docker image includes everything in the directory: virtual environments, .git folders, cached Python packages, and OS-specific files. Wrong: building with venv/ (200+ MB) and .git/ in the build context. Correct: create .dockerignore with: __pycache__/, *.pyc, .git/, venv/, .env, .idea/, *.egg-info/. Keeps images lean and secure. A production Python image should be under 200MB."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a complete deployment setup for a simple FastAPI or Flask application that returns 'Hello, World!' at / and has a /health endpoint. Include: (1) requirements.txt with the framework and a production ASGI/WSGI server, (2) a .dockerignore file, (3) a Dockerfile using python:3.11-slim, (4) a .env.example file showing the PORT and any other config variables. Don't write the app code itself — just the deployment files.",
+      "hints": [
+        "What should you exclude in .dockerignore to reduce the image size?",
+        "How do you specify the port to listen on using an environment variable?"
+      ]
+    }
+  ]
+}

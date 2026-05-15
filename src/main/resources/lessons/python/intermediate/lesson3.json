@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 3,
+  "title": "Collections",
+  "summary": "Choose the right collection type: lists, tuples, sets, and dictionaries for different use cases",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Different tools for different jobs",
+      "content": "If you only had a hammer, every problem would look like a nail. Python has four built-in collection types, each designed for different scenarios. Lists are ordered, mutable, and allow duplicates — great for sequences like a playlist. Tuples are ordered and immutable — use them for fixed data like coordinates or configuration. Sets are unordered, mutable, but contain only unique items — perfect for eliminating duplicates or membership tests. Dictionaries store key-value pairs — like a real dictionary mapping a word to its definition. Choosing the right one makes your code clearer and more performant."
+    },
+    {
+      "type": "example",
+      "title": "Using all four collection types",
+      "content": "This example demonstrates the right use case for each collection",
+      "code": "# Set — unique items only, use for deduplication and membership tests\nunique_visitors = {\"Alice\", \"Bob\", \"Charlie\", \"Alice\"}  # Alice appears once\nprint(\"Unique visitors:\", unique_visitors)\nprint(\"Is Bob here?\", \"Bob\" in unique_visitors)  # Fast membership check\n\n# Tuple — immutable, use for fixed data that shouldn't change\ncoordinates = (40.7128, -74.0060)  # Latitude and longitude of NYC\n# coordinates[0] = 50  # Would raise TypeError — tuples are immutable\nprint(\"Latitude:\", coordinates[0])  # Access by index like a list\n\n# List — ordered, mutable, use for sequences that change\nshopping_cart = [\"Apples\", \"Milk\", \"Bread\"]  # Items can be added/removed\nshopping_cart.append(\"Eggs\")  # Add an item — lists are mutable\nprint(\"Cart:\", shopping_cart)\n\n# Dictionary — key-value mapping, use for lookup tables\nprices = {\"Apples\": 0.50, \"Milk\": 2.99, \"Bread\": 3.49}\nprint(\"Price of milk:\", prices[\"Milk\"])  # Fast lookup by key\n# Expected output:\n# Unique visitors: {'Charlie', 'Alice', 'Bob'}\n# Is Bob here? True\n# Latitude: 40.7128\n# Cart: ['Apples', 'Milk', 'Bread', 'Eggs']\n# Price of milk: 2.99"
+    },
+    {
+      "type": "explanation",
+      "title": "When to use each collection — trade-offs",
+      "content": "Choose tuples for data that represents a single thing with multiple parts (like a point in 3D space: (x, y, z)) — they're hashable (usable as dictionary keys) and signal 'this won't change.' Choose sets when you need fast 'is this in the collection?' checks — O(1) average time vs O(n) for lists — and when duplicates don't make sense. Choose dictionaries for any mapping relationship: user IDs to profiles, product codes to prices. Choose lists for ordered sequences where you need indexing, slicing, and duplicates. Using lists everywhere because they're familiar is a missed opportunity for clearer, faster code."
+    },
+    {
+      "type": "tip",
+      "title": "Unintended dictionary key mutations",
+      "content": "Beginners at intermediate level still accidentally use mutable objects as dictionary keys. Wrong: my_dict = {[1, 2]: 'value'} — lists are unhashable and raise TypeError. Correct: use tuples instead: my_dict = {(1, 2): 'value'}. Only immutable types (strings, numbers, tuples) can be dictionary keys or set members."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A conference tracks attendees. Store 5 attendee names in a list (ordered registration). Use a set to find out how many unique companies they represent (company names). Use a dictionary to map each attendee name to their company. Print the unique company count and the dictionary.",
+      "hints": [
+        "Which collection type automatically removes duplicates?",
+        "How do you create a dictionary where each name maps to a company?"
+      ]
+    }
+  ]
+}

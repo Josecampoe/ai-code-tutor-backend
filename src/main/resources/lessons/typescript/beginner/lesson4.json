@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Control Flow",
+  "summary": "Make decisions in your code using if, else if, and else statements to handle different scenarios",
+  "estimatedMinutes": 13,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Control Flow Is Like a Fork in the Road",
+      "content": "Imagine walking down a path and coming to a fork. If it is raining, you take the covered route; otherwise, you take the scenic path. Control flow statements do the same thing for your code. The 'if' keyword checks a condition (a boolean expression) and runs a block of code only when that condition is true. 'else if' checks a second condition if the first was false. 'else' catches everything that did not match any condition. This lets your program behave differently based on data — like applying different shipping costs for orders above or below $50."
+    },
+    {
+      "type": "example",
+      "title": "Determining a Student's Grade",
+      "content": "Uses if-else if-else to assign letter grades based on a numeric score",
+      "code": "// Student's exam score out of 100\nconst score: number = 87;\n// Variable to hold the letter grade\nlet grade: string = '';\n// Check each threshold from highest to lowest\nif (score >= 90) {\n  grade = 'A'; // Score is 90 or above\n} else if (score >= 80) {\n  grade = 'B'; // Score is 80 to 89\n} else if (score >= 70) {\n  grade = 'C'; // Score is 70 to 79\n} else if (score >= 60) {\n  grade = 'D'; // Score is 60 to 69\n} else {\n  grade = 'F'; // Score is below 60\n}\nconsole.log('Score:', score, 'Grade:', grade);\n// Expected: Score: 87 Grade: B"
+    },
+    {
+      "type": "explanation",
+      "title": "Nested Conditions and the Ternary Operator",
+      "content": "Sometimes you need to check a condition inside another condition — like checking if a user is logged in before checking if they are an admin. This is called nesting. Be careful: deeply nested code (3+ levels) becomes hard to read, like Russian nesting dolls. For simple two-way decisions, TypeScript offers the ternary operator: 'condition ? valueIfTrue : valueIfFalse'. It is a compact if-else that fits on one line. For example, 'const fee = isMember ? 0 : 5.99;' means members pay nothing, non-members pay $5.99. Use ternary for short conditions and if-else for complex logic."
+    },
+    {
+      "type": "tip",
+      "title": "Assignment (=) Instead of Comparison (===) in Conditions",
+      "content": "The #1 beginner mistake is writing 'if (score = 100)' with a single equals sign instead of 'if (score === 100)'. The single equals assigns the value and always evaluates to true (since the assigned value is truthy). Wrong approach: 'if (isLoggedIn = true)' — this sets isLoggedIn to true instead of checking it. Correct approach: 'if (isLoggedIn === true)' or simply 'if (isLoggedIn)'. TypeScript may warn about this, but the habit of double-checking your condition operators will save you hours of debugging."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A movie theater charges different ticket prices based on age: under 12 pays $8, 12 to 64 pays $14, and 65+ pays $10. Write a program that takes an age variable and prints the correct ticket price. Make sure a negative age doesn't break your logic.",
+      "hints": [
+        "What is the first condition you should check — the special case or the normal range?",
+        "Should you use if, else if, or else for each age bracket?",
+        "What happens if the age is 0 or negative — should you guard against that?"
+      ]
+    }
+  ]
+}

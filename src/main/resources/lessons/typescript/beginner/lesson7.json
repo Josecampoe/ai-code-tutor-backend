@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Arrays and Lists",
+  "summary": "Store multiple values in an array, access elements by index, and use common array methods to manipulate data",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Arrays Are Like a Numbered Locker Bank",
+      "content": "Imagine a row of lockers at a gym, each numbered 0, 1, 2, 3 and so on. You store one item in each locker. An array works the same way: it is a numbered list of values held in a single variable. The first item sits at index 0 (not 1 — this trips everyone up at first). Arrays in TypeScript are 'typed', meaning you declare what kind of items it holds: 'string[]' for a list of strings, 'number[]' for numbers. If you try to put a number into a string array, TypeScript stops you. This is like labeling each row of lockers for a specific type of item."
+    },
+    {
+      "type": "example",
+      "title": "Managing a Shopping List with Arrays",
+      "content": "Creates an array of grocery items, adds an item, removes the last item, and prints the list",
+      "code": "// Declare a typed array of strings — a shopping list\nlet shoppingList: string[] = ['Milk', 'Bread', 'Eggs'];\n// Add items to the end of the array using push\nshoppingList.push('Butter');\nshoppingList.push('Apples');\n// Remove the last item using pop (returns the removed item)\nconst removedItem: string | undefined = shoppingList.pop();\nconsole.log('Removed:', removedItem);\n// Access elements by index (0-based)\nconst firstItem: string = shoppingList[0];\nconsole.log('First item:', firstItem);\n// Get the current length of the array\nconsole.log('List length:', shoppingList.length);\n// Print all items\nconsole.log('Shopping list:', shoppingList);\n// Expected:\n// Removed: Apples\n// First item: Milk\n// List length: 4\n// Shopping list: [ 'Milk', 'Bread', 'Eggs', 'Butter' ]"
+    },
+    {
+      "type": "explanation",
+      "title": "Common Array Methods for Everyday Tasks",
+      "content": "Arrays come with built-in methods that handle common tasks. 'push' and 'pop' work on the end of the array — like adding or removing items from the top of a stack. 'shift' and 'unshift' work on the beginning but are slower. 'includes' checks whether a value exists in the array. 'indexOf' finds the position of a value. 'slice' extracts a portion without changing the original. 'splice' removes or replaces items in place. These methods save you from writing manual loops for routine operations. Always check the TypeScript documentation — there is a method for almost every common task."
+    },
+    {
+      "type": "tip",
+      "title": "Off-by-One Errors with Array Indexes",
+      "content": "The #1 beginner mistake is forgetting that array indexes start at 0, not 1. Wrong approach: 'const fruits = [\"apple\", \"banana\"]; console.log(fruits[1]);' expecting 'apple' but getting 'banana' (index 1 is the second element). Correct approach: 'console.log(fruits[0]);' for the first element. When looping, remember the condition is 'i < array.length', not 'i <= array.length'. If you use '<=', you will access an index that does not exist and get 'undefined'. Practice by explicitly thinking 'the first item is at position zero' until it becomes second nature."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A fitness tracker records daily step counts for a week: [8432, 9100, 7650, 10200, 8800, 12400, 9500]. Store these in an array. Write code to: (1) print the day with the most steps, (2) calculate the total steps for the week, (3) check if the user ever walked more than 12000 steps in a single day.",
+      "hints": [
+        "How do you find the largest number in an array — what variable do you track?",
+        "What array method checks if a value exists or a condition is met?",
+        "How do you sum all numbers in an array — what loop or method could you use?"
+      ]
+    }
+  ]
+}

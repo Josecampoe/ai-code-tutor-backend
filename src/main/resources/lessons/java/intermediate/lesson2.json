@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Error Handling",
+  "summary": "Handle runtime errors gracefully using try-catch blocks and custom exceptions",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Exceptions as Fire Alarms",
+      "content": "A fire alarm doesn't prevent a fire, but it alerts you so you can respond appropriately. Java exceptions work the same way: they signal that something unexpected happened during program execution. When an error occurs, Java 'throws' an exception — like pulling the alarm — and your code can 'catch' it to handle the situation gracefully instead of crashing. Common exceptions include NullPointerException (accessing something that doesn't exist), ArithmeticException (dividing by zero), and IOException (file not found). The goal is to anticipate what could go wrong and have a plan for each scenario."
+    },
+    {
+      "type": "example",
+      "title": "Try-Catch to Handle Division by Zero",
+      "content": "This code safely divides two numbers and catches any arithmetic error",
+      "code": "public class SafeCalculator {\n    public static void main(String[] args) {\n        int numerator = 10;\n        int denominator = 0;\n        \n        try {\n            // This line will throw ArithmeticException\n            int result = numerator / denominator;\n            System.out.println(\"Result: \" + result);\n        } catch (ArithmeticException e) {\n            // This block runs only if an exception was thrown\n            System.out.println(\"Cannot divide by zero!\");\n        }\n        \n        // This line always runs after handling (or not)\n        System.out.println(\"Program continues...\");\n    }\n}\n// Expected output:\n// Cannot divide by zero!\n// Program continues..."
+    },
+    {
+      "type": "explanation",
+      "title": "Checked vs Unchecked Exceptions",
+      "content": "Java divides exceptions into two categories. Checked exceptions are like mandatory car inspections: the law requires you to handle them (or declare that your method throws them). These are problems you can reasonably anticipate, like a file not existing. If you call a method that throws a checked exception, the compiler forces you to handle it with try-catch or declare throws in your own method signature. Unchecked exceptions (RuntimeException and its subclasses) are like a sudden tire blowout — you could handle it, but Java doesn't force you because they represent programming bugs that ideally shouldn't happen."
+    },
+    {
+      "type": "tip",
+      "title": "Catching Exception too broadly",
+      "content": "Most common mistake: writing catch (Exception e) that catches every possible exception, making it impossible to handle different errors differently. This hides bugs and makes debugging a nightmare. Fix: catch specific exception types so each catch block handles exactly one kind of error. Wrong: catch (Exception e) { System.out.println(\"Error\"); }. Correct: catch (FileNotFoundException e) { ... } catch (IOException e) { ... }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a method called parseAge that takes a String parameter and tries to convert it to an integer using Integer.parseInt. If the string is not a valid number, catch the NumberFormatException and print 'Invalid age entered'. In main, test it with a valid age like '25' and an invalid one like 'twenty-five'.",
+      "hints": [
+        "What exception does Integer.parseInt throw when given invalid input?",
+        "Where should the try-catch block go — inside parseAge or in main?",
+        "What should the method return if the input is invalid while still compiling?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Concurrency and Threads",
+  "summary": "Master asynchronous programming with Promises, async/await, Promise.all, and understand the event loop",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Concurrency Is Like a Skilled Chef Juggling Orders",
+      "content": "A chef does not cook one dish from start to finish before starting the next — they put rice on to boil (starts it, walks away), chop vegetables while it cooks, and check the oven timer as it rings. This is concurrency: managing multiple tasks that overlap in time. JavaScript/TypeScript is single-threaded (one chef) but uses asynchronous operations to avoid waiting. A Promise represents a future value — like a kitchen timer that will ring when the rice is done. async/await is syntax that lets you write asynchronous code that reads like sequential instructions: 'await rice' means 'pause this recipe until the rice is ready, but the chef can do other work while waiting'."
+    },
+    {
+      "type": "example",
+      "title": "Fetching Multiple API Results Concurrently",
+      "content": "Uses Promise.all to fetch user data and product data simultaneously instead of sequentially",
+      "code": "// Simulated async fetch function (returns after a delay)\nfunction simulateFetch<T>(data: T, delayMs: number): Promise<T> {\n  return new Promise(resolve => {\n    setTimeout(() => resolve(data), delayMs);\n  });\n}\nasync function loadDashboard(): Promise<void> {\n  console.time('dashboard');\n  // Start both fetches at the same time (concurrent)\n  const [user, products] = await Promise.all([\n    simulateFetch({ name: 'Alice', role: 'admin' }, 2000),\n    simulateFetch([{ id: 1, name: 'Laptop' }], 1500),\n  ]);\n  // Both complete in ~2s (not 3.5s) because they ran in parallel\n  console.log('User:', user);\n  console.log('Products:', products);\n  console.timeEnd('dashboard');\n}\nloadDashboard();\n// Expected output (timing varies):\n// User: { name: 'Alice', role: 'admin' }\n// Products: [ { id: 1, name: 'Laptop' } ]\n// dashboard: ~2000ms"
+    },
+    {
+      "type": "explanation",
+      "title": "The Event Loop and Microtasks vs Macrotasks",
+      "content": "The event loop is the mechanism that lets Node.js perform non-blocking I/O despite being single-threaded. It continuously checks if the call stack is empty, then processes pending tasks. Tasks are categorized: 'macrotasks' (setTimeout, setInterval, I/O) go in the task queue, while 'microtasks' (Promise.then, queueMicrotask) go in a higher-priority microtask queue. Microtasks execute before the next macrotask — like a VIP line that cuts ahead after every regular task. Understanding this ordering is crucial for debugging timing issues. Promise handlers always run before setTimeout callbacks, which means 'Promise.resolve().then(() => console.log(\"micro\")); setTimeout(() => console.log(\"macro\"), 0);' prints 'micro' then 'macro'."
+    },
+    {
+      "type": "tip",
+      "title": "Blocking the Event Loop with CPU-Intensive Work",
+      "content": "The #1 advanced mistake is running CPU-heavy computation on the main thread, blocking all other operations. Wrong approach: 'function processLargeData(items: number[]) { items.sort((a, b) => expensiveComparison(a, b)); }' called synchronously — the event loop is frozen during sorting, so no HTTP requests, timers, or UI updates can happen. Correct: offload to a worker thread ('Worker' in Node.js), split work into chunks with setImmediate, or use a dedicated queue system. For TypeScript/Node.js, consider worker_threads for CPU-bound tasks. Never let a synchronous function run for more than ~50ms on the main thread in a server or browser context."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A web scraping tool needs to fetch the content of 10 URLs concurrently (use simulateFetch to mock). Write a function 'fetchAllUrls(urls: string[])' that fetches all URLs in parallel, returns their contents, and handles individual failures gracefully (if one fetch fails, the others should still complete). Measure and print the total time taken. Compare: how long would this take if you fetched sequentially (each URL taking ~1 second)?",
+      "hints": [
+        "What method runs multiple promises concurrently and collects all results?",
+        "How do you prevent one rejected promise from failing the entire batch?",
+        "What does Promise.allSettled return that Promise.all does not?"
+      ]
+    }
+  ]
+}

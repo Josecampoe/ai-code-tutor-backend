@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Introduction and Hello World",
+  "summary": "Set up your Java environment and write your first program that prints a greeting",
+  "estimatedMinutes": 12,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "What is Java?",
+      "content": "Think of Java like a universal language that any computer can understand, similar to how English is spoken in many countries. When you write Java code, you're giving instructions to your computer in a way it can follow precisely, like a recipe tells a chef exactly what to do. Java is especially popular because it can run on almost any device — Windows, Mac, Linux, even your phone — without changing the code."
+    },
+    {
+      "type": "example",
+      "title": "Hello World in Java",
+      "content": "This is the simplest Java program that displays a welcome message on the screen",
+      "code": "// Define a class named HelloWorld\n// In Java, all code lives inside a class\npublic class HelloWorld {\n    // The main method is the entry point\n    // Java runs whatever is inside main() first\n    public static void main(String[] args) {\n        // System.out.println prints text to the console\n        // The text in quotes is called a String\n        System.out.println(\"Hello, World!\");\n    }\n}\n// Expected output:\n// Hello, World!"
+    },
+    {
+      "type": "explanation",
+      "title": "How Java Code Runs",
+      "content": "Java uses a two-step process similar to translating a book into different languages. First, the compiler (javac) converts your source code into bytecode — a middle language that's neither Java nor machine code. Then the Java Virtual Machine (JVM) reads that bytecode and translates it into instructions your specific computer understands. This is why Java programs are portable: you only need a JVM for each device, and your bytecode runs everywhere."
+    },
+    {
+      "type": "tip",
+      "title": "Class name must match the filename",
+      "content": "Most common mistake: naming the file HelloWorld.java but writing public class helloworld (different case) or public class Hello (different name). Java is case-sensitive and strictly requires the public class name to match the filename exactly. Fix: always check that public class YourClassName matches YourClassName.java exactly, including capitalization."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You're creating a ticket kiosk app. Write a Java program that prints three lines: the movie title, showtime, and ticket price. Use a separate println statement for each line.",
+      "hints": [
+        "How do you print text to the console in Java?",
+        "What symbol marks the end of a Java statement?",
+        "Do you need a class and a main method for the program to run?"
+      ]
+    }
+  ]
+}

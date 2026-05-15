@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Intermediate Project",
+  "summary": "Build a multi-class application applying OOP, collections, file I/O, and error handling",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Project Architecture: Layered Design",
+      "content": "Real applications separate concerns into layers, like a restaurant with a kitchen, waitstaff, and dining area. The data layer handles storage (files or databases), the business logic layer enforces rules and calculations, and the presentation layer handles user interaction. For this project, you'll build a library management system with these layers. The Book class represents data, the Library class manages a collection with business rules (like 'no duplicate ISBN'), and a Main class provides the interaction. This separation makes code testable, maintainable, and easier to debug."
+    },
+    {
+      "type": "example",
+      "title": "Library Class with Core Operations",
+      "content": "This skeleton shows the Library class using a HashMap to store books by ISBN",
+      "code": "import java.util.*;\n\npublic class Library {\n    // Map isbn -> Book for fast lookups\n    private HashMap<String, Book> books = new HashMap<>();\n    \n    // Add a book, preventing duplicate ISBNs\n    public boolean addBook(Book book) {\n        if (books.containsKey(book.getIsbn())) {\n            return false;  // Already exists\n        }\n        books.put(book.getIsbn(), book);\n        return true;\n    }\n    \n    // Find a book by its ISBN\n    public Book findByIsbn(String isbn) {\n        return books.get(isbn);  // Returns null if not found\n    }\n    \n    // Count total books in the library\n    public int getTotalBooks() {\n        return books.size();\n    }\n}\n// Expected usage:\n// Library lib = new Library();\n// lib.addBook(new Book(\"123\", \"Java Basics\", \"Alice\"));"
+    },
+    {
+      "type": "explanation",
+      "title": "Why Projects Need Persistence",
+      "content": "A library that forgets all its books when the power goes out is useless. File persistence solves this by saving data to disk so it survives program restarts. For this project, you'll save the library catalog to a file when the program exits and load it when the program starts. You'll use a simple text format: each line contains ISBN, title, and author separated by commas. This introduces you to serialization — converting objects to a storable format — without the complexity of databases. The key insight is that saving and loading are mirror operations: write each field in order, read them back in the same order."
+    },
+    {
+      "type": "tip",
+      "title": "Not validating data before adding it to the collection",
+      "content": "Most common mistake: adding a book with null ISBN or empty title to the library, which causes NullPointerExceptions later when trying to save or search. Fix: validate all inputs in the add method and throw IllegalArgumentException for invalid data. Wrong: books.put(book.getIsbn(), book); with no null check. Correct: if (book == null || book.getIsbn() == null) throw new IllegalArgumentException();"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build the complete Library Management System. Create a Book class with isbn, title, author, and isBorrowed fields. Create a Library class that stores books in a HashMap, supports add, find, borrow (marks as borrowed), and return (marks as available). Add file save/load using a comma-separated format. In Main, create a few books, add them, borrow one, save to file, then restart and load to verify persistence.",
+      "hints": [
+        "How do you format a Book object into a String line for saving?",
+        "What String method splits a saved line back into fields?",
+        "How do you handle the case where the save file doesn't exist yet on first run?"
+      ]
+    }
+  ]
+}

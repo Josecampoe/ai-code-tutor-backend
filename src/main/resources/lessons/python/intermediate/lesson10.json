@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 10,
+  "title": "Intermediate Project",
+  "summary": "Build a multi-module expense tracker application with file persistence and error handling",
+  "estimatedMinutes": 25,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Architecture matters for real applications",
+      "content": "A script is a single file that does one thing. An application is an organized system of files working together — like a restaurant with separate stations for the grill, the salad prep, and the register. Each module has a clear responsibility. This project forces you to think about separation of concerns: one module for data storage, one for business logic, one for user interaction. This makes code testable, maintainable, and scalable. When a bug appears, you know where to look. When you need a feature, you know where to add it."
+    },
+    {
+      "type": "example",
+      "title": "Modular structure for the expense tracker",
+      "content": "A glimpse of how the expense tracker's data module handles file persistence",
+      "code": "import json  # For reading/writing structured data\nfrom datetime import datetime  # For timestamps on expenses\n\nclass ExpenseStorage:\n    # This module is responsible ONLY for reading/writing expense data\n\n    def __init__(self, filename=\"expenses.json\"):\n        # Store the filename where expenses are saved\n        self.filename = filename  # Default file for expense data\n        self.expenses = []  # In-memory list of expense dictionaries\n        self._load()  # Load existing expenses from file on startup\n\n    def _load(self):\n        # Private method — loads expenses from JSON file (underscore convention)\n        try:\n            with open(self.filename, \"r\") as f:\n                self.expenses = json.load(f)  # Deserialize JSON to list\n        except FileNotFoundError:\n            # File doesn't exist yet — start with empty list (no error)\n            self.expenses = []  # First run or deleted file\n        except json.JSONDecodeError:\n            # File is corrupted — start fresh and warn the user\n            print(\"Warning: expenses file was corrupted. Starting fresh.\")\n            self.expenses = []\n\n    def save(self):\n        # Write all expenses to the JSON file\n        with open(self.filename, \"w\") as f:\n            json.dump(self.expenses, f, indent=2)  # Pretty-print with 2-space indent\n\n    def add(self, description, amount, category):\n        expense = {\n            \"description\": description,\n            \"amount\": amount,\n            \"category\": category,\n            \"date\": datetime.now().isoformat()  # Timestamp in ISO format\n        }\n        self.expenses.append(expense)\n        self.save()  # Persist immediately after adding\n        return expense"
+    },
+    {
+      "type": "explanation",
+      "title": "Separation of concerns — three-layer architecture",
+      "content": "This project uses a simple three-layer architecture. The data layer (ExpenseStorage) handles reading and writing JSON files and knows nothing about user interaction. The business logic layer contains functions like calculate_total_by_category() or get_monthly_summary() — pure operations on data. The presentation layer handles input/output: showing menus, printing summaries, asking for user input. Each layer communicates through clean function calls. This separation means you could swap the JSON file storage for a database, and only the data layer changes. Test each layer independently."
+    },
+    {
+      "type": "tip",
+      "title": "One file should not do everything",
+      "content": "Intermediate developers often create a single monolithic file because splitting seems like extra work. Wrong: one 500-line script that handles input, storage, calculation, and display — impossible to test, hard to debug. Correct: multiple files, each under 150 lines, with clear responsibilities and a main.py that ties them together. If a file does more than one 'thing,' split it."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build the expense tracker application with three modules: (1) models.py — define an Expense dataclass or dictionary structure, (2) storage.py — class that loads/saves expenses to a JSON file, with error handling for missing/corrupted files, (3) main.py — command-line menu that lets the user: add an expense, view all expenses, view total by category, and exit. The program must load existing data on startup and save automatically on each change.",
+      "hints": [
+        "How do you split a large program into separate files that import from each other?",
+        "What JSON functions do you need to serialize and deserialize your expense data?"
+      ]
+    }
+  ]
+}

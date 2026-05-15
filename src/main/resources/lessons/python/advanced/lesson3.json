@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 3,
+  "title": "Memory Management",
+  "summary": "Understand Python's memory model, reference counting, garbage collection, and optimization techniques",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Python manages memory so you don't have to — mostly",
+      "context": "Python handles memory allocation and deallocation automatically, like a self-cleaning hotel room. Every object in Python has a reference count — the number of places that refer to it. When the count drops to zero, Python immediately reclaims that memory. This is reference counting, the primary memory management mechanism. A separate garbage collector handles circular references (object A references B, B references A, but nothing else references either) — these would never reach zero count. Python's gc module lets you interact with this collector: disable it, run it manually, or inspect unreachable objects."
+    },
+    {
+      "type": "example",
+      "title": "Reference counting and the gc module in action",
+      "content": "Observe how reference counts change and how gc detects cycles",
+      "code": "import sys  # For sys.getrefcount to check reference counts\nimport gc  # For garbage collector inspection\n\ndef demonstrate_reference_count():\n    # Create a simple list — its reference count is 1\n    my_list = [1, 2, 3]  # ref count = 1 (the variable my_list)\n    # getrefcount adds 1 because passing as argument also references it\n    print(f\"Ref count: {sys.getrefcount(my_list) - 1}\")\n\n    another_ref = my_list  # ref count = 2 (my_list + another_ref)\n    print(f\"After new ref: {sys.getrefcount(my_list) - 1}\")\n\n    del another_ref  # ref count drops back to 1\n    print(f\"After del: {sys.getrefcount(my_list) - 1}\")\n\ndef create_cycle():\n    # Create objects that reference each other (a circular reference)\n    class Node:\n        def __init__(self, name):\n            self.name = name  # Node identifier\n            self.ref = None  # Will point to another Node\n\n    a = Node(\"A\")  # Create first node\n    b = Node(\"B\")  # Create second node\n    a.ref = b  # A references B\n    b.ref = a  # B references A — circular reference!\n    # Both have ref count 2 (variable + the other node's ref)\n    # After del a; del b, ref count drops but not to zero — cycle remains\n\n    del a  # Remove variable reference\n    del b  # Remove variable reference\n    # gc.collect() finds and collects the unreachable cycle\n    print(f\"Unreachable objects: {gc.collect()}\")\n\ndemonstrate_reference_count()\n# Expected output (approximate):\n# Ref count: 1\n# After new ref: 2\n# After del: 1"
+    },
+    {
+      "type": "explanation",
+      "title": "Memory optimization patterns for production code",
+      "context": "Python's convenient abstractions (lists of dicts, dynamic typing) consume more memory than lower-level languages. For memory-constrained environments, use __slots__ in classes to avoid per-instance __dict__ overhead — reduces memory by 40-60% per object. Use array.array or numpy for numeric collections instead of lists of Python integers (each Python int is ~28 bytes vs 4-8 for a C int). Use generators instead of lists for large sequences — they produce items one at a time without storing the entire collection. Profile before optimizing: use tracemalloc or memory_profiler to identify actual memory hotspots, since intuition about memory usage is often wrong."
+    },
+    {
+      "type": "tip",
+      "title": "Circular references with __del__ cause memory leaks",
+      "context": "Defining __del__ (destructor) in classes with circular references creates uncollectable garbage. The gc module cannot collect objects with __del__ in a cycle because it doesn't know the safe order to call destructors. Wrong: class Node: def __del__(self): cleanup(). If cycles exist, these objects leak. Fix: avoid __del__ entirely; use context managers (with) for cleanup. Or call gc.garbage to inspect uncollectable objects."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a class with __slots__ defined and a regular class with the same attributes. Create 100,000 instances of each class and measure the memory usage difference using sys.getsizeof() or the psutil module. Also, create a list of 100,000 integers and compare its memory to a generator yielding the same sequence. Document the memory savings.",
+      "hints": [
+        "How does __slots__ change the way attributes are stored on instances?",
+        "What's the difference between a list comprehension and a generator expression in terms of memory?"
+      ]
+    }
+  ]
+}

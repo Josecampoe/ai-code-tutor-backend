@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Concurrency and Threads",
+  "summary": "Write thread-safe code using Java's concurrency utilities and avoid race conditions",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Threads as Multiple Cashiers",
+      "content": "A single cashier at a grocery store handles one customer at a time — customers behind them wait. Adding more cashiers means multiple customers are served simultaneously. In Java, threads are like those cashiers: they allow multiple tasks to execute concurrently. Modern CPUs have multiple cores, and threads let you use them. The JVM starts one main thread (the main method), and you can create additional threads using the Thread class or ExecutorService. But multiple threads accessing shared data is like multiple cashiers trying to update the same register — without coordination, money gets lost. This is where synchronization becomes critical."
+    },
+    {
+      "type": "example",
+      "title": "Race Condition and Synchronized Fix",
+      "content": "This counter class shows what happens without synchronization and how to fix it",
+      "code": "// Unsafe counter: two threads can increment simultaneously\nclass UnsafeCounter {\n    private int count = 0;\n    \n    // Without synchronized, count++ has three steps\n    // read, add, write — threads can interleave!\n    public void increment() {\n        count++;  // NOT atomic!\n    }\n    \n    public int getCount() { return count; }\n}\n\n// Safe counter: synchronized prevents interleaving\nclass SafeCounter {\n    private int count = 0;\n    \n    // synchronized ensures only one thread at a time\n    public synchronized void increment() {\n        count++;  // Now safe: one thread runs this fully\n    }\n    \n    public synchronized int getCount() { return count; }\n}\n\n// Expected: SafeCounter always reaches 10000 with 1000 threads\n// UnsafeCounter may reach 9987, 9992, etc. (race condition)"
+    },
+    {
+      "type": "explanation",
+      "title": "ExecutorService, Locks, and Concurrent Collections",
+      "content": "Creating threads manually with new Thread() is like juggling chainsaws — it works but it's dangerous and inefficient. ExecutorService provides a thread pool that reuses threads, much like a taxi fleet reuses cars instead of building a new one for each passenger. java.util.concurrent.locks.ReentrantLock offers more flexible locking than synchronized, with features like tryLock() (attempt to acquire and give up if unavailable). Concurrent collections like ConcurrentHashMap provide thread-safe data structures without locking the entire collection — like a library where multiple people can read different sections simultaneously. These are battle-tested and far less error-prone than writing your own synchronization."
+    },
+    {
+      "type": "tip",
+      "title": "Deadlock: threads waiting on each other's locks",
+      "content": "Most common mistake: Thread A locks resource 1 and waits for resource 2, while Thread B locks resource 2 and waits for resource 1. Neither can proceed — they're stuck forever. Fix: always acquire locks in the same global order across all threads. Wrong: thread1: lock(a); lock(b); thread2: lock(b); lock(a);. Correct: both lock(a) then lock(b) in that order."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a program that simulates a bank with 5 tellers (threads). Use an ExecutorService with a fixed thread pool. Each teller processes 20 random transactions (deposits or withdrawals) on a shared BankAccount. The BankAccount class must be thread-safe. After all transactions, print the final balance (starting from $10,000) and verify it matches expected value.",
+      "hints": [
+        "What ExecutorService method creates a thread pool with 5 threads?",
+        "How do you submit tasks to the executor and wait for them all to finish?",
+        "Should deposit and withdrawal methods be synchronized, and what if balance goes negative?"
+      ]
+    }
+  ]
+}

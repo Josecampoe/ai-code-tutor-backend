@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Interfaces and Abstractions",
+  "summary": "Define contracts using interfaces and abstract classes to create flexible, loosely coupled code",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Interfaces Are Like Job Descriptions, Not People",
+      "content": "An interface describes what a thing CAN do without specifying HOW it does it — like a job description listing responsibilities without naming the person who fills the role. An interface might declare 'pay()' and 'getBalance()' methods, and any class that implements that interface must provide those methods. This lets you write code that depends on the interface (the contract) rather than on specific implementations. You can swap out a 'CreditCardProcessor' for a 'PayPalProcessor' as long as both implement the same 'PaymentProcessor' interface. TypeScript uses interfaces extensively because they enable this flexibility without performance overhead — interfaces exist only at compile time."
+    },
+    {
+      "type": "example",
+      "title": "A Payment Processing Interface with Multiple Implementations",
+      "content": "Defines a PaymentProcessor interface and two classes that implement it differently",
+      "code": "// Interface: defines the contract\ninterface PaymentProcessor {\n  processPayment(amount: number): boolean;\n  getFeePercentage(): number;\n}\n// First implementation: Credit Card processing\nclass CreditCardProcessor implements PaymentProcessor {\n  processPayment(amount: number): boolean {\n    console.log(`Processing credit card charge of $${amount}`);\n    return true; // Assume success\n  }\n  getFeePercentage(): number {\n    return 2.9; // 2.9% fee\n  }\n}\n// Second implementation: PayPal processing\nclass PayPalProcessor implements PaymentProcessor {\n  processPayment(amount: number): boolean {\n    console.log(`Processing PayPal payment of $${amount}`);\n    return true;\n  }\n  getFeePercentage(): number {\n    return 3.5; // 3.5% fee\n  }\n}\n// Function depends on interface, not concrete class\nfunction charge(processor: PaymentProcessor, amount: number): void {\n  const fee: number = amount * (processor.getFeePercentage() / 100);\n  processor.processPayment(amount + fee);\n}\ncharge(new CreditCardProcessor(), 100);\n// Expected: Processing credit card charge of $102.9"
+    },
+    {
+      "type": "explanation",
+      "title": "Abstract Classes vs Interfaces — When to Use Each",
+      "content": "Abstract classes and interfaces both enable abstraction, but serve different purposes. An interface is a pure contract with no implementation — like a blueprint with empty boxes labeled 'fill this in'. An abstract class can provide partial implementation — like a partially assembled furniture kit where some pieces come pre-built and others you assemble yourself. Use interfaces when you only need to define a shape or contract. Use abstract classes when implementations share common logic. In TypeScript, a class can implement multiple interfaces but extend only one abstract class. Lean toward interfaces first — they keep your design flexible and your coupling loose."
+    },
+    {
+      "type": "tip",
+      "title": "Making Interfaces Too Large (Interface Segregation Violation)",
+      "content": "The #1 intermediate mistake is creating a 'god interface' with too many methods, forcing every implementer to define methods they do not need. Wrong approach: 'interface Worker { code(): void; design(): void; manage(): void; test(): void; }' — a junior developer does not manage. Correct: split into 'Coder', 'Designer', 'Manager', and 'Tester' interfaces. Classes implement only what they need. This is the Interface Segregation Principle in practice. If you find yourself throwing 'unimplemented' errors in a class method because 'this does not apply here', your interface is too fat."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A notification system needs to support email, SMS, and push notifications. Create a 'Notifier' interface with methods 'send(message: string): void' and 'getChannelName(): string'. Implement three classes: EmailNotifier, SMSNotifier, and PushNotifier. Write a function 'broadcast(notifiers: Notifier[], message: string)' that sends a message through every notifier. Create instances of all three and broadcast a 'System maintenance tonight' message.",
+      "hints": [
+        "What return type should the send method have if it doesn't return a value?",
+        "How does the broadcast function stay flexible — what parameter type does it accept?",
+        "What would happen if you added a new NotificationType later?"
+      ]
+    }
+  ]
+}

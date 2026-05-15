@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Modules and Packages",
+  "summary": "Organize Java code using packages and understand the Java module system",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Packages as Filing Cabinets",
+      "content": "Imagine an office with thousands of documents thrown into one pile. Finding anything is impossible. Now imagine labeled filing cabinets: 'Finance', 'HR', 'Engineering'. Inside each cabinet, folders further organize by year. Java packages work exactly like this. A package is a namespace that organizes related classes together, like com.company.project.module. Packages solve two problems: they prevent naming conflicts (two classes named User can exist in different packages) and they make your code easier to navigate. Domain naming convention reverses your company's URL: com.yourcompany.projectname.feature."
+    },
+    {
+      "type": "example",
+      "title": "Using Packages and Import Statements",
+      "content": "This code shows how packages organize classes and how imports bring them into scope",
+      "code": "// Declare which package this class belongs to\npackage com.school.model;\n\n// Import Date from Java's utility package\nimport java.util.Date;\n\n// Import our own class from another package\nimport com.school.util.StudentIdGenerator;\n\npublic class Student {\n    private String name;\n    private Date enrollmentDate;\n    private String studentId;\n    \n    public Student(String name) {\n        this.name = name;\n        // Use the imported class from another package\n        this.studentId = StudentIdGenerator.generate();\n        this.enrollmentDate = new Date();\n    }\n    \n    public void printInfo() {\n        System.out.println(name + \" - \" + studentId);\n    }\n}\n// Expected: new Student(\"Luis\").printInfo();\n// Output: Luis - S-2024-0001"
+    },
+    {
+      "type": "explanation",
+      "title": "Access Modifiers and Module Boundaries",
+      "content": "Java provides four access levels. public is like a storefront — everyone can see it. protected is like a family heirloom — visible to family (subclasses) and housemates (same package). Default (no modifier) is like a shared apartment kitchen — visible to everyone in the same package but not outside. private is like a personal diary — only the class itself can access it. Java modules (since Java 9) add another layer: you can decide which packages within a module are exported (visible to other modules) and which stay internal — like a company deciding which buildings are open to visitors and which are employee-only."
+    },
+    {
+      "type": "tip",
+      "title": "Using the default package for real projects",
+      "content": "Most common mistake: putting all classes in the default package (no package declaration) in a real application. This works for toy programs but is forbidden when using Java modules and causes naming conflicts in any non-trivial project. Fix: always declare a package at the top of every class. Wrong: (no package line). Correct: package com.mycompany.myapp.model;"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a package structure for an e-commerce system. BankAccount should be in com.store.account package, Product in com.store.catalog, and Order in com.store.sales. Write just the package declarations and import statements to show how each class would reference the others. For example, an Order needs to import both BankAccount and Product.",
+      "hints": [
+        "What goes at the very first line of each file (before imports)?",
+        "If Order needs Product, what import statement does Order.java need?",
+        "What does the import statement look like if the classes are in sibling packages?"
+      ]
+    }
+  ]
+}

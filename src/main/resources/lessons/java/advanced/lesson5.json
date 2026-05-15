@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Performance and Optimization",
+  "summary": "Profile Java applications and apply targeted optimizations for speed and memory",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Premature Optimization Is the Root of All Evil",
+      "content": "Donald Knuth's famous quote warns that optimizing code before understanding what's slow is like repainting a car before fixing the engine. The correct approach is: first make it work, then make it right, then make it fast. Performance work starts with measurement, not guessing. Use a profiler (like VisualVM, JProfiler, or YourKit) to identify actual bottlenecks. You'll often find that 90% of the time is spent in 10% of the code — that's where you should focus. Common bottlenecks include excessive object creation in loops, inefficient data structures, unnecessary I/O, and suboptimal algorithms."
+    },
+    {
+      "type": "example",
+      "title": "String Concatenation: Performance Trap",
+      "content": "This contrasts slow string concatenation with efficient StringBuilder usage in a loop",
+      "code": "// SLOW: creates a new String object each iteration\nString result = \"\";\nfor (int i = 0; i < 1000; i++) {\n    // Each += creates a new String (O(n^2) time!)\n    result += \"Item \" + i + \", \";\n}\n\n// FAST: StringBuilder mutates one buffer (O(n) time)\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++) {\n    // append() modifies the internal buffer\n    sb.append(\"Item \").append(i).append(\", \");\n}\nString fastResult = sb.toString();\n\n// Expected: both produce same string\n// But the first approach is ~100x slower for 1000 items\n// and worsens quadratically as items increase"
+    },
+    {
+      "type": "explanation",
+      "title": "Profiling, Benchmarking, and JMH",
+      "content": "Guessing about performance is unreliable because the JVM optimizes code as it runs. The JIT (Just-In-Time) compiler identifies hot methods and compiles them to native code. A method called 10,000 times may run 50x faster than when it first starts. This makes manual timing with System.currentTimeMillis() misleading — it includes JIT warmup. The Java Microbenchmark Harness (JMH) is the proper tool for benchmarks as it handles warmup, dead-code elimination, and statistical analysis. Think of JMH as a scientific instrument for measurement — it controls all variables so you can trust the numbers."
+    },
+    {
+      "type": "tip",
+      "title": "Optimizing without profiling first",
+      "content": "Most common mistake: spending hours micro-optimizing code that runs once and doesn't matter, while ignoring a real bottleneck like an N+1 query or O(n^2) algorithm. Fix: always profile first to identify where the time is actually spent. Wrong: assuming the bottleneck is in method X and optimizing it. Correct: run a profiler, find the hottest method (most CPU time), and optimize that."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You have a log processing method that reads a large file line by line, splits each line by comma, and stores fields in an ArrayList. It takes 30 seconds to process a 500 MB file. Without rewriting the entire logic, identify three targeted optimizations you'd investigate using a profiler: one related to data structures, one related to string handling, and one related to I/O buffering.",
+      "hints": [
+        "What data structure offers faster lookups if you're frequently searching by one field?",
+        "What happens if the lines have thousands of fields — is split() still efficient?",
+        "Does Files.readAllLines() or BufferedReader.readLine() handle large files better?"
+      ]
+    }
+  ]
+}

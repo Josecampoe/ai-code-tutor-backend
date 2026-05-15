@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Loops",
+  "summary": "Repeat actions using for loops, while loops, and understand when to use each type",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Loops Are Like a Laundry Folding Assembly Line",
+      "content": "Imagine folding a pile of laundry: you pick up one shirt, fold it, set it down, and repeat until the pile is gone. A loop does exactly this for repetitive tasks. A 'for' loop is best when you know exactly how many items you have — like folding 10 shirts. A 'while' loop is best when you need to keep going until some condition changes — like folding laundry until the basket is empty. Both let you avoid copying and pasting the same code over and over. Loops are essential for processing lists, generating reports, or retrying failed operations."
+    },
+    {
+      "type": "example",
+      "title": "Counting with a For Loop",
+      "content": "Uses a for loop to print the multiplication table for the number 3",
+      "code": "// The number we want to multiply\nconst multiplier: number = 3;\n// Loop from 1 to 10 (inclusive)\n// Initial: i = 1, Condition: i <= 10, Update: i++\nfor (let i: number = 1; i <= 10; i++) {\n  // Calculate the product for this step\n  const product: number = multiplier * i;\n  // Print the current line of the table\n  console.log(multiplier + ' x ' + i + ' = ' + product);\n}\n// Expected output:\n// 3 x 1 = 3\n// 3 x 2 = 6\n// ... (up to 3 x 10 = 30)"
+    },
+    {
+      "type": "explanation",
+      "title": "While Loops for Unknown Repetitions",
+      "content": "A while loop keeps running as long as its condition stays true. Unlike a for loop which has a built-in counter, a while loop just checks a condition before each iteration. This makes it ideal for situations where you do not know the count in advance — like rolling a die until you get a 6, or reading lines from a file until you reach the end. The danger with while loops is creating an 'infinite loop' where the condition never becomes false. Always make sure something inside the loop changes the condition so it eventually stops."
+    },
+    {
+      "type": "tip",
+      "title": "Creating an Infinite Loop by Accident",
+      "content": "The #1 beginner mistake with loops is forgetting to update the counter variable, causing the loop to run forever and crash the program. Wrong approach: 'for (let i = 0; i < 10;) { console.log(i); }' — the counter 'i' never increases! Correct approach: 'for (let i = 0; i < 10; i++) { console.log(i); }' — the 'i++' ensures progress. For while loops, the same mistake: 'let x = 0; while (x < 10) { console.log(x); }' never changes x. Always verify that your loop makes progress toward its ending condition."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A restaurant wants to calculate the total revenue for a week. Store the daily revenues [120, 98, 150, 175, 200, 310, 185] in an array (you'll learn arrays next, but just use this literal). Use a for loop to sum all values and print the total. Then calculate and print the average daily revenue.",
+      "hints": [
+        "What variable should hold the running total — where should it be declared?",
+        "How do you access each array element inside the loop?",
+        "How do you calculate an average from the total and the number of days?"
+      ]
+    }
+  ]
+}

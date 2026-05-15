@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Advanced OOP and SOLID",
+  "summary": "Apply the five SOLID principles to build maintainable, scalable object-oriented TypeScript applications",
+  "estimatedMinutes": 19,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "SOLID Is the Foundation of Maintainable OOP",
+      "content": "SOLID is an acronym for five principles that guard against rotting code: Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion. Think of them as building codes for software — just as a building follows fire safety and structural codes to remain safe over decades, your code follows SOLID to remain maintainable over years. Each principle prevents a specific type of decay: SRP prevents god classes, OCP prevents modification cascades, LSP prevents inheritance surprises, ISP prevents fat interfaces, and DIP prevents tight coupling. Together, they produce code that is easy to extend, test, and refactor. TypeScript's interfaces and type system make following SOLID natural."
+    },
+    {
+      "type": "example",
+      "title": "Open-Closed Principle — Extend Without Modifying",
+      "content": "Shows how to add new report formats without changing existing code, using interfaces",
+      "code": "// OCP violation: adding a new format means editing this switch\n// class ReportGenerator {\n//   generate(data: any, format: string) {\n//     switch(format) {\n//       case 'csv': ... break;\n//       case 'json': ... break;\n//       // Adding 'xml' requires modifying this class\n//     }\n//   }\n// }\n// OCP compliant: extend via interface\ninterface ReportFormatter {\n  format(data: Record<string, unknown>[]): string;\n}\nclass CsvFormatter implements ReportFormatter {\n  format(data: Record<string, unknown>[]): string {\n    const headers = Object.keys(data[0]).join(',');\n    const rows = data.map(row => Object.values(row).join(','));\n    return [headers, ...rows].join('\\n');\n  }\n}\nclass JsonFormatter implements ReportFormatter {\n  format(data: Record<string, unknown>[]): string {\n    return JSON.stringify(data, null, 2);\n  }\n}\n// Adding XmlFormatter does not modify existing classes\nclass ReportGenerator {\n  constructor(private formatter: ReportFormatter) {}\n  generate(data: Record<string, unknown>[]): string {\n    return this.formatter.format(data);\n  }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Dependency Inversion — Depend on Abstractions, Not Concretions",
+      "content": "The Dependency Inversion Principle states that high-level modules should not depend on low-level modules; both should depend on abstractions. Concretely, your business logic should not directly import a MySQL driver — it should depend on a 'Database' interface, and the MySQL implementation should be 'injected' from outside. This is the 'D' in SOLID and the reason dependency injection containers exist. The principle is reversed from what beginners expect: instead of 'top code depends on bottom code', both depend on interfaces. This makes swapping implementations trivial — switch from MySQL to PostgreSQL by providing a different implementation of the same interface, without touching business logic."
+    },
+    {
+      "type": "tip",
+      "title": "Violating Liskov Substitution with Incompatible Subtypes",
+      "content": "The #1 advanced OOP mistake is creating a subclass that violates the expectations set by the parent class. Wrong approach: extending a 'Bird' class with 'Penguin' and overriding 'fly()' to throw an error — because not all birds fly. Correct: do not model the world as a rigid hierarchy. Use interfaces instead: 'interface Flyable { fly(): void }' and have only flying birds implement it. 'Penguin extends Bird' but does not implement Flyable. The Liskov Substitution Principle says a subclass should be usable anywhere the parent is used without breaking expectations. If you have a method that throws 'not supported', you have violated LSP."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A payment processing system violates SRP — a single 'OrderProcessor' class handles validation, payment, inventory, email notifications, and logging. Refactor it following SOLID principles. Define interfaces for: PaymentGateway, InventoryService, EmailService, and Logger. Create an OrderProcessor that depends on these interfaces (DIP) and coordinates them. Each implementation should be in its own class with a single responsibility (SRP). Make the system open for extension (OCP) — adding a 'PaymentGateway' like 'CryptoGateway' should not require changing OrderProcessor.",
+      "hints": [
+        "What does the Single Responsibility Principle say about the original OrderProcessor — how many responsibilities does it have?",
+        "How does depending on interfaces rather than concrete classes enable swapping implementations?",
+        "Where would you add retry logic for failed payments — in the gateway implementation or in OrderProcessor?"
+      ]
+    }
+  ]
+}

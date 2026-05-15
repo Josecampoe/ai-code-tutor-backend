@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functional Programming",
+  "summary": "Apply functional patterns like map, filter, reduce, and pure functions",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functional Programming Is a Cooking Assembly Line",
+      "content": "Think of functional programming as a cooking assembly line. Each station (function) takes ingredients, transforms them, and passes them to the next station — without spilling or changing the original ingredients. Pure functions always produce the same output for the same input and do not modify anything outside themselves (no side effects). Array methods like map, filter, and reduce are perfect examples: they return new arrays without changing the original."
+    },
+    {
+      "type": "example",
+      "title": "Map, filter, and reduce in action",
+      "content": "Processes an array of product prices using functional methods without mutation",
+      "code": "const prices = [10, 25, 50, 100, 5];\n\n// filter: keep items under $30\nlet affordable = prices.filter(p => p < 30);\nconsole.log(affordable);\n// Expected output: [10, 25, 5]\n\n// map: add 10% tax to each price\nlet withTax = prices.map(p => p * 1.1);\nconsole.log(withTax);\n// Expected output: [11, 27.5, 55, 110, 5.5]\n\n// reduce: calculate total\nlet total = prices.reduce((sum, p) => sum + p, 0);\nconsole.log(total);\n// Expected output: 190\n\n// Chain methods\nlet result = prices\n  .filter(p => p > 20)\n  .map(p => p * 1.1)\n  .reduce((sum, p) => sum + p, 0);\nconsole.log(result);\n// Expected output: 192.5"
+    },
+    {
+      "type": "explanation",
+      "title": "Immutability and Side Effects",
+      "content": "Immutability means never modifying data in place — instead, create a copy with changes. This prevents bugs where one part of code accidentally changes data that another part depends on. Side effects are any changes a function makes to the outside world (modifying a global variable, writing to a file, updating the DOM). Pure functions avoid side effects entirely. In practice, some side effects are necessary (like saving to a database), but isolate them at the edges of your system."
+    },
+    {
+      "type": "tip",
+      "title": "Mutating arrays inside map or filter",
+      "content": "The #1 mistake developers make is modifying the original array inside map or filter callbacks. Wrong: arr.map(x => { arr.push(x * 2); return x; }) — mutates the original array. Correct: arr.map(x => x * 2) returns a new array. If you need the original, use the returned array. Methods like sort and splice mutate in place — always copy first: [...arr].sort() or arr.toSorted()."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You have an array of user objects: [{name: 'Alice', age: 25, active: true}, {name: 'Bob', age: 17, active: false}, {name: 'Charlie', age: 30, active: true}]. Use filter to keep only active users, then map to create an array of greetings like 'Hello, Alice!', then reduce to count total characters in all greetings. Chain all three methods.",
+      "hints": [
+        "What condition should filter use to check if a user is active?",
+        "What does the map callback need to return for each user?",
+        "What initial value should reduce use for counting characters across strings?"
+      ]
+    }
+  ]
+}

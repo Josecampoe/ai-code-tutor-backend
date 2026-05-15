@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 4,
+  "title": "Testing",
+  "summary": "Write unit tests, integration tests, and use test-driven development with pytest",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Tests are insurance for your code",
+      "context": "Testing is like having a safety net when you walk a tightrope. Every time you change code, you risk breaking something. Tests catch those breaks immediately, before they reach production. The testing pyramid has three levels: unit tests (fast, isolated, test one function), integration tests (test how components work together), and end-to-end tests (test the full system). pytest is Python's most popular testing framework — it's simpler than unittest (no boilerplate class, no self.assertEqual). In pytest, any function starting with 'test_' is automatically discovered and run. Assertions use Python's built-in assert statement."
+    },
+    {
+      "type": "example",
+      "title": "Unit tests for a discount calculation function",
+      "content": "Testing edge cases: zero discount, maximum discount, and invalid inputs",
+      "code": "# Module: pricing.py (the code being tested)\ndef calculate_discount(price: float, discount_pct: float) -> float:\n    # Validates and calculates discounted price\n    if discount_pct < 0 or discount_pct > 100:\n        raise ValueError(\"Discount must be 0-100\")  # Guard clause\n    if price < 0:\n        raise ValueError(\"Price cannot be negative\")\n    return price * (1 - discount_pct / 100)\n\n# Module: test_pricing.py (the test file — pytest discovers it automatically)\ndef test_no_discount():\n    # Zero percent discount should return the original price\n    assert calculate_discount(100, 0) == 100.0\n\ndef test_fifty_percent():\n    # Half off $80 should be exactly $40\n    assert calculate_discount(80, 50) == 40.0\n\ndef test_full_discount():\n    # 100% discount means the item is free\n    assert calculate_discount(50, 100) == 0.0\n\ndef test_negative_price():\n    # Negative prices should raise an error — not silently return wrong value\n    import pytest  # pytest provides advanced assertions\n    with pytest.raises(ValueError):  # Expect a ValueError to be raised\n        calculate_discount(-10, 20)\n\ndef test_invalid_discount():\n    # Discount over 100% should not be allowed\n    with pytest.raises(ValueError):\n        calculate_discount(100, 150)\n\n# Run with: pytest test_pricing.py -v (v = verbose output)\n# Expected output: all 5 tests pass (indicated by green dots or PASSED)"
+    },
+    {
+      "type": "explanation",
+      "title": "Fixtures, mocking, and TDD",
+      "context": "pytest fixtures provide reusable test setup — like creating a database connection or loading test data. Instead of repeating setup code, you define a fixture once: @pytest.fixture def sample_user(): return User(\"Alice\", 25). Fixtures can request other fixtures, creating dependency chains. Mocking (unittest.mock or pytest-mock) replaces real dependencies (like a payment API) with test doubles that return controlled responses. Test-Driven Development (TDD) is the practice of writing tests BEFORE implementation: red (test fails), green (make it pass), refactor (improve the code). TDD forces you to think about the API design from the caller's perspective and ensures testability from day one."
+    },
+    {
+      "type": "tip",
+      "title": "Don't test implementation details",
+      "context": "Testing private methods or internal state makes refactoring painful. Wrong: testing that _calculate_internal() is called (tests how, not what). Correct: test the public function's return values and side effects. Tests should verify behavior, not implementation. When you refactor (change how), the tests should still pass (the what stays same). If every refactor requires test changes, you're testing implementation details."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a function called validate_password(password) that returns True if the password is at least 8 characters, contains at least one uppercase letter, one lowercase letter, one digit, and one special character. Otherwise raise ValueError with a specific message. Then write pytest tests for: valid password, too short, missing uppercase, missing digit, and missing special character. Use pytest.raises for the error cases.",
+      "hints": [
+        "How do you check if a string contains at least one uppercase letter?",
+        "What does pytest.raises(SomeException) return and how do you use it as a context manager?"
+      ]
+    }
+  ]
+}

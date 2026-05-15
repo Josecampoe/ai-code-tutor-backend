@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Intermediate Project",
+  "summary": "Build a command-line task manager application that stores tasks in a JSON file, using classes, interfaces, generics, and error handling",
+  "estimatedMinutes": 22,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Project Overview — Task Manager CLI",
+      "content": "You are building a command-line task manager that can add, list, complete, and delete tasks, persisting them to a JSON file. This project combines everything from intermediate lessons: interfaces define task shapes, generic storage handles loading/saving, classes encapsulate business logic, file I/O persists data, and error handling makes the app robust. The architecture follows separation of concerns: a TaskEngine class manages operations, a FileStorage generic class handles persistence, and a CLI layer handles user interaction. This is the same architectural pattern used by real todo apps, issue trackers, and project management tools — scaled down but structurally identical."
+    },
+    {
+      "type": "example",
+      "title": "Task Interface and Generic Storage Engine",
+      "content": "Shows the core Task interface and the generic storage class that handles file persistence",
+      "code": "// Define what a Task looks like — an interface contract\ninterface Task {\n  id: string;\n  title: string;\n  completed: boolean;\n  createdAt: Date;\n}\n// Generic storage class that persists items to a JSON file\nclass FileStore<T extends { id: string }> {\n  private items: T[] = [];\n  constructor(private filePath: string) {}\n  // Load items from file\n  async load(): Promise<void> {\n    try {\n      const data: string = await readFile(this.filePath, 'utf-8');\n      this.items = JSON.parse(data) as T[];\n    } catch {\n      this.items = []; // Start fresh if file missing\n    }\n  }\n  // Save current items to file\n  async save(): Promise<void> {\n    await writeFile(this.filePath, JSON.stringify(this.items, null, 2));\n  }\n  getAll(): T[] { return this.items; }\n  getById(id: string): T | undefined {\n    return this.items.find(item => item.id === id);\n  }\n  add(item: T): void { this.items.push(item); }\n  remove(id: string): void {\n    this.items = this.items.filter(item => item.id !== id);\n  }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Architecture — How the Pieces Fit Together",
+      "content": "The TaskManager class wraps a FileStore<Task> and adds domain-specific methods like 'markComplete(id)' and 'listByStatus(completed: boolean)'. The CLI layer reads commands from process.argv or a prompt library. FileStore is generic so it could store any entity (users, projects, notes) with minimal changes. Error handling wraps every file operation. This layered design — data access (FileStore), business logic (TaskManager), and presentation (CLI) — is called 'three-layer architecture'. It is the same pattern used in enterprise applications, just on a smaller scale. Each layer only knows about the layer directly below it, which makes testing and swapping implementations straightforward."
+    },
+    {
+      "type": "tip",
+      "title": "Mixing Business Logic with File I/O Operations",
+      "content": "The #1 intermediate project mistake is coupling business logic directly with file operations — writing task management code and file reading code in the same function. Wrong approach: 'function addTask(title: string) { const data = fs.readFileSync(\"tasks.json\"); ... fs.writeFileSync(...); }' in one function. Correct: separate into FileStore (handles file I/O) and TaskManager (handles business logic). This way you can unit test TaskManager without touching the filesystem, and you can swap FileStore for a DatabaseStore later without changing any business logic. If a function both calculates and persists, split it."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Complete the task manager by implementing the TaskManager class with these methods: 'addTask(title: string): Task' generates a unique ID and creates a task, 'listTasks(showCompleted?: boolean): Task[]' filters by completion status, 'markComplete(id: string): void' sets completed to true, and 'deleteTask(id: string): void' removes the task. Also add a method 'getStats(): { total: number; completed: number; pending: number }'. Each method should call the underlying FileStore methods. Handle edge cases: duplicate IDs, removing non-existent tasks, and empty task lists.",
+      "hints": [
+        "How do you generate a unique string ID without external libraries — what could you use?",
+        "What should markComplete do if the task ID does not exist — throw an error or silently ignore?",
+        "How does the generic constraint 'T extends { id: string }' protect the FileStore methods?"
+      ]
+    }
+  ]
+}

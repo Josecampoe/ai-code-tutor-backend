@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Memory Management",
+  "summary": "Understand garbage collection, memory leaks, and optimization techniques",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Memory Is a Parkade — Garbage Collection Is the Janitor",
+      "content": "Think of memory as a parkade with numbered spots. When you create an object, it parks in a spot (memory allocation). The garbage collector (janitor) drives around looking for cars that no one is using — objects with no references pointing to them. JavaScript uses a mark-and-sweep algorithm: it starts from known roots (global variables, the call stack), marks everything reachable, and sweeps away unmarked objects. Modern engines like V8 also generational collection: young objects are checked frequently, old objects less often."
+    },
+    {
+      "type": "example",
+      "title": "Creating and losing references",
+      "content": "Shows how objects become eligible for garbage collection when references are removed",
+      "code": "let user = { name: 'Alice', data: [1, 2, 3] };\n// user references the object — it is reachable\n\nuser = null;\n// Original object is now unreachable\n// GC will collect it on next sweep\n\n// Common memory leak: closures holding references\nfunction createLeak() {\n  let largeData = new Array(1000000).fill('x');\n  return function () {\n    // This closure keeps largeData alive\n    console.log('still holding');\n  };\n}\n\nconst leakyFn = createLeak();\n// largeData cannot be GC'd even though\n// createLeak finished execution"
+    },
+    {
+      "type": "explanation",
+      "title": "Common Memory Leak Patterns",
+      "content": "Three leaks dominate JavaScript applications. First, forgotten timers: setInterval that references DOM nodes keeps them alive even after removal. Second, detached DOM nodes: JavaScript variables holding references to removed DOM elements prevent GC. Third, closures: inner functions referencing outer scope variables keep those variables alive as long as the inner function exists. Use Chrome DevTools Memory tab to take heap snapshots and compare — look for detached DOM nodes and unexpected retained sizes."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to clean up event listeners and timers",
+      "content": "The #1 mistake developers make is registering event listeners or intervals without cleanup. Wrong: setInterval(fetchData, 5000) in a component — runs forever even after component unmounts. Correct: store the interval ID (const id = setInterval(...)) and call clearInterval(id) during cleanup. For event listeners, always call removeEventListener with the same reference. In React, return cleanup functions from useEffect."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a memory-safe polling utility. Create a function createPoller(callback, intervalMs) that returns an object with start() and stop() methods. Ensure that calling stop() clears the interval and releases any references so the poller can be garbage collected. Then write a test that creates a poller, starts it, stops it after 3 seconds, and verifies there are no lingering interval IDs.",
+      "hints": [
+        "What does setInterval return that you need to store for cleanup?",
+        "After clearInterval, should you also null out the stored ID?",
+        "How can you verify using Node.js or browser tools that no intervals remain?"
+      ]
+    }
+  ]
+}

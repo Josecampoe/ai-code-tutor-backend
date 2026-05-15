@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 3,
+  "title": "Operators",
+  "summary": "Perform calculations, compare values, and combine conditions using Python operators",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Operators are the verbs of programming",
+      "content": "If variables are nouns (the stuff), operators are verbs (the actions). Think of operators like the buttons on a calculator: add, subtract, multiply, divide. But Python operators go beyond basic math — they can also compare two things (like weighing two boxes to see which is heavier) or check logical conditions (like 'is it both sunny AND warm outside?'). Python groups operators into arithmetic (math), comparison (comparisons), logical (and/or/not), and assignment (= with a twist)."
+    },
+    {
+      "type": "example",
+      "title": "Using arithmetic and comparison operators",
+      "content": "This calculates a worker's weekly pay and checks if they earned overtime",
+      "code": "# Set the hourly wage and hours worked for a part-time employee\nhourly_wage = 15.50  # Pay rate in dollars per hour\nhours_worked = 42  # Total hours this week\n# Calculate regular pay — 40 hours at normal rate\nregular_pay = 40 * hourly_wage  # Multiplication uses the * symbol\n# Calculate overtime — hours beyond 40 at 1.5x rate\novertime_pay = (hours_worked - 40) * (hourly_wage * 1.5)\n# Add them together to get total weekly pay\ntotal_pay = regular_pay + overtime_pay\n# Check if the worker earned more than $700 using > operator\nearned_bonus = total_pay > 700  # Boolean: True or False\nprint(\"Total pay:\", total_pay)\nprint(\"Earned bonus:\", earned_bonus)\n# Expected output:\n# Total pay: 666.5\n# Earned bonus: False"
+    },
+    {
+      "type": "explanation",
+      "title": "Logical operators combine conditions",
+      "content": "Logical operators — and, or, not — work like everyday decision-making. 'and' means both conditions must be true (like needing a password AND a fingerprint to unlock a phone). 'or' means at least one must be true (like free shipping if you spend $50 OR have a premium membership). 'not' flips true to false and vice versa (like 'if NOT raining, go outside'). These are essential for making decisions in your code."
+    },
+    {
+      "type": "tip",
+      "title": "= vs == is a classic trap",
+      "content": "Using = when you mean == is the single most common bug for beginners. A single = assigns a value (x = 5 means 'store 5 in x'). Double == compares values (x == 5 means 'is x equal to 5?'). Wrong: if score = 100: print(\"Perfect!\") — this assigns, not compares. Correct: if score == 100: print(\"Perfect!\")."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A movie theater charges different prices: adults $12, children $8, seniors $10. You bought 2 adult tickets and 3 children tickets. Write code to calculate the total cost and check if the total is over $50 (which qualifies for a free popcorn coupon).",
+      "hints": [
+        "How do you calculate the cost for adults separately from children?",
+        "Which comparison operator checks if a value is greater than another?"
+      ]
+    }
+  ]
+}

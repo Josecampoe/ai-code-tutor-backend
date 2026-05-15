@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Collections",
+  "summary": "Use Map, Set, WeakMap, and WeakSet for specialized data storage beyond arrays",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Maps and Sets Are Specialty Containers",
+      "content": "Arrays and objects work for general storage, but JavaScript offers specialized collections for specific needs. A Map is like a dictionary where keys can be any type (not just strings), and insertion order is preserved. A Set is like a bag that automatically rejects duplicates — add the same value twice and it stores it once. These collections have cleaner APIs (size, has, delete) and better performance for their intended use cases compared to hacking plain objects into maps."
+    },
+    {
+      "type": "example",
+      "title": "Map and Set usage",
+      "content": "Stores user session data in a Map and unique visitor IPs in a Set",
+      "code": "// Map — any type as key, ordered\nlet sessions = new Map();\nlet user1 = { id: 1 };\nlet user2 = { id: 2 };\n\nsessions.set(user1, '2026-05-15');\nsessions.set(user2, '2026-05-14');\nconsole.log(sessions.get(user1));\n// Expected output: 2026-05-15\nconsole.log(sessions.size);\n// Expected output: 2\n\n// Set — unique values only\nlet uniqueIPs = new Set();\nuniqueIPs.add('192.168.1.1');\nuniqueIPs.add('192.168.1.2');\nuniqueIPs.add('192.168.1.1');\nconsole.log(uniqueIPs.size);\n// Expected output: 2"
+    },
+    {
+      "type": "explanation",
+      "title": "WeakMap and WeakSet for Memory Safety",
+      "content": "WeakMap and WeakSet are variants that hold weak references to their keys. This means if no other variable references the key object, it can be garbage collected. They are invaluable for caching or storing metadata about DOM nodes without preventing their cleanup. The trade-off: you cannot iterate over WeakMap or WeakSet, and keys must be objects (not primitives). Use them when you need to associate data with objects that have an independent lifecycle."
+    },
+    {
+      "type": "tip",
+      "title": "Using objects as maps without protection",
+      "content": "The #1 mistake intermediate developers make is using plain objects ({}) as maps. Wrong: let cache = {}; cache[key] = value; — keys are converted to strings, '__proto__' causes bugs, and there is no size property. Correct: use Map() for key-value storage. Maps accept any key type, have predictable behavior, and provide a size property."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a simple cache system. Create a function memoize(fn) that returns a new function. The returned function should check a Map cache before calling fn. If the argument was seen before, return the cached result. Use a WeakMap instead — what changes? Test by caching an expensive calculation that multiplies a number by itself 1 million times.",
+      "hints": [
+        "What type should the Map keys be for caching function results?",
+        "How do WeakMap keys differ from Map keys in what they can be?",
+        "When would WeakMap's automatic cleanup be more important than Map's iterability?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Beginner Project",
+  "summary": "Build a complete program combining everything learned so far",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Bringing It All Together",
+      "content": "Now that you've learned variables, control flow, loops, methods, arrays, Strings, and basic OOP, it's time to combine them into a real program. Think of this like building a LEGO set where each brick is a concept you've mastered. The project will require you to decide which concept to use for each piece of the puzzle. Professional developers rarely use just one concept in isolation. The skill is knowing which tool fits which job. This project simulates a real task a junior developer might face in their first week on the job."
+    },
+    {
+      "type": "example",
+      "title": "Project Structure Overview",
+      "content": "This shows the class skeleton and how the pieces fit together for the project",
+      "code": "// This class will represent a single task in a to-do list\nclass Task {\n    // Fields for task description and completion status\n    String description;\n    boolean isComplete;\n    \n    // Method to mark this task as done\n    void markComplete() {\n        isComplete = true;\n    }\n    \n    // Method to print task status with a checkbox\n    void printTask() {\n        String checkbox = isComplete ? \"[X]\" : \"[ ]\";\n        System.out.println(checkbox + \" \" + description);\n    }\n}\n// Expected output when used:\n// [ ] Buy groceries\n// [X] Finish homework"
+    },
+    {
+      "type": "explanation",
+      "title": "Planning Before Coding",
+      "content": "Before writing any code, plan what your program needs to do. Write down the requirements — like a chef planning a menu before cooking. What features does the program need? What data structures will store the information? What methods will manipulate that data? This planning phase is called 'design' and it's what separates professionals from hobbyists. For this project, think about what a task manager needs: adding tasks, listing them, marking them complete, and maybe calculating how many are done."
+    },
+    {
+      "type": "tip",
+      "title": "Trying to code everything at once without testing small pieces",
+      "content": "Most common mistake: writing 100 lines of code, then running it and finding it doesn't work, with no idea where the bug is. Fix: write one small method at a time and test it immediately. Get the addTask method working before you write markComplete. Wrong: writing the entire program in one go. Correct: write a method, test it, then move to the next."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a simple task manager that stores up to 5 tasks. Create a Task class with description and isComplete fields. In main, create an array of Task objects, add two tasks, mark the first one complete, then loop through the array and print each task with its completion checkbox.",
+      "hints": [
+        "What size should your Task array be?",
+        "How do you create a Task object and put it into the array?",
+        "How do you loop through the array and call printTask on each element?"
+      ]
+    }
+  ]
+}

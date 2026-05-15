@@ -1,0 +1,40 @@
+{
+  "lessonNumber": 10,
+  "title": "Advanced Project",
+  "summary": "Build a production-grade REST API for an e-commerce platform using Express, Prisma, Zod validation, authentication, and automated tests",
+  "estimatedMinutes": 25,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Project Overview — E-Commerce API Platform",
+      "content": "You are building a complete REST API backend for an e-commerce platform called 'ShopAPI'. This project integrates everything from the advanced lessons: Express with typed routes, Prisma ORM for database persistence, Zod schemas for request validation, JWT-based authentication, SOLID-principled architecture with dependency injection, comprehensive test coverage, performance-optimized queries, and deployment-ready configuration. The API will support product listing with search/filter/pagination, user registration and login, cart management, order placement with stock validation, and an admin-only product management interface. By completing this, you will have built a portfolio-quality project that mirrors real e-commerce backends powering millions of dollars in transactions daily."
+    },
+    {
+      "type": "example",
+      "title": "Architecture — Layered Structure with Dependency Injection",
+      "content": "Shows the project folder structure and the dependency injection pattern connecting routes, services, and repositories",
+      "code": "// src/\n//   ├── routes/         # Express route handlers (thin layer)\n//   │   ├── product.routes.ts\n//   │   └── order.routes.ts\n//   ├── services/       # Business logic layer\n//   │   ├── product.service.ts\n//   │   └── order.service.ts\n//   ├── repositories/   # Data access layer (Prisma)\n//   │   ├── product.repository.ts\n//   │   └── order.repository.ts\n//   ├── middlewares/     # Auth, validation, error handling\n//   │   ├── auth.middleware.ts\n//   │   └── validate.middleware.ts\n//   ├── schemas/         # Zod validation schemas\n//   │   └── product.schema.ts\n//   └── app.ts          # Express app setup\n// Dependency injection example:\nexport class OrderService {\n  // Depends on abstractions (interfaces), not concretions\n  constructor(\n    private orderRepo: OrderRepository,\n    private productRepo: ProductRepository,\n    private paymentGateway: PaymentGateway\n  ) {}\n  async placeOrder(userId: number, items: OrderItemInput[]): Promise<Order> {\n    // Business logic: validate stock, calculate total, process payment\n    for (const item of items) {\n      const product = await this.productRepo.findById(item.productId);\n      if (!product || product.stock < item.quantity) {\n        throw new Error(`Insufficient stock for product ${item.productId}`);\n      }\n    }\n    const total = await this.calculateTotal(items);\n    await this.paymentGateway.charge(userId, total);\n    return this.orderRepo.create(userId, items);\n  }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Production Features: Pagination, Filtering, Rate Limiting, and Logging",
+      "content": "Real APIs must handle scale and abuse. Pagination prevents sending thousands of records at once — implement cursor-based pagination (using a unique sort field as a bookmark) instead of offset-based for better performance on large datasets. Filtering uses query parameters with Zod-validated schemas to prevent injection. Rate limiting (using express-rate-limit) protects against DoS attacks — like a bouncer limiting how fast customers enter the club. Structured logging (using pino or winston) outputs JSON logs that production monitoring tools (Datadog, Grafana) can ingest — unlike console.log which is unstructured and hard to search. Each request should log a correlation ID for tracing issues across services."
+    },
+    {
+      "type": "tip",
+      "title": "Not Separating Read Models from Write Models (CQRS Awareness)",
+      "content": "The #1 advanced project mistake is using the same data model for reading and writing, leading to over-fetching or under-fetching. Wrong approach: always returning the full Product object (with description, images, reviews, etc.) even for list endpoints that only need name and price. Correct: define separate typed interfaces for different use cases — 'ProductListItem' (id, name, price, thumbnail) vs 'ProductDetail' (all fields + related products). Prisma's 'select' and 'include' let you tailor queries per endpoint without extra models. This is a lightweight application of CQRS (Command Query Responsibility Segregation) — the principle that reading data and writing data have different optimal shapes."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Implement the complete e-commerce API with these endpoints: POST /api/auth/register (email, password, name), POST /api/auth/login (returns JWT), GET /api/products (search, filter by category, paginate with cursor), GET /api/products/:id, POST /api/orders (authenticated, takes array of { productId, quantity }, validates stock, processes payment mock), GET /api/orders/:id (authenticated, user can only see their own orders), and PATCH /api/products/:id (admin only, updates stock or price). Implement: (1) JWT authentication middleware, (2) role-based authorization (admin vs user), (3) Zod validation for all request bodies, (4) Prisma transactions for order placement, (5) comprehensive error handling, (6) rate limiting on auth endpoints, (7) unit tests for OrderService with mocked repository.",
+      "hints": [
+        "How does the JWT middleware extract and verify the token from the Authorization header?",
+        "How do you implement cursor-based pagination — what query parameter represents the cursor?",
+        "What Prisma API ensures the stock decrement and order creation happen atomically?",
+        "How should the mock PaymentGateway be injected during testing vs production?"
+      ]
+    }
+  ]
+}

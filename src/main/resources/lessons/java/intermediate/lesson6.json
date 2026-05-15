@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functional Programming",
+  "summary": "Write cleaner code using lambda expressions and the Stream API",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Lambdas as Anonymous Coworkers",
+      "content": "Imagine you have a temp worker who shows up, does exactly one task you specify, and leaves without you ever knowing their name. That's what a lambda expression is: a nameless function you can pass around like a value. Before lambdas, Java required you to create an entire class just to pass one piece of behavior. Now you can write (x, y) -> x + y and Java understands it as 'take x and y and return their sum'. Lambdas work hand-in-hand with functional interfaces — interfaces with exactly one abstract method, like Runnable, Comparator, and Consumer."
+    },
+    {
+      "type": "example",
+      "title": "Using Lambdas with the Stream API",
+      "content": "This code filters a list of products to find inexpensive ones using streams and lambdas",
+      "code": "import java.util.List;\nimport java.util.stream.Collectors;\n\npublic class ProductFilter {\n    public static void main(String[] args) {\n        List<Product> products = List.of(\n            new Product(\"Laptop\", 1200.00),\n            new Product(\"Mouse\", 25.00),\n            new Product(\"Keyboard\", 75.00)\n        );\n        \n        // Stream pipeline: filter products under $100\n        List<Product> cheap = products.stream()\n            .filter(p -> p.price < 100.0)\n            .collect(Collectors.toList());\n        \n        cheap.forEach(p -> System.out.println(p.name));\n    }\n}\n\nclass Product {\n    String name;\n    double price;\n    Product(String name, double price) {\n        this.name = name;\n        this.price = price;\n    }\n}\n// Expected output:\n// Mouse\n// Keyboard"
+    },
+    {
+      "type": "explanation",
+      "title": "Stream Pipeline: Map, Filter, Reduce",
+      "content": "The Stream API lets you process collections as a pipeline, like an assembly line in a factory. Filter removes items you don't want (like a quality inspector rejecting defective products). Map transforms each item (like a machine that paints each product red). Reduce combines all items into one result (like a scale that weighs all products together). The beauty is that these operations chain together: you start with a collection, filter it, map it, and collect the results — all in one readable expression. This replaces many verbose for-loops with concise, intent-revealing code."
+    },
+    {
+      "type": "tip",
+      "title": "Modifying external variables inside lambdas",
+      "content": "Most common mistake: trying to modify a local variable from inside a lambda, like int count = 0; list.forEach(item -> count++);. Local variables used in lambdas must be effectively final (not reassigned). Fix: use an atomic counter or a stream reduction instead. Wrong: int sum = 0; numbers.forEach(n -> sum += n);. Correct: int sum = numbers.stream().reduce(0, (a, b) -> a + b);"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Given a list of Employee objects with name (String) and salary (double) fields, use the Stream API to find the average salary of all employees earning more than $50,000. Hint: combine filter with mapToDouble and average.",
+      "hints": [
+        "What stream method selects only employees above $50,000?",
+        "How do you convert a stream of employees to a stream of their salaries?",
+        "What terminal operation calculates the average of a numeric stream?"
+      ]
+    }
+  ]
+}

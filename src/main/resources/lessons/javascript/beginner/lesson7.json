@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Arrays and Lists",
+  "summary": "Store and manage collections of data using arrays",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Arrays Are Like Numbered Lockers",
+      "content": "An array is like a row of lockers, each with a numbered door. You store a value in locker 0, another in locker 1, and so on. In JavaScript, arrays can hold any type — strings, numbers, even other arrays. The position number is called the index, and it always starts at 0, not 1. This zero-based indexing is one of the first things every programmer must memorize, like remembering that elevator buttons for the ground floor say 0 in many countries."
+    },
+    {
+      "type": "example",
+      "title": "Creating and working with arrays",
+      "content": "Builds a shopping list array and shows common array operations",
+      "code": "// Create an array with square brackets\nlet fruits = ['apple', 'banana', 'cherry'];\n\n// Access elements by index (starts at 0)\nconsole.log(fruits[0]);\n// Expected output: apple\n\n// Get the number of items\nconsole.log(fruits.length);\n// Expected output: 3\n\n// Add an item to the end\nfruits.push('date');\nconsole.log(fruits);\n// Expected output: ['apple', 'banana', 'cherry', 'date']\n\n// Remove the last item\nlet last = fruits.pop();\nconsole.log(last);\n// Expected output: date"
+    },
+    {
+      "type": "explanation",
+      "title": "Looping Through Arrays",
+      "content": "The real power of arrays comes when you combine them with loops. Instead of writing fruits[0], fruits[1], fruits[2] manually, you write a loop that goes from index 0 to fruits.length - 1. The loop variable i acts as the index, and fruits[i] gives you each element in sequence. This pattern — looping over an array — is one of the most common operations in programming, used everywhere from displaying shopping lists to processing data."
+    },
+    {
+      "type": "tip",
+      "title": "Off-by-one errors with array indexes",
+      "content": "The #1 mistake beginners make is forgetting that array indexes start at 0, not 1. Wrong: fruits[1] gives 'banana' thinking it is the first element. Correct: fruits[0] gives 'apple'. Also, using <= fruits.length in a loop accesses fruits[fruits.length] which is undefined (indexes go from 0 to length-1). Correct loop: for (let i = 0; i < fruits.length; i++)."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You are tracking daily temperatures for a week. Create an array with these values: 72, 75, 68, 70, 73, 71, 69. Write a loop that calculates and prints the average temperature for the week.",
+      "hints": [
+        "How do you add each temperature to a running total inside the loop?",
+        "What is the relationship between the sum of all temperatures and the array length?",
+        "After the loop finishes, where should you calculate and print the average — inside or outside the loop?"
+      ]
+    }
+  ]
+}

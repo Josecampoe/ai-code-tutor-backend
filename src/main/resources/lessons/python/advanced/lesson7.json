@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 7,
+  "title": "Working with APIs",
+  "summary": "Consume REST APIs and build API clients with requests, error handling, and rate limiting",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "APIs are how programs talk to each other",
+      "context": "An API (Application Programming Interface) is like a restaurant menu — it lists what you can order, what each dish costs, and what you'll get back. When your program needs data from another service (weather data, stock prices, GitHub repos), it sends an HTTP request to that service's API endpoint (a URL). The API responds with structured data, most commonly JSON. Python's requests library is the industry standard for making HTTP calls — it's cleaner and more human-friendly than the built-in urllib. You'll deal with GET requests (fetching data), POST requests (creating data), and authentication (API keys, OAuth tokens)."
+    },
+    {
+      "type": "example",
+      "title": "Building a robust API client with error handling",
+      "content": "Fetch weather data from OpenWeatherMap API with proper error handling",
+      "code": "import requests  # Industry-standard HTTP library — pip install requests\nimport time  # For implementing rate limiting delays\n\nclass WeatherClient:\n    # Client for fetching weather data from a public API\n    def __init__(self, api_key: str):\n        self.api_key = api_key  # Authentication token\n        self.base_url = \"https://api.openweathermap.org/data/2.5/weather\"\n        self.last_request = 0  # Track last request time for rate limiting\n\n    def get_temperature(self, city: str) -> float:\n        # Enforce rate limit: at least 1 second between requests\n        elapsed = time.time() - self.last_request  # Time since last call\n        if elapsed < 1.0:  # If less than 1 second has passed\n            time.sleep(1.0 - elapsed)  # Wait to stay under rate limit\n\n        # Build query parameters as a dictionary\n        params = {\n            \"q\": city,  # City name to search for\n            \"appid\": self.api_key,  # API authentication\n            \"units\": \"metric\"  # Return temperature in Celsius\n        }\n\n        try:\n            # Send GET request to the API endpoint\n            response = requests.get(self.base_url, params=params, timeout=10)\n            response.raise_for_status()  # Raises HTTPError for 4xx/5xx\n            data = response.json()  # Parse JSON response to dictionary\n            return data[\"main\"][\"temp\"]  # Extract temperature field\n\n        except requests.exceptions.HTTPError as e:\n            if response.status_code == 404:\n                raise ValueError(f\"City '{city}' not found\") from e\n            raise  # Re-raise other HTTP errors\n\n        except requests.exceptions.Timeout:\n            raise TimeoutError(\"Weather API timed out — try again later\")\n\n        finally:\n            self.last_request = time.time()  # Update request timestamp"
+    },
+    {
+      "type": "explanation",
+      "title": "API design patterns — retries, caching, and pagination",
+      "context": "Production API clients need more than a single request. Implement exponential backoff retries for transient failures (network blips, 503 Service Unavailable): wait 1s, then 2s, then 4s between retry attempts, up to a maximum. Cache API responses with time-based expiration (e.g., cache weather data for 10 minutes since it doesn't change second by second) using functools.lru_cache or a dedicated cache library. Handle pagination for list endpoints — the API returns 20 results per page, and you need to loop through pages until all data is collected. Use session objects (requests.Session()) for connection pooling when making multiple requests to the same server — it reuses TCP connections, significantly improving performance."
+    },
+    {
+      "type": "tip",
+      "title": "Never hard-code API keys in source code",
+      "context": "Committing API keys to version control is a security breach — automated scanners find and exploit them. Wrong: API_KEY = \"sk-abc123...\" in your Python file. Correct: use environment variables: import os; API_KEY = os.environ[\"API_KEY\"]. Store keys in a .env file (never committed) and load with python-dotenv. Or use a secrets manager. If you commit a key, assume it's compromised and rotate it immediately."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a GitHub API client that fetches repository information. Use the public GitHub API (no key needed for public repos). Create a function get_repo_info(owner, repo) that sends a GET request to https://api.github.com/repos/{owner}/{repo}. Parse the JSON response and print: the repo name, description, star count, and fork count. Handle 404 (repo not found) and timeout errors gracefully. No API key required for this exercise.",
+      "hints": [
+        "What HTTP method does fetching data from an API typically use?",
+        "How do you extract specific fields from the JSON response dictionary?"
+      ]
+    }
+  ]
+}
