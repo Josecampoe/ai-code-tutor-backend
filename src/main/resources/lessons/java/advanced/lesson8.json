@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Databases and Persistence",
+  "summary": "Connect Java applications to relational databases using JDBC and connection pooling",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Databases as a Filing Cabinet System",
+      "content": "A file cabinet has labeled drawers (schemas), folders inside (tables), and documents with structured fields (rows and columns). Relational databases organize data the same way but with superpowers: instant search, relationships between tables, and ACID transactions that prevent data corruption. Java connects to databases via JDBC (Java Database Connectivity) — a standard API that works with any database (MySQL, PostgreSQL, H2, etc.) by using the appropriate driver. The driver translates JDBC calls into the database's native protocol, like a universal remote that works with any TV brand."
+    },
+    {
+      "type": "example",
+      "title": "Connecting and Querying with JDBC",
+      "content": "This code connects to a database, runs a query, and processes results using a PreparedStatement",
+      "code": "import java.sql.*;\n\npublic class UserRepository {\n    // Database URL with credentials (never hardcode in real code)\n    private static final String URL = \"jdbc:postgresql://localhost:5432/mydb\";\n    \n    public void findUsersAboveAge(int minAge) {\n        // try-with-resources auto-closes connection, stmt, results\n        String sql = \"SELECT name, age FROM users WHERE age > ?\";\n        \n        try (Connection conn = DriverManager.getConnection(URL, \"admin\", \"pass\");\n             PreparedStatement stmt = conn.prepareStatement(sql)) {\n            \n            // Set parameters safely (prevents SQL injection)\n            stmt.setInt(1, minAge);\n            ResultSet rs = stmt.executeQuery();\n            \n            // Iterate through result rows\n            while (rs.next()) {\n                String name = rs.getString(\"name\");\n                int age = rs.getInt(\"age\");\n                System.out.println(name + \" - \" + age);\n            }\n        } catch (SQLException e) {\n            System.err.println(\"Database error: \" + e.getMessage());\n        }\n    }\n}\n// Expected: prints all users older than minAge"
+    },
+    {
+      "type": "explanation",
+      "title": "Connection Pooling and ORMs",
+      "content": "Opening a database connection is expensive — like making a phone call that takes 2 seconds to connect. If every web request opens a new connection, your database quickly becomes overwhelmed. Connection pooling (HikariCP is the industry standard) keeps a pool of permanent open connections, like a taxi stand with cars ready to go. When your code asks for a connection, it gets one from the pool instantly; when done, the connection returns to the pool rather than closing. ORMs (Object-Relational Mappers) like Hibernate or jOOQ automate the mapping between Java objects and database tables — generating SQL for you. The trade-off is that ORMs hide complexity but add a learning curve and can generate inefficient queries."
+    },
+    {
+      "type": "tip",
+      "title": "SQL injection via string concatenation in queries",
+      "content": "Most common mistake: building SQL by concatenating strings: String sql = \"SELECT * FROM users WHERE name = '\" + userName + \"'\". A malicious userName like \"' OR '1'='1\" deletes all data or bypasses authentication. Fix: always use PreparedStatement with ? placeholders. Wrong: Statement stmt = conn.createStatement(); stmt.executeQuery(\"SELECT * FROM users WHERE id = \" + id);. Correct: PreparedStatement stmt = conn.prepareStatement(\"SELECT * FROM users WHERE id = ?\"); stmt.setInt(1, id);"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a ProductRepository class that connects to an H2 in-memory database. Implement methods: createTable() that creates a products table (id, name, price, quantity), insertProduct(Product p), findById(int id), and findAll(). Use PreparedStatement for all queries. Test by inserting 3 products, finding one by ID, and listing all.",
+      "hints": [
+        "What JDBC URL connects to an in-memory H2 database?",
+        "What method of PreparedStatement executes an INSERT?",
+        "How do you map a ResultSet row back to a Product object?"
+      ]
+    }
+  ]
+}

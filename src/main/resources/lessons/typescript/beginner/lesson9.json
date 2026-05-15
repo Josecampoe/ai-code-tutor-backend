@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Introduction to OOP",
+  "summary": "Model real-world things using classes, objects, properties, and methods in TypeScript",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Classes Are Blueprints, Objects Are Built Houses",
+      "content": "A class is like a blueprint for a house: it specifies the number of rooms, the paint color, and what activities you can do inside (methods). The actual houses built from that blueprint are called 'objects' or 'instances'. One blueprint can create many different houses, each with its own values — one might have 'paintColor: blue', another 'paintColor: white'. TypeScript classes also have a special method called the 'constructor' that runs when you create a new object, setting up initial values. This approach mirrors how we naturally think about the world: categories (classes) and specific items (objects)."
+    },
+    {
+      "type": "example",
+      "title": "A Book Class with Properties and a Method",
+      "content": "Defines a Book class, creates two book objects, and calls a method on one of them",
+      "code": "// Define a class called Book\nclass Book {\n  // Properties with type annotations\n  title: string;\n  author: string;\n  pages: number;\n  // Constructor runs when we create a new Book instance\n  constructor(title: string, author: string, pages: number) {\n    this.title = title;\n    this.author = author;\n    this.pages = pages;\n  }\n  // Method: returns a summary of the book\n  getSummary(): string {\n    return `${this.title} by ${this.author} (${this.pages} pages)`;\n  }\n}\n// Create two book objects (instances)\nconst book1 = new Book('The Hobbit', 'J.R.R. Tolkien', 310);\nconst book2 = new Book('Dune', 'Frank Herbert', 412);\n// Call the method on book1\nconsole.log(book1.getSummary());\nconsole.log(book2.getSummary());\n// Expected:\n// The Hobbit by J.R.R. Tolkien (310 pages)\n// Dune by Frank Herbert (412 pages)"
+    },
+    {
+      "type": "explanation",
+      "title": "The 'this' Keyword and Method Context",
+      "content": "Inside a class method, 'this' refers to the specific object that called the method. If book1 calls getSummary(), 'this' is book1; if book2 calls the same method, 'this' is book2. Think of 'this' as a mirror that always reflects whichever object is currently speaking. This is why one method definition works for all objects — 'this' dynamically points to the right instance. A common mistake is forgetting 'this.' when accessing properties inside the class. Writing 'title' instead of 'this.title' will look for a local variable or parameter named 'title', not the class property."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the 'new' Keyword When Creating Objects",
+      "content": "The #1 beginner mistake is creating an object without the 'new' keyword. Wrong approach: 'const book = Book(\"Title\", \"Author\", 200);' — this does not create an object; it tries to call the constructor as a regular function, which returns undefined and causes errors. Correct approach: 'const book = new Book(\"Title\", \"Author\", 200);' — 'new' tells TypeScript to create a fresh object and bind 'this' inside the constructor to it. Without 'new', 'this' inside the constructor refers to the global object (window in browsers), which leads to hard-to-find bugs."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A car dealership needs a digital inventory system. Create a Car class with properties for make (string), model (string), year (number), and price (number). Add a method called 'getAge' that calculates the car's age based on the current year 2026. Add a method called 'getDescription' that returns a formatted string like '2022 Toyota Camry — $25000'. Create two car objects and print their descriptions.",
+      "hints": [
+        "What parameter does the constructor need besides the Car properties?",
+        "How do you calculate the age from the current year and the car's year?",
+        "What template literal formats the description string?"
+      ]
+    }
+  ]
+}

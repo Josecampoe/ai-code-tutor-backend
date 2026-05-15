@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Intermediate Project",
+  "summary": "Build a CLI task manager with persistence, error handling, and modular architecture",
+  "estimatedMinutes": 22,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "The Task Manager Architecture",
+      "content": "This project brings together modules, file I/O, error handling, OOP, and functional programming into a real CLI application. The architecture follows a three-layer design: data layer (file-based JSON persistence), business logic (task CRUD operations), and presentation (CLI interface). Each layer is a separate module. Separating concerns like this means you can swap the file storage for a database later without touching the business logic or CLI code."
+    },
+    {
+      "type": "example",
+      "title": "Task model with validation",
+      "content": "Defines a Task class with validation in the constructor and a static fromJSON method",
+      "code": "class Task {\n  constructor(title, priority = 'medium') {\n    if (!title || title.trim().length === 0) {\n      throw new Error('Title is required');\n    }\n    this.id = Date.now();\n    this.title = title.trim();\n    this.priority = priority;\n    this.done = false;\n    this.createdAt = new Date();\n  }\n\n  toggle() {\n    this.done = !this.done;\n  }\n\n  toJSON() {\n    return { id: this.id, title: this.title,\n      priority: this.priority, done: this.done };\n  }\n\n  static fromJSON(data) {\n    let t = new Task(data.title, data.priority);\n    t.id = data.id;\n    t.done = data.done;\n    return t;\n  }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Separation of Concerns Is the Goal",
+      "content": "The biggest leap from beginner to intermediate is understanding that code organization matters as much as functionality. In this project, storage.js should only read and write files — it should not know what a Task is. taskService.js should only manage business rules — it should not know about files or CLI formatting. cli.js should only handle user input and output. This modularity makes each piece testable, replaceable, and understandable on its own."
+    },
+    {
+      "type": "tip",
+      "title": "Tight coupling between layers",
+      "content": "The #1 mistake intermediate developers make is letting concerns bleed across layers. Wrong: reading a file in the CLI module and parsing JSON there. Correct: storage module returns and accepts plain objects; business logic layer handles conversion to/from Task instances; CLI only calls business methods. Use dependency injection — pass the storage instance into the service constructor — so each component is independently testable."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build the full task manager. Create three files: storage.js (read/write tasks.json, handles missing file), taskService.js (addTask, listTasks, toggleDone, deleteTask, uses storage), and cli.js (reads command line args, calls service, prints output). Support commands: 'add \"Buy milk\" high', 'list', 'done <id>', 'delete <id>'. Handle errors gracefully at each layer.",
+      "hints": [
+        "How should storage.js handle the first run when tasks.json does not exist?",
+        "Where does JSON parsing/stringifying happen — in storage, service, or CLI?",
+        "How does the CLI extract the command and arguments from process.argv?"
+      ]
+    }
+  ]
+}

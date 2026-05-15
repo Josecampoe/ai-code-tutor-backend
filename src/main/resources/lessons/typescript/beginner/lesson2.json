@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Variables and Data Types",
+  "summary": "Declare variables with let and const and use TypeScript's core types: string, number, boolean, null, and undefined",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Variables as Labeled Boxes",
+      "content": "Imagine variables as labeled boxes where you store different kinds of items. A 'string' box holds text like a person's name. A 'number' box holds numeric values like a price or age. A 'boolean' box holds a true-or-false switch like 'isLoggedIn'. TypeScript is like a warehouse manager who checks that you only put the right kind of item into each box. The keywords 'let' and 'const' determine whether you can replace the contents later. 'let' means the label stays but you can swap what's inside; 'const' means the box is permanently sealed."
+    },
+    {
+      "type": "example",
+      "title": "Declaring Variables with Different Types",
+      "content": "Shows how to declare variables of each core type with explicit annotations",
+      "code": "// String type holds text — use double or single quotes\nlet productName: string = 'Organic Coffee';\n// Number type holds integers and decimals alike\nlet price: number = 15.99;\n// Boolean type holds true or false only\nlet inStock: boolean = true;\n// Const variables cannot be reassigned after creation\nconst storeName: string = 'Corner Market';\n// Null represents an intentionally empty value\nlet discount: null = null;\n// Undefined means a variable has not been assigned yet\nlet couponCode: undefined = undefined;\n// Print all values to see them together\nconsole.log(productName, price, inStock, storeName);\n// Expected: Organic Coffee 15.99 true Corner Market"
+    },
+    {
+      "type": "explanation",
+      "title": "Type Inference — When TypeScript Guesses for You",
+      "content": "You don't always need to write the type annotation. TypeScript is smart enough to infer (guess) the type from the initial value you assign. If you write 'let age = 25;', TypeScript knows 'age' is a number even without ': number'. This keeps code clean while still catching mistakes later. If you later try to assign 'age = \"old\"', TypeScript will complain because it remembers that 'age' started as a number. This is called 'type inference' and it is one of TypeScript's most helpful features when you are learning — you get protection without extra typing."
+    },
+    {
+      "type": "tip",
+      "title": "Confusing let, const, and var",
+      "content": "The #1 beginner mistake is using the old 'var' keyword instead of 'let' or 'const', or forgetting that 'const' means the variable binding cannot change. Wrong approach: 'const taxRate = 0.08; taxRate = 0.10;' (TypeScript error: cannot reassign a const). Correct approach: 'let taxRate = 0.08; taxRate = 0.10;' (use let when the value changes). Always default to 'const' and switch to 'let' only when you know the value needs to change. Never use 'var' — it has confusing scoping rules."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a simple product catalog entry for a bookstore. Create variables for the book title (string), author (string), page count (number), price (number), and isBestseller (boolean). Use const for values that will never change and let for values that might. Print a summary sentence using all variables.",
+      "hints": [
+        "Which of these values could change after the book is created — price? title?",
+        "Can you combine strings and numbers with the + operator in console.log?",
+        "What type would you use to indicate whether something is true or false?"
+      ]
+    }
+  ]
+}

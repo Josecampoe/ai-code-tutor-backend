@@ -53,7 +53,7 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
                 .frameOptions(frame -> frame.deny())
-                .xssProtection(xss -> xss.enable())
+                .xssProtection(xss -> xss.disable())
                 .contentTypeOptions(ct -> {})
                 .httpStrictTransportSecurity(hsts -> hsts
                     .includeSubDomains(true)

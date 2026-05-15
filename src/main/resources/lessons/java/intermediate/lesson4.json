@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "File I/O",
+  "summary": "Read and write files using Java's file I/O classes, handle encoding and exceptions",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "File I/O as Reading a Recipe Book",
+      "content": "Reading a file is like opening a recipe book, copying a recipe onto a notepad, and closing the book. First you open the file (create a connection), then you read the data line by line (like copying text), and finally you close the file to tell the system you're done. Writing a file is the reverse: you open a blank notebook, write your data, and close it. The important rule is always close your files when finished, like turning off the stove after cooking. Java's try-with-resources handles this automatically, closing the file even if an exception occurs."
+    },
+    {
+      "type": "example",
+      "title": "Reading a File with try-with-resources",
+      "content": "This code reads a file named 'scores.csv' line by line and prints each line",
+      "code": "import java.nio.file.*;\nimport java.io.*;\nimport java.util.List;\n\npublic class FileReaderExample {\n    public static void main(String[] args) throws IOException {\n        // Define the path to the file\n        Path filePath = Paths.get(\"scores.csv\");\n        \n        // Read all lines at once into a List of Strings\n        List<String> lines = Files.readAllLines(filePath);\n        \n        // Loop through each line and print it\n        for (String line : lines) {\n            System.out.println(line);\n        }\n        \n        // Files.readAllLines handles closing automatically\n        System.out.println(\"Read \" + lines.size() + \" lines.\");\n    }\n}\n// Expected output (assuming scores.csv exists):\n// Alice,92\n// Bob,78\n// Charlie,88\n// Read 3 lines."
+    },
+    {
+      "type": "explanation",
+      "title": "BufferedReader vs Files.readAllLines",
+      "content": "Files.readAllLines is convenient but loads the entire file into memory at once. For a small config file, this is fine. For a 2 GB log file, this will crash your program with an OutOfMemoryError. That's where BufferedReader comes in — it reads one line at a time, keeping only the current line in memory. Think of it as drinking from a water fountain (one sip at a time) instead of trying to swallow the entire reservoir. For large files, always use BufferedReader with a while loop reading line by line."
+    },
+    {
+      "type": "tip",
+      "title": "Not closing file resources, causing resource leaks",
+      "content": "Most common mistake: opening a FileReader or Scanner on a file but not calling close() when done. Open files consume operating system resources, and your program can run out of file handles. Fix: always use try-with-resources (try (Scanner sc = new Scanner(new File(\"data.txt\"))) { ... }) which auto-closes. Wrong: Scanner sc = new Scanner(new File(\"data.txt\")); /* no close */ Correct: try (Scanner sc = new Scanner(new File(\"data.txt\"))) { ... }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a program that reads a text file called 'temperatures.txt' where each line contains a city name and temperature separated by a comma (e.g., 'Madrid,28.5'). Calculate the average temperature across all cities and print it. Handle the case where the file doesn't exist by printing a friendly error message.",
+      "hints": [
+        "What method splits a String into parts using a delimiter?",
+        "How do you parse a temperature like '28.5' into a double?",
+        "What exception does Files.readAllLines throw if the file is missing?"
+      ]
+    }
+  ]
+}

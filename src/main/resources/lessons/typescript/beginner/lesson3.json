@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Operators",
+  "summary": "Use arithmetic, comparison, and logical operators to perform calculations and make decisions in TypeScript",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Operators Are Math and Logic Tools",
+      "content": "Operators are like tools in a toolbox that let you combine or compare values. Arithmetic operators (+, -, *, /) do math just like a calculator. Comparison operators (===, !==, <, >) ask yes-or-no questions like 'is the price greater than $10?' Logical operators (&&, ||, !) combine multiple yes-or-no questions — like asking 'is the item in stock AND priced under $20?' TypeScript checks that you use these operators on compatible types, preventing nonsense like subtracting a name from a price."
+    },
+    {
+      "type": "example",
+      "title": "Working with Arithmetic and Comparison Operators",
+      "content": "Shows arithmetic operations and comparison results using a shopping cart scenario",
+      "code": "// Set up item prices for a shopping cart\nconst itemPrice: number = 25.50;\nconst taxRate: number = 0.08;\nconst quantity: number = 3;\n// Arithmetic: calculate total before tax\nconst subtotal: number = itemPrice * quantity;\n// Arithmetic: calculate tax amount\nconst taxAmount: number = subtotal * taxRate;\n// Arithmetic: final total\nconst total: number = subtotal + taxAmount;\n// Comparison: check if customer qualifies for free shipping\nconst freeShippingThreshold: number = 50;\nconst qualifiesForFreeShipping: boolean = total >= freeShippingThreshold;\nconsole.log('Subtotal:', subtotal, 'Total:', total);\nconsole.log('Free shipping?', qualifiesForFreeShipping);\n// Expected: Subtotal: 76.5 Total: 82.62\n// Expected: Free shipping? true"
+    },
+    {
+      "type": "explanation",
+      "title": "Logical Operators Combine Conditions",
+      "content": "Logical operators let you check multiple conditions at once. The AND operator (&&) returns true only when every condition is true — like a bouncer checking both age AND ID. The OR operator (||) returns true if at least one condition is true — like a restaurant accepting either cash OR card. The NOT operator (!) flips true to false and false to true — like an 'opposite day' switch. TypeScript ensures the results are always boolean when used in conditions, which keeps your logic predictable."
+    },
+    {
+      "type": "tip",
+      "title": "Using == Instead of ===",
+      "content": "The #1 beginner mistake is using '==' (loose equality) instead of '===' (strict equality). Wrong approach: '5 == \"5\"' returns true even though one is a number and the other is a string, because JavaScript converts types automatically. Correct approach: '5 === \"5\"' returns false because the types differ. TypeScript will warn you about this, but beginners often ignore it. Always use '===' and '!==' in TypeScript. Think of '===' as asking 'are these exactly the same thing?' while '==' asks 'do these kinda look similar after some magic conversion?'"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A coffee shop sells lattes for $4.50 each and offers a $1.00 discount when you buy 4 or more. Create variables for price, quantity, and discount. Calculate the total and determine if the customer gets the discount. Use comparison and arithmetic operators. Print the final total and whether the discount was applied.",
+      "hints": [
+        "Which comparison operator checks if quantity is 4 or more?",
+        "How do you calculate a total with a conditional discount?",
+        "What type should your 'discountApplied' variable have?"
+      ]
+    }
+  ]
+}

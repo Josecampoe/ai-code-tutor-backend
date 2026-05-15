@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Introduction to OOP",
+  "summary": "Model real-world objects using classes, fields, and methods in Java",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Classes as Blueprints, Objects as Houses",
+      "content": "Before building a house, an architect draws a blueprint. The blueprint specifies that every house will have doors, windows, and a roof. But the blueprint itself isn't a house — it's a plan. You can build 100 identical houses from the same blueprint. In Java, a class is the blueprint, and an object is the actual house built from that blueprint. The class defines what properties (fields) and behaviors (methods) every object should have. You create objects from a class using the new keyword, just like a construction crew follows a blueprint."
+    },
+    {
+      "type": "example",
+      "title": "A Simple Class and Object Creation",
+      "content": "This defines a Car class with fields and a method, then creates two car objects in main",
+      "code": "// Define a Car class blueprint\nclass Car {\n    // Fields: data each Car object will have\n    String model;\n    int year;\n    double price;\n    \n    // Method: behavior this car can perform\n    void displayInfo() {\n        System.out.println(model + \" (\" + year + \") - $\" + price);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        // Create two actual Car objects from the blueprint\n        Car car1 = new Car();\n        car1.model = \"Camry\";\n        car1.year = 2023;\n        car1.price = 28000.00;\n        \n        Car car2 = new Car();\n        car2.model = \"Civic\";\n        car2.year = 2024;\n        car2.price = 25500.00;\n        \n        car1.displayInfo();\n        car2.displayInfo();\n    }\n}\n// Expected output:\n// Camry (2023) - $28000.0\n// Civic (2024) - $25500.0"
+    },
+    {
+      "type": "explanation",
+      "title": "Fields, Methods, and State",
+      "content": "Every object has state (what it knows) and behavior (what it does). The state is stored in fields — variables that belong to the object. The behavior is defined in methods — functions that belong to the object. Going back to the car analogy: the car's color, speed, and fuel level are its state (fields). The car's accelerate, brake, and honk actions are its behavior (methods). Each Car object you create has its own copy of the fields, so one car can be red and another blue without affecting each other."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the new keyword when creating objects",
+      "content": "Most common mistake: writing Car myCar = Car(); instead of Car myCar = new Car();. Without new, Java doesn't allocate memory for the object. Fix: always use new when creating an instance. Wrong: Car myCar = Car();. Correct: Car myCar = new Car();"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Design a Student class for a school registration system. It should have fields for name (String), studentId (int), and gpa (double). Add a method called printSummary that prints all the student's info. Then create two Student objects in main with different data and call printSummary on each.",
+      "hints": [
+        "What keyword do you use to create an instance of the Student class?",
+        "How do you access an object's fields after creating it?",
+        "What goes inside the parentheses of a method declaration?"
+      ]
+    }
+  ]
+}

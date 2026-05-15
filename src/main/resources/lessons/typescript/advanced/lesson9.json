@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Deployment Basics",
+  "summary": "Build, configure, and deploy a TypeScript application to production with environment configuration and CI/CD",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Deployment Is Like Moving from a Workshop to a Storefront",
+      "content": "Development happens in your local workshop — everything is set up for convenience: hot reloading, verbose error messages, and relaxed security. Deployment moves your application to a storefront (production server) where customers use it. This requires: building (compiling TypeScript to JavaScript), configuring (setting environment variables for different environments), hardening (removing debug tools, enabling security headers), and monitoring (logging errors that happen in production). TypeScript compilation is straightforward with 'tsc' or 'tsup' — they strip types and output JavaScript. The key difference is that production must be reliable, fast, and secure, while development prioritizes developer experience and debugging."
+    },
+    {
+      "type": "example",
+      "title": "Build Configuration and Environment Variables",
+      "content": "Shows a production-ready build setup with environment-specific configuration",
+      "code": "// File: tsconfig.json — production build config\n// {\n//   \"compilerOptions\": {\n//     \"target\": \"ES2022\",\n//     \"module\": \"NodeNext\",\n//     \"moduleResolution\": \"NodeNext\",\n//     \"outDir\": \"./dist\",\n//     \"rootDir\": \"./src\",\n//     \"strict\": true,\n//     \"esModuleInterop\": true,\n//     \"skipLibCheck\": true,\n//     \"sourceMap\": true\n//   },\n//   \"include\": [\"src/**/*\"],\n//   \"exclude\": [\"src/**/*.test.ts\"]\n// }\n// File: src/config.ts — typed environment configuration\ninterface AppConfig {\n  port: number;\n  databaseUrl: string;\n  nodeEnv: 'development' | 'production' | 'test';\n}\nfunction loadConfig(): AppConfig {\n  // process.env is populated by the deployment platform\n  return {\n    port: parseInt(process.env.PORT || '3000', 10),\n    databaseUrl: process.env.DATABASE_URL || 'postgres://localhost:5432/app',\n    nodeEnv: (process.env.NODE_ENV as AppConfig['nodeEnv']) || 'development',\n  };\n}\nexport const config: AppConfig = loadConfig();\nconsole.log(`Starting in ${config.nodeEnv} mode on port ${config.port}`);\n// Build command: npx tsc --project tsconfig.json"
+    },
+    {
+      "type": "explanation",
+      "title": "CI/CD Pipelines, Docker, and Hosting Options",
+      "content": "CI/CD (Continuous Integration/Continuous Deployment) automates testing and deployment. When you push code to GitHub, a CI pipeline runs your tests, lints the code, and builds the TypeScript project. If everything passes, CD deploys the build artifact to a server. Docker packages your application with all its dependencies into a container — like a shipping container that holds everything needed and works identically on any dock (laptop, test server, production). Popular TypeScript deployment targets: Node.js on VPS (DigitalOcean, AWS EC2), serverless (AWS Lambda with Node.js runtime), or Platform-as-a-Service (Railway, Fly.io, Vercel for backend). Each has trade-offs in cost, scaling, and maintenance."
+    },
+    {
+      "type": "tip",
+      "title": "Hard-Coding Secrets or Environment-Specific Values",
+      "content": "The #1 advanced deployment mistake is hard-coding secrets (API keys, database passwords) or environment-specific URLs in the source code. Wrong approach: 'const dbUrl = \"postgres://user:password@localhost:5432/mydb\";' in the source file — this exposes secrets in git history and prevents different environments. Correct: use environment variables accessed via 'process.env' and never commit .env files. Add '.env' to .gitignore. Use a secrets manager (AWS Secrets Manager, Doppler, or GitHub Secrets) for production. In TypeScript, create a typed config module that reads from process.env with validation — if a required variable is missing, the app should fail to start immediately rather than crash later at an unpredictable moment."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a deployment plan for a TypeScript Express API with a PostgreSQL database. Write: (1) a production-ready Dockerfile that uses multi-stage builds (build stage compiles TypeScript, runtime stage is minimal with only compiled JS), (2) a .dockerignore file, (3) a sample CI pipeline in YAML format (GitHub Actions) that runs tests on push and deploys to a server on main branch commits. Document which environment variables the application needs and which are optional.",
+      "hints": [
+        "Why should the runtime Docker image not include TypeScript or dev dependencies (ts-node, @types/*)?",
+        "What does the CI pipeline need to do before running tests — install dependencies? compile?",
+        "How does the application know whether it is running in development or production — what environment variable controls this?"
+      ]
+    }
+  ]
+}

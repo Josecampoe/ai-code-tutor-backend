@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Modules and Packages",
+  "summary": "Organize code into reusable modules and manage dependencies with npm",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Modules Are Like Kitchen Drawers",
+      "content": "Imagine a kitchen where every utensil is piled on the counter — chaotic and hard to find anything. Modules are like organized drawers: one for knives, one for measuring cups, one for spices. Each drawer (file) has a specific purpose and you only open what you need. JavaScript modules (ESM) use export to make things available and import to pull them in. This keeps code organized, prevents naming conflicts, and makes testing easier because each module can be tested in isolation."
+    },
+    {
+      "type": "example",
+      "title": "Exporting and importing between files",
+      "content": "Creates a math utilities module and imports it in a main file",
+      "code": "// File: math-utils.js\nexport function add(a, b) {\n  return a + b;\n}\n\nexport function multiply(a, b) {\n  return a * b;\n}\n\nexport const PI = 3.1416;\n\n// File: main.js\n// Import specific named exports\nimport { add, multiply, PI } from './math-utils.js';\n\nconsole.log(add(5, 3));\n// Expected output: 8\n\nconsole.log(multiply(4, PI));\n// Expected output: 12.5664\n\n// Import everything as a namespace\nimport * as MathUtils from './math-utils.js';\nconsole.log(MathUtils.add(2, 2));\n// Expected output: 4"
+    },
+    {
+      "type": "explanation",
+      "title": "Default vs Named Exports",
+      "content": "A module can have one default export (usually the main thing) and many named exports. Default exports are imported without curly braces: import MyComponent from './file.js'. Named exports require curly braces: import { specificThing } from './file.js'. Default exports are convenient but make renaming easy at import time — which can lead to inconsistent naming across a codebase. Professional projects often prefer named exports for consistency and better IDE autocompletion."
+    },
+    {
+      "type": "tip",
+      "title": "Mixing default and named imports incorrectly",
+      "content": "The #1 mistake developers make is importing named exports without curly braces. Wrong: import add from './math-utils.js' — this tries to get the default export, which does not exist. Correct: import { add } from './math-utils.js'. For default exports: export default class; import MyClass from './file.js' (no braces). Remember: braces for named, no braces for default."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a validation module with named exports: isValidEmail, isStrongPassword, and sanitizeInput. Then create a main file that imports all three and tests them against sample data. Use both named imports and namespace import approaches in separate versions.",
+      "hints": [
+        "What regular expression pattern can check for a basic email format?",
+        "What minimum requirements define a strong password (length, character types)?",
+        "How do you import everything from a module without listing each export individually?"
+      ]
+    }
+  ]
+}

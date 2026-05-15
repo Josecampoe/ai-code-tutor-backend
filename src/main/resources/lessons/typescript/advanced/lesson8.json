@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Databases and Persistence",
+  "summary": "Connect to SQL databases using Prisma ORM with TypeScript, write type-safe queries, and handle migrations",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "An ORM Is Like a Translator Between Languages",
+      "content": "Your TypeScript code speaks objects and classes; your database speaks tables and SQL. An ORM (Object-Relational Mapper) is like a translator that converts between these two languages. Prisma is the leading TypeScript ORM — you define your data model in a schema file, and Prisma generates a fully typed client. This means every query is checked at compile time: typos in column names, wrong relationship paths, or mismatched types are caught before you run the code. Instead of writing 'SELECT * FROM users WHERE id = 1' and manually mapping the result to a User object, you write 'prisma.user.findUnique({ where: { id: 1 } })' and get a typed 'User | null' back."
+    },
+    {
+      "type": "example",
+      "title": "Defining a Prisma Model and Running Typed Queries",
+      "content": "Shows a Prisma schema for a blog and the generated TypeScript queries for creating and reading posts",
+      "code": "// File: prisma/schema.prisma — the data model definition\n// model User {\n//   id    Int     @id @default(autoincrement())\n//   email String  @unique\n//   name  String\n//   posts Post[]\n// }\n// model Post {\n//   id      Int     @id @default(autoincrement())\n//   title   String\n//   content String?\n//   author  User    @relation(fields: [authorId], references: [id])\n//   authorId Int\n// }\n// File: src/queries.ts — typed database operations\nimport { PrismaClient } from '@prisma/client';\nconst prisma = new PrismaClient();\nasync function createUserWithPost(): Promise<void> {\n  // Create a user and a post in one transaction (nested write)\n  const user = await prisma.user.create({\n    data: {\n      email: 'alice@example.com',\n      name: 'Alice',\n      posts: { create: { title: 'My First Post' } },\n    },\n    include: { posts: true }, // Include related posts in result\n  });\n  console.log('Created user:', user.name, 'with', user.posts.length, 'post(s)');\n  // Query with filtering\n  const recentPosts = await prisma.post.findMany({\n    where: { authorId: user.id },\n    orderBy: { id: 'desc' },\n    take: 10,\n  });\n  console.log('Recent posts:', recentPosts.length);\n}\ncreateUserWithPost();"
+    },
+    {
+      "type": "explanation",
+      "title": "Migrations, Connection Pooling, and Transactions",
+      "content": "Migrations are version-controlled snapshots of your database schema — like git for your database structure. Prisma generates migration files when you change your schema, making deployment to production safe and repeatable. Connection pooling reuses database connections instead of creating a new one for every request — like a taxi fleet that picks up many passengers instead of each person buying a car. TypeScript's async/await makes transaction handling natural: wrap operations in 'prisma.$transaction([...])' to ensure atomicity — either all operations succeed or the entire transaction rolls back. This prevents partial updates where, for example, a payment is charged but the order is not created due to a crash."
+    },
+    {
+      "type": "tip",
+      "title": "N+1 Query Problem — Fetching Related Data Inefficiently",
+      "content": "The #1 advanced database mistake is the N+1 query problem: fetching a list of items and then making a separate query for each item's relations. Wrong approach: 'const users = await prisma.user.findMany(); for (const user of users) { const posts = await prisma.post.findMany({ where: { authorId: user.id } }); }' — this makes 1 query for users + N queries for posts. Correct: use Prisma's 'include' or 'select' to eagerly load relations in a single query: 'await prisma.user.findMany({ include: { posts: true } })'. For complex cases, use raw SQL or batch queries. Always check your database query log to see what queries your ORM is actually generating."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Design a Prisma schema for an e-commerce system with User, Product, Order, and OrderItem models. A User has many Orders. An Order has many OrderItems (linking to Product). Product has name, price, and stock. Write Prisma queries to: (1) find a user with all their orders including product details, (2) reduce product stock when an order is created (use a transaction), (3) find the top 5 most ordered products. Handle the case where stock is insufficient.",
+      "hints": [
+        "What relation type connects OrderItem to both Order and Product — what foreign keys are needed?",
+        "How can you update product stock and create the order atomically — what Prisma API ensures both succeed or both fail?",
+        "How do you aggregate and sort data in Prisma — can you group by product ID and count?"
+      ]
+    }
+  ]
+}

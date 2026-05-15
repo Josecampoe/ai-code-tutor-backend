@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "OOP Deep Dive",
+  "summary": "Master constructors, the this keyword, method overloading, and encapsulation",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Constructors as Assembly Instructions",
+      "content": "When you buy furniture from a store, the box comes with assembly instructions that tell you how to put it together. Some furniture comes partially assembled (default constructor), and other pieces let you choose options like color or size (parameterized constructor). In Java, a constructor is a special method that runs when you create an object with new. It sets up the initial state of the object. If you don't write any constructor, Java gives you a default one for free — but once you write your own, the default disappears."
+    },
+    {
+      "type": "example",
+      "title": "Multiple Constructors via Overloading",
+      "content": "This BankAccount class offers different ways to create accounts depending on what info is available",
+      "code": "public class BankAccount {\n    private String owner;\n    private double balance;\n    \n    // Full constructor: requires both fields\n    public BankAccount(String owner, double initialDeposit) {\n        this.owner = owner;\n        // Ensure balance can't be negative at creation\n        if (initialDeposit >= 0) {\n            this.balance = initialDeposit;\n        }\n    }\n    \n    // Overloaded constructor: name only, zero balance\n    public BankAccount(String owner) {\n        // Call the full constructor with 0 as balance\n        this(owner, 0.0);\n    }\n    \n    public void printAccount() {\n        System.out.println(owner + \": $\" + balance);\n    }\n}\n// Expected: new BankAccount(\"Alice\", 500).printAccount();\n// Output: Alice: $500.0"
+    },
+    {
+      "type": "explanation",
+      "title": "Encapsulation and the this Keyword",
+      "content": "Encapsulation is the practice of keeping an object's internal data private and exposing controlled access through public methods. Imagine a bank vault: the money inside is private, and you interact with it only through the teller window (methods). The this keyword is a self-reference — it's the object saying 'me' or 'myself'. When a parameter has the same name as a field, this.fieldName distinguishes the field from the parameter. This is like saying 'my own balance' versus 'the balance you're handing me'. Encapsulation protects your object's data from being set to invalid values."
+    },
+    {
+      "type": "tip",
+      "title": "Confusing method overloading with method overriding",
+      "content": "Most common mistake: thinking that two methods with the same name but different parameters in the same class is overriding. It's overloading. Overriding happens in a subclass with inheritance. Fix: remember overloading = same class, same name, different parameters. Overriding = subclass, same signature, @Override annotation. Wrong: 'I overloaded the method in the child class'. Correct: 'I overrode the method in the child class and overloaded it in the parent.'"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a Product class with private fields for name, price, and quantityInStock. Write two constructors: one that takes all three fields, and one that takes just name and price (defaulting quantity to 0). Add a method restock(int amount) that increases the stock only if the amount is positive. Add a method sell(int amount) that decreases stock only if enough is available.",
+      "hints": [
+        "How do you prevent the full constructor from accepting negative values?",
+        "How can the two-parameter constructor reuse the three-parameter constructor?",
+        "What condition checks if there is enough stock before selling?"
+      ]
+    }
+  ]
+}

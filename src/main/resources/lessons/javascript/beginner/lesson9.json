@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Introduction to OOP",
+  "summary": "Model real-world things using objects and simple classes",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Objects Bundle Data and Behavior",
+      "content": "Objects in JavaScript are like a character sheet in a video game. The character has properties (health, name, level) and abilities (attack, heal, move). Similarly, an object bundles related data (properties) and functions (methods) into a single unit. Instead of storing a person's name in one variable, age in another, and email in a third, you put them all inside a person object. This keeps your code organized and mirrors how we naturally think about things."
+    },
+    {
+      "type": "example",
+      "title": "Creating a simple object and a class",
+      "content": "Defines a person object with properties and a method, then creates a blueprint with a class",
+      "code": "// Object literal — a single person\nlet person = {\n  name: 'Alice',\n  age: 30,\n  greet: function () {\n    return 'Hi, I am ' + this.name;\n  }\n};\nconsole.log(person.greet());\n// Expected output: Hi, I am Alice\n\n// Class — blueprint for many objects\nclass Student {\n  constructor(name, grade) {\n    this.name = name;\n    this.grade = grade;\n  }\n  describe() {\n    return this.name + ' has grade ' + this.grade;\n  }\n}\nlet s = new Student('Bob', 'A');\nconsole.log(s.describe());\n// Expected output: Bob has grade A"
+    },
+    {
+      "type": "explanation",
+      "title": "The class Keyword Is a Blueprint",
+      "content": "A class is a blueprint for creating objects with the same structure. Just as a house blueprint describes the layout without being a house itself, a class describes properties and methods without creating an actual object. You use the new keyword to build an instance from the class. The constructor method runs automatically when new is called — it sets up initial values. Each instance gets its own copy of the properties but shares the methods defined in the class."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the new keyword",
+      "content": "The #1 mistake beginners make is calling a class constructor without new. Wrong: let s = Student('Bob', 'A'); — this does not create an object; it calls the constructor as a regular function and returns undefined. Correct: let s = new Student('Bob', 'A');. Without new, this inside the constructor refers to the global object (or undefined in strict mode), causing hard-to-find bugs."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A library needs a simple system to track books. Create a Book class with properties for title, author, and year. Add a method called getSummary that returns 'Title by Author (Year)'. Then create two book instances and print their summaries.",
+      "hints": [
+        "What parameters should the constructor accept?",
+        "How do you assign constructor parameters to instance properties using this?",
+        "What does the getSummary method need to return — a formatted string with which parts?"
+      ]
+    }
+  ]
+}

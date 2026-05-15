@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Testing",
+  "summary": "Write unit tests, integration tests, and mocks using Vitest or Jest",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Testing Is Like a Fire Drill",
+      "content": "Running tests is like conducting fire drills: you practice scenarios in a controlled environment so you know everything works when it matters. Unit tests verify individual functions in isolation — like testing a single smoke detector. Integration tests verify that components work together — like checking the whole alarm system. End-to-end tests simulate real user scenarios — like a full evacuation drill. Most professional projects aim for a test pyramid: many unit tests, fewer integration tests, and a handful of E2E tests."
+    },
+    {
+      "type": "example",
+      "title": "Unit testing a pricing function",
+      "content": "Tests a calculateTotal function with normal cases, edge cases, and error cases",
+      "code": "// pricing.js\nexport function calculateTotal(price, quantity, discount) {\n  if (price < 0 || quantity < 0) {\n    throw new Error('Negative values not allowed');\n  }\n  let subtotal = price * quantity;\n  let discountAmt = subtotal * (discount || 0);\n  return subtotal - discountAmt;\n}\n\n// pricing.test.js\nimport { describe, it, expect } from 'vitest';\nimport { calculateTotal } from './pricing';\n\ndescribe('calculateTotal', () => {\n  it('computes total without discount', () => {\n    expect(calculateTotal(10, 3)).toBe(30);\n  });\n  it('applies percentage discount', () => {\n    expect(calculateTotal(100, 2, 0.1)).toBe(180);\n  });\n  it('rejects negative price', () => {\n    expect(() => calculateTotal(-5, 1)).toThrow();\n  });\n});"
+    },
+    {
+      "type": "explanation",
+      "title": "Mocks and Stubs: Isolating the Code Under Test",
+      "content": "When testing a function that calls an API or database, you do not want your tests making real network calls. Mocks replace real dependencies with controllable substitutes. A stub returns fixed values. A spy records how a function was called (how many times, with what arguments). In Jest/Vitest, vi.mock() replaces an entire module, and vi.fn() creates a mock function. This lets you test error handling by making the mock throw, or test loading states by making the mock resolve slowly."
+    },
+    {
+      "type": "tip",
+      "title": "Testing implementation details instead of behavior",
+      "content": "The #1 mistake developers make is testing internal implementation rather than public behavior. Wrong: testing that a private method was called or that internal state matches certain values — these tests break on refactoring. Correct: test the public API — given input X, expect output Y. If the internals change but the output is the same, the test should still pass. Refactoring should not require rewriting tests."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write tests for a UserService that has methods: getUser(id) — fetches from an API, and sendWelcomeEmail(user) — calls an email service. Mock the API and email modules so no real calls are made. Test: successful user fetch, fetch returning null (user not found), API throwing an error (network failure), and sendWelcomeEmail being called with the correct user data after fetch.",
+      "hints": [
+        "How do you mock the fetch function (or API module) to return different data per test?",
+        "What assertion checks that sendWelcomeEmail was called with the correct argument?",
+        "How do you test the error path — what should getUser return or throw when the API fails?"
+      ]
+    }
+  ]
+}

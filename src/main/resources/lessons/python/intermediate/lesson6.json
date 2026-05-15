@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 6,
+  "title": "Functional Programming",
+  "summary": "Write cleaner code using lambda, map, filter, reduce, and list comprehensions",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functions as first-class citizens",
+      "content": "In Python, functions are values — you can pass them around like numbers or strings. This is the heart of functional programming: treating functions as building blocks that can be assigned to variables, passed as arguments, or returned from other functions. Think of it like a factory assembly line where each station (function) performs one transformation and passes the result to the next station. This style often leads to more declarative code — you describe WHAT you want done, not HOW to do it step by step. Python blends procedural, OOP, and functional styles, so you pick the best tool for each job."
+    },
+    {
+      "type": "example",
+      "title": "Lambda, map, and filter in action",
+      "content": "Process a list of employee salaries — filter, transform, and sum in a functional style",
+      "code": "# List of annual salaries for employees\nsalaries = [45000, 62000, 38000, 75000, 52000, 41000]\n\n# Filter: keep only salaries above $50000 using a lambda (anonymous function)\n# lambda x: ... is a one-line function without a def statement\nhigh_earners = list(filter(lambda s: s > 50000, salaries))\nprint(\"High earners:\", high_earners)\n\n# Map: apply a 10% bonus to every salary\n# Each element gets transformed through the lambda function\nwith_bonus = list(map(lambda s: s * 1.10, high_earners))\nprint(\"With bonus:\", with_bonus)\n\n# List comprehension — the Pythonic way (more readable than map/filter)\n# [expression for item in iterable if condition]\nbonus_list = [s * 1.10 for s in salaries if s > 50000]\nprint(\"Comprehension:\", bonus_list)\n\n# Expected output:\n# High earners: [62000, 75000, 52000]\n# With bonus: [68200.0, 82500.0, 57200.0]\n# Comprehension: [68200.0, 82500.0, 57200.0]"
+    },
+    {
+      "type": "explanation",
+      "title": "List comprehensions vs map/filter — the trade-off",
+      "content": "List comprehensions are Python's preferred functional-style tool. They combine map and filter into one readable expression: [f(x) for x in iterable if condition]. They're generally faster than map/filter with lambdas because they avoid function call overhead per element. However, if you already have a named function, map(function, iterable) can be cleaner. For simple transformations, use comprehensions. For extremely large datasets (millions of items), consider generator expressions (replace [] with ()) which produce items lazily without building the entire list in memory. For complex multi-step pipelines, good old for loops with explicit variable names may be the clearest option."
+    },
+    {
+      "type": "tip",
+      "title": "Don't overuse lambdas — name your functions",
+      "content": "Lambdas are convenient but reduce readability when complex. Wrong: result = map(lambda x: x * 1.10 if x > 0 else 0, data) — the lambda is doing too much. Correct: define a named function: def apply_bonus(salary): return salary * 1.10 if salary > 0 else 0; result = map(apply_bonus, data). Named functions are easier to test, debug, and reuse."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You have a list of product prices: [29.99, 49.99, 10.50, 89.99, 5.00, 120.00]. Use a list comprehension to: (1) keep only prices over $20 (the profitable items), and (2) apply a 15% discount to each kept price. Print the resulting list. Then do the same with map() and filter() to compare the syntax.",
+      "hints": [
+        "Which part of the comprehension is the condition to filter items?",
+        "Which part is the transformation expression applied to each item?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Error Handling",
+  "summary": "Catch and handle errors gracefully using try-catch-finally blocks and create custom error classes",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Errors Are Like Fire Alarms, Not Fires Themselves",
+      "content": "An error in your code is like a fire — something went wrong. A 'try-catch' block is the fire alarm system that detects it and lets you respond. The 'try' block wraps code that might fail (like reading a file that does not exist). If an error occurs, execution jumps to the 'catch' block where you handle it — log it, show a user-friendly message, or try an alternative approach. The 'finally' block always runs afterward, regardless of success or failure — like locking the building doors after an evacuation. TypeScript forces you to think about what errors your code might encounter."
+    },
+    {
+      "type": "example",
+      "title": "Parsing JSON Safely with Error Handling",
+      "content": "Attempts to parse a JSON string and gracefully handles malformed data",
+      "code": "// A potentially malformed JSON string\nconst jsonString: string = '{ \"name\": \"Alice\", age: 30 }';\n// Invalid JSON — missing quotes around 'age'\ntry {\n  // This line might throw an error\n  const userData: unknown = JSON.parse(jsonString);\n  console.log('Parsed data:', userData);\n} catch (error: unknown) {\n  // Type guard to check if error is an Error object\n  if (error instanceof Error) {\n    console.error('Failed to parse JSON:', error.message);\n  } else {\n    console.error('An unknown error occurred');\n  }\n} finally {\n  // This always runs — cleanup or logging\n  console.log('Parse attempt finished');\n}\n// Expected:\n// Failed to parse JSON: Expected property name in JSON at position 17\n// Parse attempt finished"
+    },
+    {
+      "type": "explanation",
+      "title": "Custom Error Classes for Domain-Specific Problems",
+      "content": "Built-in Error types (TypeError, RangeError) are generic, like saying 'something broke'. Custom error classes let you be specific: 'InsufficientFundsError', 'ValidationError', 'NetworkTimeoutError'. These extend the Error class and can carry extra data like the account balance that caused the failure. This is like having different colored alarms for different emergencies — a fire alarm sounds different from a carbon monoxide detector. When you catch errors, you can check the type and respond appropriately: insufficient funds shows a 'deposit money' message, while a network error triggers a retry."
+    },
+    {
+      "type": "tip",
+      "title": "Catching Errors Too Broadly and Swallowing Them",
+      "content": "The #1 intermediate mistake is using an empty catch block that silently ignores errors. Wrong approach: 'try { riskyOperation(); } catch (e) {}' — the error disappears with no trace, making debugging impossible. Correct approach: 'try { riskyOperation(); } catch (e: unknown) { console.error(\"Operation failed:\", e); throw e; }' — log the error and re-throw if you cannot handle it. At minimum, always log the error message. Silent catches are the leading cause of 'it works on my machine' bugs that mysteriously fail in production."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A banking app needs a withdrawal function. Create a custom InsufficientFundsError that stores the account balance and attempted withdrawal amount. Write a function 'withdraw(balance: number, amount: number)' that throws InsufficientFundsError if the amount exceeds the balance. Call the function with a $50 balance attempting to withdraw $75. Catch the error and print a helpful message showing the shortfall.",
+      "hints": [
+        "What properties should your custom error carry beyond the message?",
+        "How do you extend the built-in Error class?",
+        "What type guard should you use in the catch block to access your custom properties?"
+      ]
+    }
+  ]
+}

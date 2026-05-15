@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Operators",
+  "summary": "Perform calculations, comparisons, and logical operations on data",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Operators as Tools in a Toolbox",
+      "content": "Think of operators as the tools in a handyman's belt. A hammer does one thing (pound nails), a screwdriver does another (turn screws), and a measuring tape compares lengths. Java operators work the same way. Arithmetic operators (+, -, *, /) calculate numbers like a calculator. Comparison operators (>, <, ==) compare values like a scale. Logical operators (&&, ||, !) combine conditions like a checklist where all items must pass."
+    },
+    {
+      "type": "example",
+      "title": "Using Arithmetic and Comparison Operators",
+      "content": "This code calculates a restaurant bill total and checks if it's within budget",
+      "code": "// Menu item prices\ndouble burgerPrice = 12.50;\ndouble friesPrice = 4.00;\ndouble sodaPrice = 2.50;\n// Calculate subtotal using +\ndouble subtotal = burgerPrice + friesPrice + sodaPrice;\n// Tax is 8% of subtotal\ndouble tax = subtotal * 0.08;\n// Total with tax\ndouble total = subtotal + tax;\n// Print the bill\nSystem.out.println(\"Total: $\" + total);\n// Check if total exceeds $20 budget\nboolean withinBudget = total <= 20.00;\nSystem.out.println(\"Within budget: \" + withinBudget);\n// Expected output (varies by math):\n// Total: $20.52\n// Within budget: false"
+    },
+    {
+      "type": "explanation",
+      "title": "Integer Division and Modulus",
+      "content": "When you divide two integers in Java, the result is always an integer — Java truncates (chops off) the decimal part. This is like splitting 7 pizzas evenly among 2 people: each person gets 3 whole pizzas (7 / 2 = 3), and 1 pizza remains (7 % 2 = 1). The modulus operator (%) gives you the remainder of a division. This is extremely useful for checking if a number is even (number % 2 == 0 means even) or cycling through positions."
+    },
+    {
+      "type": "tip",
+      "title": "Using = instead of == for comparison",
+      "content": "Most common mistake: writing if (score = 100) instead of if (score == 100). The single = is the assignment operator that sets a value. The double == is the equality operator that checks if two values are the same. Fix: always use == for comparison. Wrong: if (total = 50). Correct: if (total == 50)."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A coffee shop sells lattes for $4.75 each. Write code that calculates the total cost for 3 lattes, applies a 10% discount if the total exceeds $12, and prints the final amount along with whether a discount was applied.",
+      "hints": [
+        "What operator calculates the total before discount?",
+        "How do you check if the total is greater than $12?",
+        "How can you print both the final price and the boolean result?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Recursion",
+  "summary": "Solve problems that repeat in a self-similar way using recursive functions",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Recursion Is Russian Dolls",
+      "content": "Recursion is when a function calls itself, like Russian nesting dolls: each doll contains a smaller version of itself until you reach the tiniest solid doll. Every recursive function needs two parts: a base case (the smallest doll that stops the nesting) and the recursive case (the call to a smaller version). Recursion is ideal for problems with a naturally recursive structure: file systems (folders inside folders), tree traversal, and mathematical sequences like factorials."
+    },
+    {
+      "type": "example",
+      "title": "Factorial with recursion",
+      "content": "Calculates the factorial of a number using recursive calls with a base case",
+      "code": "function factorial(n) {\n  // Base case: stop when n is 0 or 1\n  if (n <= 1) {\n    return 1;\n  }\n  // Recursive case: n times factorial of n-1\n  return n * factorial(n - 1);\n}\n\nconsole.log(factorial(5));\n// Expected output: 120\n// Calculation: 5 * 4 * 3 * 2 * 1 = 120\n\nconsole.log(factorial(1));\n// Expected output: 1\n\nconsole.log(factorial(0));\n// Expected output: 1"
+    },
+    {
+      "type": "explanation",
+      "title": "The Call Stack and Stack Overflow",
+      "content": "Each recursive call adds a frame to the call stack — like stacking plates. The base case stops adding plates and the stack unwinds as each call returns. If the base case is missing or never reached, the stack grows until it hits the memory limit, causing a stack overflow error. JavaScript engines have different stack limits (around 10,000 frames). For deep recursion, consider a loop (iteration) instead — it uses constant stack space."
+    },
+    {
+      "type": "tip",
+      "title": "Missing or incorrect base case",
+      "content": "The #1 mistake developers make with recursion is forgetting the base case or making it unreachable. Wrong: function countdown(n) { return countdown(n - 1); } — no base case, infinite recursion. Correct: function countdown(n) { if (n <= 0) return; console.log(n); countdown(n - 1); }. Always verify the base case is reachable and that each recursive call moves toward it."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a recursive function called deepReverse that reverses an array that may contain nested arrays. For example, deepReverse([1, [2, [3, 4]], 5]) should return [5, [[4, 3], 2], 1]. Handle arbitrarily deep nesting without flattening the structure.",
+      "hints": [
+        "What is the base case — what kind of element does not need recursion?",
+        "How do you check if an element is an array (needs recursion) or a simple value?",
+        "How do you build the result — by reversing the outer array first, or processing inner arrays first?"
+      ]
+    }
+  ]
+}

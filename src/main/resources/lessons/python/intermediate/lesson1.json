@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 1,
+  "title": "OOP Deep Dive",
+  "summary": "Use inheritance, polymorphism, and encapsulation to build extensible class hierarchies",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Inheritance is like a family tree",
+      "content": "Inheritance lets you create a new class that reuses, extends, or overrides behavior from an existing class — like a child inheriting traits from a parent but also having unique characteristics. The parent class (base class) defines shared functionality. The child class (subclass) inherits all of it automatically, then adds or changes only what's different. This eliminates duplicated code across similar classes. Python supports multiple inheritance (a class can inherit from several parents), but single inheritance with well-designed hierarchies is generally cleaner and easier to maintain."
+    },
+    {
+      "type": "example",
+      "title": "Employee hierarchy with inheritance",
+      "content": "A base Employee class and two subclasses that specialize pay calculation",
+      "code": "class Employee:\n    # Base class -- shared by all employee types\n    def __init__(self, name, employee_id):\n        self.name = name  # Employee's full name\n        self.employee_id = employee_id  # Unique identifier\n\n    def calculate_pay(self, hours_worked):\n        # Default: pay = hours * base rate (to be overridden)\n        return hours_worked * 20  # $20 per hour base rate\n\nclass SalariedEmployee(Employee):\n    # SalariedEmployee inherits from Employee -- gets name and id automatically\n    def __init__(self, name, employee_id, annual_salary):\n        # Call the parent's __init__ to set name and employee_id\n        super().__init__(name, employee_id)  # super() refers to parent\n        self.annual_salary = annual_salary  # New attribute for salary\n\n    def calculate_pay(self, hours_worked):\n        # Override: salaried employees get fixed salary regardless of hours\n        return self.annual_salary / 26  # Bi-weekly pay from annual salary\n\n# Create a salaried employee\nmanager = SalariedEmployee(\"Alice Chen\", \"E1001\", 78000)\nprint(f\"{manager.name}: ${manager.calculate_pay(80):.2f}\")\n# Expected output:\n# Alice Chen: $3000.00"
+    },
+    {
+      "type": "explanation",
+      "title": "Polymorphism and duck typing",
+      "content": "Polymorphism means 'many forms' — the ability for different classes to define methods with the same name but different behavior. In Python, this works through duck typing: 'if it walks like a duck and quacks like a duck, it's a duck.' You don't need formal interfaces; Python just checks if the object has the required method at runtime. This lets you write flexible code that works with any object that implements the expected methods. It's powerful but requires discipline — document what methods consumers should expect and test thoroughly."
+    },
+    {
+      "type": "tip",
+      "title": "super() is not optional in subclasses",
+      "content": "A common intermediate mistake is defining __init__ in a subclass but forgetting to call super().__init__(). Wrong: class Manager(Employee): def __init__(self, name, id, dept): self.dept = dept — name and id are never set. Correct: call super().__init__(name, id) first, then set dept. Without super(), the parent's initialization is skipped, and inherited attributes will be missing."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A library needs a media tracking system. Create a base class Media with title and year attributes and a describe() method. Create two subclasses: Book (adds author and pages) and Movie (adds director and duration). Each subclass should override describe() to include its own fields. Create one book and one movie, then call describe() on both using a single loop.",
+      "hints": [
+        "What happens in the subclass __init__ if you don't call the parent __init__?",
+        "How can you store both media types in a single list to iterate over them?"
+      ]
+    }
+  ]
+}

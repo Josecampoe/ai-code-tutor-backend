@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "OOP Deep Dive",
+  "summary": "Master prototypes, inheritance, and the prototype chain in JavaScript",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Prototypes Are Shared Toolkits",
+      "content": "Every JavaScript object has a hidden link called [[Prototype]] that points to another object. When you access a property that does not exist on the object itself, JavaScript walks up this chain looking for it — like a employee asking a manager, then a director, then a CEO. All instances created from the same class share one prototype object. Methods defined on the prototype exist in one place in memory, not duplicated across instances. This is JavaScript's native inheritance mechanism."
+    },
+    {
+      "type": "example",
+      "title": "Prototype chain in action",
+      "content": "Creates a class and demonstrates how the prototype chain resolves method calls",
+      "code": "class Animal {\n  constructor(name) {\n    this.name = name;\n  }\n  speak() {\n    return this.name + ' makes a sound';\n  }\n}\n\nclass Dog extends Animal {\n  speak() {\n    return this.name + ' barks';\n  }\n}\n\nlet rex = new Dog('Rex');\nconsole.log(rex.speak());\n// Expected output: Rex barks\n\n// Check the prototype chain\nconsole.log(rex.__proto__ === Dog.prototype);\n// Expected output: true\nconsole.log(rex.__proto__.__proto__ === Animal.prototype);\n// Expected output: true"
+    },
+    {
+      "type": "explanation",
+      "title": "hasOwnProperty vs in Operator",
+      "content": "The in operator checks the entire prototype chain for a property, while hasOwnProperty checks only the object's own properties. This distinction matters when you iterate over objects. If you use for...in on an object, it enumerates inherited properties as well. Using hasOwnProperty filters those out. Understanding this prevents bugs where inherited methods show up unexpectedly in data processing."
+    },
+    {
+      "type": "tip",
+      "title": "Modifying built-in prototypes",
+      "content": "The #1 mistake intermediate developers make is extending built-in prototypes like Array.prototype with custom methods. Wrong: Array.prototype.shuffle = function () {...}. This can collide with future JavaScript versions or other libraries. Correct: create a standalone function (function shuffle(arr) {...}) or use a utility class. Only extend built-in prototypes in polyfills with careful checks and documentation."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A payment system needs different processing strategies. Create a base Payment class with a process(amount) method. Extend it with CreditCardPayment and PayPalPayment that each override process. Both should call the base method first (printing 'Processing payment of $X'), then add their own specific logic. Create instances and call process.",
+      "hints": [
+        "How do you call the parent class's method from within the child class?",
+        "What keyword establishes the prototype chain between classes?",
+        "If the parent method returns a value, how do you capture and extend it?"
+      ]
+    }
+  ]
+}

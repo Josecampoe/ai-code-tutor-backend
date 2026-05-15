@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Working with APIs",
+  "summary": "Consume REST APIs using HttpClient, parse JSON, and handle HTTP responses",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "APIs as Restaurant Waiters",
+      "content": "A waiter takes your order to the kitchen and brings your food back. You don't need to know how the kitchen works or what stoves they use. A REST API works the same way: your code sends an HTTP request (the order) to a server, and the server sends back an HTTP response (the food). The request includes a method (GET = 'what's on the menu?', POST = 'I'd like to order', PUT = 'change my order', DELETE = 'cancel this'). The response includes a status code (200 = success, 404 = not found, 500 = server error) and usually a JSON body containing the data."
+    },
+    {
+      "type": "example",
+      "title": "Calling a REST API with HttpClient",
+      "content": "This uses Java's modern HttpClient to fetch weather data from an API endpoint",
+      "code": "import java.net.URI;\nimport java.net.http.*;\nimport com.google.gson.*;\n\npublic class WeatherClient {\n    public static void main(String[] args) throws Exception {\n        // Build the HTTP client (reusable instance)\n        HttpClient client = HttpClient.newHttpClient();\n        \n        // Build a GET request to the weather API\n        HttpRequest request = HttpRequest.newBuilder()\n            .uri(URI.create(\"https://api.weather.gov/points/39.7,-104.9\"))\n            .build();\n        \n        // Send the request and get the response body\n        HttpResponse<String> response = client.send(request,\n            HttpResponse.BodyHandlers.ofString());\n        \n        // Parse JSON response using Gson library\n        JsonObject json = JsonParser.parseString(\n            response.body()).getAsJsonObject();\n        \n        System.out.println(\"Status: \" + response.statusCode());\n        System.out.println(\"City: \" + json.get(\"city\").getAsString());\n    }\n}\n// Expected: Status: 200, City: Denver"
+    },
+    {
+      "type": "explanation",
+      "title": "JSON Parsing with Gson and Jackson",
+      "content": "JSON is the lingua franca of web APIs — a lightweight text format that both humans and machines can read. Java has two major JSON libraries: Gson (Google) and Jackson (FasterXML). Both can convert JSON strings to Java objects (deserialization) and Java objects to JSON strings (serialization). Jackson is generally faster and more feature-rich, while Gson is simpler. Both use annotations like @JsonProperty to map JSON field names to Java field names. A common pattern is creating Data Transfer Objects (DTOs) — simple classes with fields matching the API response structure, used purely for data exchange."
+    },
+    {
+      "type": "tip",
+      "title": "Not handling HTTP error status codes",
+      "content": "Most common mistake: assuming every API call succeeds and never checking the status code. When the server returns 500 or 404, the response body might be an error message, not the expected data. Trying to parse error JSON as your data type causes cryptic NullPointerExceptions. Fix: always check response.statusCode() before parsing. Wrong: JsonObject data = parse(response.body()); (no status check). Correct: if (response.statusCode() == 200) { parse(response.body()); } else { logError(response.body()); }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a program that calls the GitHub API (https://api.github.com/users/{username}/repos) to fetch a user's public repositories. Parse the JSON response to extract and print each repository's name, description, and star count. Handle the case where the user doesn't exist (404 status) and network errors (timeout).",
+      "hints": [
+        "What HTTP method do you use to fetch data from an API?",
+        "How do you extract an array of repos from the JSON response?",
+        "What status code indicates the user was not found?"
+      ]
+    }
+  ]
+}

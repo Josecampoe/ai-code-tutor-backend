@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 2,
+  "title": "Variables and Data Types",
+  "summary": "Store information in variables and work with numbers, text, and true/false values",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Variables are like labeled boxes",
+      "content": "Imagine you have a set of storage boxes in your garage. Each box has a label (the variable name) and holds something inside (the value). In Python, you create a box by writing a name, an equals sign, and the thing you want to store. The box can hold different kinds of items: numbers, words, or true/false flags. Unlike other languages, Python figures out what kind of thing you're storing without you having to tell it."
+    },
+    {
+      "type": "example",
+      "title": "Creating and using variables",
+      "content": "This example stores a student's name, age, and enrollment status in variables",
+      "code": "# A string variable holds text — notice the quotes around the value\nstudent_name = \"Maria Gonzalez\"  # Store the student's full name\n# An integer variable holds a whole number — no quotes needed\nstudent_age = 21  # Store age as a number you can do math with\n# A boolean variable holds True or False — like a light switch\nis_enrolled = True  # Store whether the student is currently enrolled\n# Print combines text and variables using a comma\nprint(\"Name:\", student_name)  # Display the label and the value\nprint(\"Age:\", student_age)  # Show the age on screen\nprint(\"Enrolled:\", is_enrolled)  # Show enrollment status\n# Expected output:\n# Name: Maria Gonzalez\n# Age: 21\n# Enrolled: True"
+    },
+    {
+      "type": "explanation",
+      "title": "Basic data types explained",
+      "content": "Python comes with four essential data types you'll use constantly. Strings (str) are sequences of characters wrapped in quotes — like a name or an address. Integers (int) are whole numbers — positive, negative, or zero — that you can add, subtract, or multiply. Floats (float) are numbers with decimal points, useful for prices or measurements. Booleans (bool) are the simplest: just True or False, typically used as flags or answers to yes/no questions."
+    },
+    {
+      "type": "tip",
+      "title": "Don't mix types by accident",
+      "content": "A common mistake is trying to combine a string and a number with +. Python won't guess what you mean. Wrong: print(\"Age: \" + 25) raises a TypeError. Correct: convert the number with str() first: print(\"Age: \" + str(25)). Or use a comma: print(\"Age:\", 25)."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You're building a simple profile card for a library system. Create variables for a book's title (string), number of pages (integer), price (float), and whether it's checked out (boolean). Then print each piece of information labeled on its own line.",
+      "hints": [
+        "Which data type would you use for a price that includes cents?",
+        "What happens if you try to print a number without converting it to string first?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Error Handling",
+  "summary": "Gracefully handle runtime errors using try, catch, and custom error types",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Errors Are Like Airplane Turbulence",
+      "content": "Errors in code are unavoidable, like turbulence during a flight. You cannot prevent every bump, but you can prepare for it. JavaScript provides try-catch-finally blocks to handle errors gracefully. Code that might fail goes inside try. If something goes wrong, execution jumps to catch instead of crashing the entire program. The finally block runs regardless of success or failure — like a flight attendant's safety demo that happens every flight, smooth or bumpy."
+    },
+    {
+      "type": "example",
+      "title": "Try-catch in action",
+      "content": "Catches a runtime error when parsing invalid JSON data",
+      "code": "function parseUser(jsonString) {\n  try {\n    let user = JSON.parse(jsonString);\n    console.log('Name:', user.name);\n    return user;\n  } catch (error) {\n    console.log('Invalid JSON provided');\n    console.log('Error details:', error.message);\n    return null;\n  } finally {\n    console.log('Parse attempt finished');\n  }\n}\n\nparseUser('{\"name\": \"Alice\"}');\n// Expected output: Name: Alice\n// Expected output: Parse attempt finished\n\nparseUser('not-json');\n// Expected output: Invalid JSON provided\n// Expected output: Parse attempt finished"
+    },
+    {
+      "type": "explanation",
+      "title": "Custom Error Types for Clarity",
+      "content": "Built-in error types (Error, TypeError, RangeError) are useful, but custom error classes communicate intent better. Instead of throw new Error('User not found'), create class UserNotFoundError extends Error. Then in your catch, you can check the error type with instanceof and handle each type appropriately. This pattern is essential in professional applications where different errors need different responses — like a 404 response for 'not found' versus a 400 for validation failure."
+    },
+    {
+      "type": "tip",
+      "title": "Swallowing errors silently",
+      "content": "The #1 mistake intermediate developers make is catching errors and doing nothing. Wrong: try { risky(); } catch (e) {} — this hides bugs and makes debugging impossible. Correct: log the error, re-throw if you cannot handle it, or at minimum provide a fallback value. Never leave an empty catch block. At minimum log error.message to the console or a logging service."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a function getUser(id) that throws a NotFoundError if the id is negative and a ValidationError if the id is not a number. Create both custom error classes extending Error. Call the function with invalid inputs and catch each error type separately, printing different messages for each.",
+      "hints": [
+        "How do you create a custom error class that inherits from Error?",
+        "What operator checks whether a caught error is an instance of a specific class?",
+        "Should you use one catch block with instanceof checks, or multiple try-catch blocks?"
+      ]
+    }
+  ]
+}

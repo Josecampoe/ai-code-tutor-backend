@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Beginner Project",
+  "summary": "Build a complete grade calculator that uses everything learned so far",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Putting It All Together",
+      "content": "This project combines variables, arrays, loops, functions, control flow, and objects into one program. Building a complete tool from scratch is like assembling furniture from a flat pack — each piece (concept) was useless on its own, but together they create something functional. The grade calculator will accept student names and scores, compute averages, assign letter grades, and generate a report. You have already learned every piece you need — now you just arrange them."
+    },
+    {
+      "type": "example",
+      "title": "A helper function to calculate letter grade",
+      "content": "Converts a numeric score to a letter grade using if-else conditions",
+      "code": "function getLetterGrade(score) {\n  if (score >= 90) {\n    return 'A';\n  } else if (score >= 80) {\n    return 'B';\n  } else if (score >= 70) {\n    return 'C';\n  } else if (score >= 60) {\n    return 'D';\n  } else {\n    return 'F';\n  }\n}\n\nconsole.log(getLetterGrade(85));\n// Expected output: B\nconsole.log(getLetterGrade(42));\n// Expected output: F"
+    },
+    {
+      "type": "explanation",
+      "title": "Thinking in Steps: Planning Before Coding",
+      "content": "Before writing any code, break the problem into steps. First, create the data (student names and scores). Second, calculate each student's average. Third, convert averages to letter grades. Fourth, display a formatted report. This step-by-step approach — called decomposition — is how professional programmers tackle large problems. You are not writing one massive program; you are writing several small pieces that each do one thing well, then connecting them."
+    },
+    {
+      "type": "tip",
+      "title": "Trying to write everything at once",
+      "content": "The #1 mistake beginners make on projects is writing all the code before testing any of it. Wrong: write 50 lines, run it, and nothing works — no idea which part broke. Correct: write the grade calculator function, test it. Write the average calculator function, test it. Build incrementally, testing each piece. Use console.log after every step to verify the data looks right."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a grade report system. Create an array of student objects, each with a name and an array of scores. Write a function that calculates each student's average, assigns a letter grade using getLetterGrade, and prints a report like 'Alice: 85 (B)'. Test with three students: Alice [88, 92, 85], Bob [70, 65, 72], Charlie [95, 98, 100].",
+      "hints": [
+        "What structure should each student object have — what properties?",
+        "How do you loop over the scores array to calculate a sum, then divide for the average?",
+        "Where does getLetterGrade need to be called — inside the loop or outside?"
+      ]
+    }
+  ]
+}

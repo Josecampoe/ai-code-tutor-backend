@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Advanced OOP and SOLID",
+  "summary": "Apply SOLID principles to design maintainable, extensible object-oriented systems",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "SOLID as Building Codes for Software",
+      "content": "Building codes ensure a house is safe, maintainable, and won't collapse when you add a second floor. SOLID is the software equivalent — five principles that prevent your code from turning into a brittle mess as it grows. S (Single Responsibility): each class should have one job, like a chef who only cooks and doesn't also fix the plumbing. O (Open/Closed): classes should be open for extension but closed for modification — you add features by writing new code, not changing old code. L (Liskov Substitution): subclasses should work wherever their parent is used, like a square that's a valid rectangle. I (Interface Segregation): don't force classes to implement methods they don't use. D (Dependency Inversion): depend on abstractions, not concrete implementations."
+    },
+    {
+      "type": "example",
+      "title": "Violating SRP and Fixing It",
+      "content": "This shows a class doing too much, then being refactored to follow Single Responsibility",
+      "code": "// BAD: One class handles data, persistence, and display\nclass InvoiceBad {\n    private double amount;\n    \n    public void calculateTotal() { /* ... */ }\n    public void saveToFile() { /* file I/O logic */ }\n    public void printInvoice() { /* display logic */ }\n}\n\n// GOOD: Each class has exactly one responsibility\nclass Invoice {\n    private double amount;\n    public void calculateTotal() { /* ... */ }\n}\n\nclass InvoiceRepository {\n    public void save(Invoice inv) { /* file I/O */ }\n}\n\nclass InvoicePrinter {\n    public void print(Invoice inv) { /* display */ }\n}\n\n// Benefit: change file format without touching Invoice\n// Benefit: test Invoice without disk I/O"
+    },
+    {
+      "type": "explanation",
+      "title": "Dependency Injection and Composition Over Inheritance",
+      "content": "Dependency Injection (DI) is the practice of providing an object's dependencies from the outside rather than having the object create them itself. Instead of new EmailService() inside a NotificationSender, you pass the EmailService via the constructor. This makes testing trivial (pass a mock) and lets you swap implementations without changing code. Composition over inheritance means building objects by assembling smaller objects rather than extending classes. A Car isn't a VehicleWithEngine — it has an Engine, has Wheels, has a SteeringWheel. Inheritance creates rigid hierarchies (a problem when you later need a ElectricCar that isn't a GasCar), while composition creates flexible building blocks."
+    },
+    {
+      "type": "tip",
+      "title": "Deep inheritance hierarchies that violate Liskov Substitution",
+      "content": "Most common mistake: creating a subclass that overrides methods in ways that break the parent class contract. Classic example: Rectangle has setWidth() and setHeight(), but Square overrides them to keep width == height — violating the principle that code using Rectangle shouldn't need to know it's actually a Square. Fix: prefer composition over inheritance. Wrong: class Square extends Rectangle { void setWidth(int w) { super.setWidth(w); super.setHeight(w); } }. Correct: have Square and Rectangle implement a Shape interface separately."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Refactor a VideoGameStore class that currently does everything: stores inventory in a List, processes sales, prints receipts, saves data to a file, and sends email confirmations. Apply the Single Responsibility and Dependency Inversion principles to split it into focused classes. Describe which classes you'd create and what each one's responsibility would be.",
+      "hints": [
+        "How many distinct responsibilities does the original class have?",
+        "Which responsibilities would change if you switched from file storage to a database?",
+        "How would you make the receipt printing depend on an interface instead of a concrete class?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Generics",
+  "summary": "Write type-safe, reusable code using Java generics with type parameters",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Generics as Adaptable Containers",
+      "content": "Imagine a universal phone charger with interchangeable tips — the same charger base works with USB-C, Lightning, or Micro-USB depending on which tip you attach. Java generics work the same way: you write a class or method once, and the user decides what type it works with. Instead of writing separate classes for IntegerList, StringList, and DoubleList, you write one List<T> where T is a placeholder for any type. This gives you compile-time type safety, meaning the compiler catches type mistakes before your program runs — like a charger that physically prevents plugging in the wrong cable."
+    },
+    {
+      "type": "example",
+      "title": "A Generic Class and Method",
+      "content": "This generic Box class stores any type, and a generic method swaps array elements",
+      "code": "// Generic class: T is a type parameter\npublic class Box<T> {\n    private T item;  // Field of generic type T\n    \n    public void setItem(T item) {\n        this.item = item;\n    }\n    \n    public T getItem() {\n        return item;\n    }\n}\n\n// Generic method: swaps two elements in an array\npublic static <T> void swap(T[] array, int i, int j) {\n    T temp = array[i];\n    array[i] = array[j];\n    array[j] = temp;\n}\n\n// Usage:\n// Box<String> stringBox = new Box<>();\n// stringBox.setItem(\"Hello\");\n// String value = stringBox.getItem();  // No cast needed"
+    },
+    {
+      "type": "explanation",
+      "title": "Bounded Type Parameters and Wildcards",
+      "content": "Sometimes you want to restrict what types T can be — like saying 'T must be a type of Animal' rather than just 'T can be anything'. Bounded type parameters do this: <T extends Number> means T can only be Number or its subclasses (Integer, Double, etc.). Wildcards (? extends Number) are used when you don't care about the exact type as long as it's a subtype of Number. The PECS rule (Producer Extends, Consumer Super) helps you decide: use ? extends T when you only read from a collection, and ? super T when you only write to it."
+    },
+    {
+      "type": "tip",
+      "title": "Using raw types instead of parameterized types",
+      "content": "Most common mistake: writing List list = new ArrayList(); instead of List<String> list = new ArrayList<>();. Raw types bypass generic type checking, allowing you to add any object and causing ClassCastException at runtime. Fix: always use parameterized types. Wrong: List names = new ArrayList(); names.add(123);. Correct: List<String> names = new ArrayList<>();"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a generic method called findMax that takes an array of Comparable<T> elements and returns the largest element according to natural ordering. The method signature should use a bounded type parameter. Test it with an Integer array and a String array.",
+      "hints": [
+        "What keyword bounds T to only types that implement Comparable?",
+        "Which method in the Comparable interface compares two elements?",
+        "How do you iterate through the array to find the maximum value?"
+      ]
+    }
+  ]
+}

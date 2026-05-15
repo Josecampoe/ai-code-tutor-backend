@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Memory Management",
+  "summary": "Understand JVM memory model, garbage collection, and avoid memory leaks",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "JVM Memory as a City Layout",
+      "content": "The JVM divides memory into districts, like a city with residential, commercial, and industrial zones. The Heap is the residential area where all objects live — every new Car(), every ArrayList, every String. The Stack is like a surgery waiting room: each method call gets a numbered ticket, and when the method finishes (returns), its ticket is discarded. The Method Area (Metaspace) is the city library — it stores class definitions, static variables, and method bytecode. Outside the city limits, off-heap memory handled by direct ByteBuffers doesn't follow normal garbage collection rules and must be explicitly freed."
+    },
+    {
+      "type": "example",
+      "title": "Stack vs Heap: Where Variables Live",
+      "content": "This annotated code shows which variables go on the stack and which objects live in the heap",
+      "code": "public class MemoryDemo {\n    public static void main(String[] args) {\n        // Primitive: value stored directly on the stack\n        int x = 42;\n        \n        // Reference variable 'names' is on the stack\n        // The ArrayList object itself lives in the heap\n        ArrayList<String> names = new ArrayList<>();\n        \n        names.add(\"Alice\");  // \"Alice\" String object in heap\n        \n        // When this method ends, 'x' and 'names' vanish\n        // from the stack. The ArrayList and \"Alice\" stay\n        // in the heap until GC reclaims them.\n    }\n}\n\n// Note: GC reclaims heap objects when no references\n// point to them. The 'names' reference disappears when\n// main() ends, making the ArrayList eligible for GC."
+    },
+    {
+      "type": "explanation",
+      "title": "Garbage Collection Generations and Algorithms",
+      "content": "The Heap is divided into generations based on research showing most objects die young. The Young Generation (Eden + Survivor spaces) is where new objects are born. Most die here quickly, like disposable coffee cups. Objects that survive several GC cycles get promoted to the Old Generation (Tenured), like reusable water bottles. The Metaspace holds class metadata and grows dynamically. Modern GC algorithms include G1GC (default since Java 9) which divides the heap into regions and prioritizes collecting regions with the most garbage — like cleaning the dirtiest rooms of a house first. ZGC and Shenandoah offer sub-millisecond pause times for large heaps."
+    },
+    {
+      "type": "tip",
+      "title": "Memory leak via forgotten object references",
+      "content": "Most common mistake: adding objects to a static ArrayList (or a long-lived collection) and never removing them. The collection holds references, so GC can't reclaim those objects even if they're no longer needed. Fix: use WeakHashMap or clear collections when done. Wrong: static List<Session> sessions = new ArrayList<>(); sessions.add(session); (never removed). Correct: sessions.remove(session); when session expires, or use WeakHashMap<Session, Data>."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a program that intentionally creates a memory leak by storing objects in a static HashMap keyed by a custom class that has hashCode() but no equals() override. Add 10,000 entries and explain why the map never reuses keys and keeps growing. Then fix the equals() method and show how duplicates are now correctly handled.",
+      "hints": [
+        "What happens when two keys have the same hashCode but equals returns false?",
+        "Which two methods must be consistent for HashMap to work correctly?",
+        "How can you verify the fix by checking the map size after adding 'duplicate' keys?"
+      ]
+    }
+  ]
+}

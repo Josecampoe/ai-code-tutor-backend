@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Deployment Basics",
+  "summary": "Package Java applications as JARs, manage dependencies, and deploy to servers",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "JAR Files as Application Packages",
+      "content": "A JAR (Java ARchive) file is like a zipped folder that contains all the pieces needed to run your application: compiled .class files, resources (images, configs), and metadata. It's the standard distribution format for Java applications. An executable JAR includes a MANIFEST.MF file that tells Java which class has the main() method — like a note on a gift box saying 'open this side'. With an executable JAR, anyone with Java installed can run your app with a simple command: java -jar myapp.jar. Build tools like Maven and Gradle automate JAR creation, dependency management, and the entire build lifecycle."
+    },
+    {
+      "type": "example",
+      "title": "Maven pom.xml with Dependencies and Build",
+      "content": "This Maven pom.xml configures dependencies and builds an executable fat JAR",
+      "code": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n    <modelVersion>4.0.0</modelVersion>\n    <groupId>com.mycompany</groupId>\n    <artifactId>myapp</artifactId>\n    <version>1.0.0</version>\n    \n    <properties>\n        <maven.compiler.source>17</maven.compiler.source>\n        <maven.compiler.target>17</maven.compiler.target>\n    </properties>\n    \n    <dependencies>\n        <!-- PostgreSQL database driver -->\n        <dependency>\n            <groupId>org.postgresql</groupId>\n            <artifactId>postgresql</artifactId>\n            <version>42.7.1</version>\n        </dependency>\n    </dependencies>\n</project>\n<!-- Run: mvn package -> creates target/myapp-1.0.0.jar -->\n<!-- Run: java -jar target/myapp-1.0.0.jar -->"
+    },
+    {
+      "type": "explanation",
+      "title": "Build Tools: Maven vs Gradle",
+      "content": "Maven and Gradle both manage dependencies, compile code, run tests, and package applications, but they approach it differently. Maven uses XML and follows a strict convention-over-configuration lifecycle — your project structure and build phases are predictable. Gradle uses Groovy or Kotlin DSL and is more flexible and faster (incremental compilation, parallel execution). Both rely on remote repositories (Maven Central) to download dependencies. When you declare a dependency like 'PostgreSQL 42.7.1', the build tool downloads the JAR and its transitive dependencies (libraries that PostgreSQL itself depends on). This saves you from manually downloading and managing dozens of JAR files."
+    },
+    {
+      "type": "tip",
+      "title": "Including dependencies without shading or creating a fat JAR",
+      "content": "Most common mistake: creating a JAR that doesn't include its dependencies, then getting ClassNotFoundException when running it. The application can't find required libraries because they're not in the classpath. Fix: use Maven Shade Plugin or Gradle Shadow Plugin to create a fat JAR containing everything. Wrong: java -jar myapp.jar -> ClassNotFoundException: org.postgresql.Driver. Correct: build a fat JAR with mvn package shade:shade, then java -jar target/myapp-1.0.0-shaded.jar"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Your console application depends on Gson (for JSON parsing) and HikariCP (for database connection pooling). Create a pom.xml or build.gradle file that declares these dependencies and configures the Maven JAR plugin to build an executable fat JAR with the main class com.mycompany.App as the entry point.",
+      "hints": [
+        "What Maven plugin creates a fat JAR with all dependencies?",
+        "Where in pom.xml do you specify the main class for the manifest?",
+        "What is the groupId and artifactId for Gson on Maven Central?"
+      ]
+    }
+  ]
+}

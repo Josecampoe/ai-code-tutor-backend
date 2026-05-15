@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 5,
+  "title": "Performance and Optimization",
+  "summary": "Profile, identify bottlenecks, and optimize Python code using profiling tools and best practices",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Don't guess — measure",
+      "context": "Optimizing without data is like trying to fix a car engine by randomly replacing parts. You might make things worse. The first rule of optimization is 'measure, don't guess.' Python provides profiling tools: cProfile for function-level timing, timeit for micro-benchmarks, and line_profiler for line-by-line analysis. Always profile before optimizing to identify the actual bottleneck, which often surprises developers — it's rarely where you expect. Premature optimization (optimizing before you have data) is the root of much evil. Write clean, correct code first. Then profile. Then optimize only the critical 20% that accounts for 80% of the runtime."
+    },
+    {
+      "type": "example",
+      "title": "Using cProfile and timeit to measure performance",
+      "content": "Profile two approaches to find the slowest part of the code",
+      "code": "import timeit  # For precise micro-benchmarks of small code snippets\nimport cProfile  # For function-level profiling of larger programs\nimport pstats  # For sorting and displaying profile results\n\ndef slow_approach(items):\n    # Inefficient: builds a new list by concatenating in a loop (O(n^2))\n    result = []  # Start with empty list\n    for i in items:  # Iterate over each item\n        result = result + [i]  # Concatenation creates a NEW list each time!\n    return result\n\ndef fast_approach(items):\n    # Efficient: list comprehension builds in one pass (O(n))\n    return [i for i in items]  # Single allocation, no repeated copying\n\n# timeit measures how long a snippet takes, running it many times\nslow_time = timeit.timeit(\n    'slow_approach(range(1000))',  # Code string to measure\n    globals=globals(),  # Make our functions available\n    number=100  # Run 100 times and return total duration\n)\n\nfast_time = timeit.timeit(\n    'fast_approach(range(1000))',\n    globals=globals(),\n    number=100\n)\n\nprint(f\"Slow: {slow_time:.4f}s\")\nprint(f\"Fast: {fast_time:.4f}s\")\nprint(f\"Speedup: {slow_time / fast_time:.1f}x\")\n\n# For larger programs, use cProfile:\n# cProfile.run('my_function()', 'profile_output')\n# p = pstats.Stats('profile_output')\n# p.sort_stats('cumtime').print_stats(10)  # Top 10 by cumulative time"
+    },
+    {
+      "type": "explanation",
+      "title": "Common optimization strategies",
+      "context": "After profiling, target these common patterns. Use local variable bindings: accessing a local variable is faster than a global or attribute access — cache module-level functions in local scope inside hot loops. Use built-in functions and libraries: Python's built-in functions (map, filter, sum, any, all) are implemented in C and run much faster than manual loops. Consider NumPy for numerical operations — orders of magnitude faster than pure Python lists. Use generators for large sequences to avoid memory exhaustion. Use collections.deque instead of list for stack/queue operations (O(1) append/pop vs O(n) for list.pop(0)). Use set for membership tests instead of lists (O(1) vs O(n))."
+    },
+    {
+      "type": "tip",
+      "title": "Micro-optimizations are usually not worth it",
+      "context": "Spending hours optimizing a function that runs 0.1% of total execution time is a waste. Profile first — you'll likely find the bottleneck is somewhere you didn't expect (often I/O, network, or database queries). Wrong: obsessing over x**2 vs x*x or list append vs list comprehension in non-hot code. Correct: optimize algorithms (e.g., O(n^2) to O(n log n)), add caching (functools.lru_cache), reduce I/O, or use vectorized operations. A 10x algorithm improvement beats a 10% micro-optimization every time."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Take a slow list operation: generate a list of 10,000 random integers, then filter and transform them (keep only even numbers, multiply each by 3). Write four versions: (1) a for loop with .append(), (2) a list comprehension, (3) map/filter, (4) a generator expression. Use timeit to benchmark each version with 1000 runs. Print the results and order them from fastest to slowest.",
+      "hints": [
+        "How do you use timeit to measure just the execution time of a function?",
+        "Which of the four approaches do you expect to be fastest — and why?"
+      ]
+    }
+  ]
+}

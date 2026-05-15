@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 5,
+  "title": "Loops",
+  "summary": "Repeat tasks efficiently using for and while loops",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Loops are your personal assistant",
+      "content": "Imagine you have 100 envelopes to stamp and address. Doing each one manually would take forever. A loop is like hiring an assistant who says 'I'll do this same task for each envelope until all 100 are done.' Python has two kinds of loops. A for loop is perfect when you know how many times to repeat (like counting 1 to 10). A while loop keeps going until a condition changes (like 'keep stirring soup until it boils'). Both save you from writing repetitive code."
+    },
+    {
+      "type": "example",
+      "title": "Counting with a for loop",
+      "content": "This loop prints a countdown from 5 to 1 using range()",
+      "code": "# range(5, 0, -1) generates numbers starting at 5, ending before 0, stepping down by 1\n# The loop variable 'number' takes a new value each iteration\nfor number in range(5, 0, -1):  # Start at 5, stop before 0, count backwards\n    print(number)  # Print the current countdown number\nprint(\"Blast off!\")  # This runs once after the loop finishes\n# Expected output:\n# 5\n# 4\n# 3\n# 2\n# 1\n# Blast off!"
+    },
+    {
+      "type": "explanation",
+      "title": "For vs while — when to use each",
+      "content": "Use a for loop when you know exactly how many iterations you need — like processing every customer in a list of 50 orders. The for loop handles the counting automatically, so you can't accidentally create an infinite loop. Use a while loop when you're waiting for a condition to change — like 'keep asking for a password until the user enters the correct one.' While loops need extra caution: if the condition never becomes False, the loop runs forever (infinite loop), freezing your program. Always double-check that something inside the loop changes the condition."
+    },
+    {
+      "type": "tip",
+      "title": "Infinite loops will crash your program",
+      "content": "The most common loop mistake is creating an infinite loop by forgetting to update a condition variable. Wrong: x = 0; while x < 10: print(x) — x never changes, so it runs forever. Correct: x = 0; while x < 10: print(x); x = x + 1 — x increases each time, so the loop eventually stops."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A coffee shop gives a loyalty stamp for every purchase. After 10 stamps, the customer gets a free drink. Write a program that prints each stamp number from 1 to 10 and prints 'Free drink!' when the 10th stamp is reached.",
+      "hints": [
+        "Should you use a for loop or a while loop here? Why?",
+        "How can you check if the current stamp number is the 10th one?"
+      ]
+    }
+  ]
+}

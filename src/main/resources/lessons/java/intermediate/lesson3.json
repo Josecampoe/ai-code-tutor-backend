@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Collections",
+  "summary": "Use ArrayList, HashMap, and other collection classes for dynamic data storage",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Collections vs Arrays: Elastic vs Fixed",
+      "content": "An array is like a parking lot with exactly 50 spaces — you can't add a 51st car without building a new lot. Collections are like a valet parking service: they handle expanding and shrinking automatically. The Java Collections Framework provides ready-to-use data structures that grow and shrink as needed. The two most important are ArrayList (an ordered list that autosizes) and HashMap (a dictionary that maps keys to values). These are the workhorses of daily Java programming, and knowing which to use for which scenario is a core skill."
+    },
+    {
+      "type": "example",
+      "title": "ArrayList and HashMap in Action",
+      "content": "This code manages a shopping cart using ArrayList and product prices using HashMap",
+      "code": "import java.util.ArrayList;\nimport java.util.HashMap;\n\npublic class Store {\n    public static void main(String[] args) {\n        // ArrayList that grows as items are added\n        ArrayList<String> cart = new ArrayList<>();\n        cart.add(\"Milk\");\n        cart.add(\"Bread\");\n        cart.add(\"Eggs\");\n        \n        // HashMap maps product names to prices\n        HashMap<String, Double> prices = new HashMap<>();\n        prices.put(\"Milk\", 3.99);\n        prices.put(\"Bread\", 2.49);\n        prices.put(\"Eggs\", 4.99);\n        \n        // Loop through cart and print each item's price\n        for (String item : cart) {\n            System.out.println(item + \": $\" + prices.get(item));\n        }\n        \n        System.out.println(\"Total items: \" + cart.size());\n    }\n}\n// Expected output:\n// Milk: $3.99\n// Bread: $2.49\n// Eggs: $4.99\n// Total items: 3"
+    },
+    {
+      "type": "explanation",
+      "title": "Choosing the Right Collection",
+      "content": "Each collection type has a specific purpose. ArrayList is ideal when you need ordered access by index and frequently iterate through all elements — like displaying a playlist. LinkedList is better when you frequently insert or delete from the beginning or middle. HashSet is like a bouncer at a club that ensures nobody enters twice — it guarantees no duplicates and has fast lookup. TreeSet keeps elements sorted automatically. The key is matching the collection to the use case: need unique items without caring about order? Use HashSet. Need key-value lookups by employee ID? Use HashMap. Need both order and quick access? Use LinkedHashMap."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to specify the generic type",
+      "content": "Most common mistake: writing ArrayList list = new ArrayList() without the angle brackets, which gives a raw type and bypasses type safety. This means you can accidentally add a String to a list meant for Integers. Fix: always use the diamond operator <> and declare the type. Wrong: ArrayList list = new ArrayList(); list.add(\"text\"); list.add(123); Correct: ArrayList<String> list = new ArrayList<>();"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A teacher needs to store student names and their final grades. Use a HashMap to store the data: 'Alice' -> 92, 'Bob' -> 78, 'Charlie' -> 88. Then write a loop that finds and prints the student with the highest grade and calculates the class average.",
+      "hints": [
+        "How do you iterate through all entries in a HashMap?",
+        "What Map methods give you all keys or all values?",
+        "How do you track the highest grade while looping?"
+      ]
+    }
+  ]
+}

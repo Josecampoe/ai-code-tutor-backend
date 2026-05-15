@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Recursion",
+  "summary": "Solve problems where a method calls itself, breaking complex tasks into simpler ones",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Recursion as Russian Dolls",
+      "content": "A Russian nesting doll (matryoshka) contains a smaller doll inside, which contains an even smaller doll, until you reach the tiniest doll that can't be opened. Recursion works the same way: a method calls itself with a smaller version of the same problem until it reaches a 'base case' so simple that no further recursion is needed. Every recursive function needs two things: a base case that stops the recursion (like the smallest doll), and a recursive case that calls itself with a simpler version of the problem. Without a base case, you get infinite recursion and a StackOverflowError."
+    },
+    {
+      "type": "example",
+      "title": "Calculating Factorial Recursively",
+      "content": "This method calculates n! using recursion: the classic example of divide-and-conquer",
+      "code": "public class Factorial {\n    // Recursive method to calculate factorial\n    public static int factorial(int n) {\n        // Base case: 0! = 1 (no more recursion)\n        if (n == 0) {\n            return 1;\n        }\n        // Recursive case: n! = n * (n-1)!\n        // Call itself with a smaller number\n        return n * factorial(n - 1);\n    }\n    \n    public static void main(String[] args) {\n        int result = factorial(5);\n        System.out.println(\"5! = \" + result);\n    }\n}\n// Expected output:\n// 5! = 120"
+    },
+    {
+      "type": "explanation",
+      "title": "Recursion vs Iteration: Trade-offs",
+      "content": "Any problem solved with recursion can also be solved with a loop. So why use recursion? Some problems are naturally recursive — like traversing a file directory tree, searching a family tree, or parsing nested mathematical expressions. For these, the recursive solution is shorter, clearer, and matches the problem's structure. The trade-off is performance: each recursive call adds a frame to the call stack, consuming memory. For deep recursion (thousands of levels), iterative solutions are safer. A good rule: if the problem involves nested structures or branching, reach for recursion; if it's linear, use a loop."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the base case or making it unreachable",
+      "content": "Most common mistake: writing a recursive method where the base case is never reached, causing infinite recursion. For example, calling factorial(-1) when the base case only checks n == 0. Fix: always ensure every possible input eventually reaches a base case. Wrong: public int fib(int n) { return fib(n-1) + fib(n-2); } (no base case). Correct: add if (n <= 1) return n; before the recursive call."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a recursive method called sumDigits that takes a positive integer and returns the sum of its digits. For example, sumDigits(1234) should return 10 (1+2+3+4). Hint: the last digit is n % 10 and the remaining number is n / 10.",
+      "hints": [
+        "What operation extracts the last digit of a number?",
+        "What operation removes the last digit?",
+        "What is the simplest possible input (base case) for this method?"
+      ]
+    }
+  ]
+}

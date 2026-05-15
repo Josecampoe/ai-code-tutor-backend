@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 8,
+  "title": "Strings",
+  "summary": "Manipulate text using string methods, slicing, and formatting",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Strings are sequences of characters",
+      "content": "A string is a sequence of individual characters — letters, numbers, spaces, punctuation — wrapped in quotes. Think of it like a necklace where each bead is a character and the string keeps them in order. Python treats strings similarly to lists: you can access individual characters by index, slice portions, and measure length. But strings have a superpower: dozens of built-in methods for searching, modifying, and cleaning up text. Behind the scenes, every string is an object with built-in tools you can call using dot notation, like 'hello'.upper()."
+    },
+    {
+      "type": "example",
+      "title": "Common string operations with a customer name",
+      "content": "This shows cleaning, formatting, and searching within a string",
+      "code": "# A messy customer name with extra spaces and mixed case\ncustomer_name = \"  jOhN sMiTh  \"  # Notice the spaces and odd capitalization\n# strip() removes whitespace from both ends — like trimming a hedge\nclean_name = customer_name.strip()  # Result: \"jOhN sMiTh\"\n# title() capitalizes the first letter of every word\nformatted_name = clean_name.title()  # Result: \"John Smith\"\n# upper() makes everything uppercase — useful for comparisons\nloud_name = clean_name.upper()  # Result: \"JOHN SMITH\"\n# len() counts all characters including spaces\nname_length = len(clean_name)  # Counts characters in \"jOhN sMiTh\"\n# Check if a substring exists using the 'in' keyword\nhas_last_name = \"Smith\" in formatted_name  # True if found\nprint(\"Cleaned:\", clean_name)\nprint(\"Formatted:\", formatted_name)\nprint(\"Uppercase:\", loud_name)\nprint(\"Has 'Smith':\", has_last_name)\n# Expected output:\n# Cleaned: jOhN sMiTh\n# Formatted: John Smith\n# Uppercase: JOHN SMITH\n# Has 'Smith': True"
+    },
+    {
+      "type": "explanation",
+      "title": "String formatting with f-strings",
+      "content": "f-strings (formatted string literals) are the modern way to embed variables inside text. You put an 'f' before the opening quote and wrap variables in curly braces {} — Python replaces the braces with the variable's value automatically. This is much cleaner than old-style concatenation with +. For example, f\"Hello, {name}! You are {age} years old.\" produces a complete sentence. You can even put expressions inside the braces: f\"Total: ${price * quantity:.2f}\" calculates and formats the result."
+    },
+    {
+      "type": "tip",
+      "title": "Strings are immutable — you can't change them directly",
+      "content": "Many beginners try to modify a character directly, like name[0] = 'K'. Wrong — strings are immutable (unchangeable). Python raises a TypeError. Correct: create a new string using methods or slicing: name = 'K' + name[1:]. Methods like replace() and upper() return new strings — they don't alter the original."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A registration system captured a user's email as '  ALEX@EXAMPLE.COM  '. Write code to trim the spaces, convert it to lowercase, and check if '@' is present. Then print a friendly welcome message using an f-string: 'Welcome, alex@example.com!'",
+      "hints": [
+        "Which method removes extra whitespace from both ends of a string?",
+        "How do you convert all letters to lowercase?"
+      ]
+    }
+  ]
+}

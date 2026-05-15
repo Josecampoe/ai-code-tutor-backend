@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functional Programming",
+  "summary": "Apply functional programming patterns using pure functions, higher-order functions, map, filter, and reduce",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functional Programming Is Like an Assembly Line",
+      "content": "Functional programming treats your data as items on a factory conveyor belt. Each station (function) takes the item, does one specific transformation, and passes it to the next station. The data is never modified in place — each station creates a new, transformed version. This makes the process predictable and testable. Key concepts include 'pure functions' (same input always gives same output, no side effects), 'immutability' (never change data, always create copies), and 'higher-order functions' (functions that take or return other functions). TypeScript's type system supports all of these beautifully."
+    },
+    {
+      "type": "example",
+      "title": "Processing Orders with map, filter, and reduce",
+      "content": "Takes an array of orders, filters high-value ones, transforms them with tax, and sums the total",
+      "code": "// Define an order type\ninterface Order {\n  id: number;\n  amount: number;\n  isPaid: boolean;\n}\nconst orders: Order[] = [\n  { id: 1, amount: 25.0, isPaid: true },\n  { id: 2, amount: 100.0, isPaid: false },\n  { id: 3, amount: 75.0, isPaid: true },\n];\n// Filter: only paid orders\nconst paidOrders: Order[] = orders.filter(order => order.isPaid);\n// Map: apply 8% tax to each amount\nconst withTax: number[] = paidOrders.map(order => order.amount * 1.08);\n// Reduce: sum all amounts into a single total\nconst totalRevenue: number = withTax.reduce((sum, val) => sum + val, 0);\nconsole.log('Paid orders with tax:', withTax);\nconsole.log('Total revenue:', totalRevenue.toFixed(2));\n// Expected: Paid orders with tax: [27, 81]\n// Expected: Total revenue: 108.00"
+    },
+    {
+      "type": "explanation",
+      "title": "Chaining and Immutability Best Practices",
+      "content": "The true power of functional programming emerges when you chain operations: 'orders.filter(o => o.isPaid).map(o => o.amount * 1.08).reduce(...)'. This reads like a sentence: 'take orders, keep only paid ones, apply tax, then sum'. Each step returns a new array, leaving the original untouched. This immutability prevents bugs where one part of your code accidentally modifies data that another part relies on. TypeScript's readonly modifier for arrays ('readonly Order[]' or 'ReadonlyArray<Order>') enforces this at compile time, making it clear that a function should not mutate its input."
+    },
+    {
+      "type": "tip",
+      "title": "Mutating Data Inside map or forEach Instead of Returning a New Value",
+      "content": "The #1 intermediate mistake is using map to mutate items instead of returning transformed copies. Wrong approach: 'items.map(item => { item.discounted = true; return item; })' — this modifies each original object. Correct approach: 'items.map(item => ({ ...item, discounted: true }))' — spread the original and override the property, creating a new object. The same applies to forEach vs map: use map when you want a transformed array, use forEach when you want to perform a side effect (like console.log). If you ignore this, you will encounter bugs where shared state changes unexpectedly."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A customer database has entries: [{name: 'Alice', age: 32, isActive: true}, {name: 'Bob', age: 17, isActive: true}, {name: 'Charlie', age: 45, isActive: false}]. Use filter to get only active customers, then map to create an array of strings like 'Alice (32)', and finally reduce to count how many active customers are over 30. Chain all operations in one statement.",
+      "hints": [
+        "What does filter return — a new array or the original?",
+        "What template literal would give 'Name (age)' format?",
+        "How do you count matching items with reduce instead of using filter again?"
+      ]
+    }
+  ]
+}

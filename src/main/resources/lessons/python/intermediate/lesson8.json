@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 8,
+  "title": "Interfaces and Abstractions",
+  "summary": "Design flexible systems using abstract base classes and protocol-like patterns",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Abstraction hides complexity behind a contract",
+      "content": "Think of a vending machine: you press a button (the interface) and get a snack. You don't need to understand the internal mechanics — the coin reader, the motor, the springs. That's abstraction: hiding implementation details behind a clean interface. In Python, abstraction lets you define 'what' an object should do without specifying 'how.' You can use Abstract Base Classes (ABCs) from the abc module to define methods that subclasses MUST implement. This enforces a contract across your codebase — any class that inherits from your ABC guarantees certain methods exist."
+    },
+    {
+      "type": "example",
+      "title": "Abstract base class for payment processors",
+      "content": "Define a PaymentProcessor interface that all payment methods must implement",
+      "code": "from abc import ABC, abstractmethod  # ABC = Abstract Base Class\n\nclass PaymentProcessor(ABC):\n    # This is an abstract class — it cannot be instantiated directly\n    # It defines the contract that all payment methods must follow\n\n    @abstractmethod  # Decorator marking this as mandatory for subclasses\n    def process_payment(self, amount):\n        # No implementation — subclasses MUST override this\n        pass  # pass is a placeholder meaning \"do nothing\"\n\n    @abstractmethod\n    def refund(self, transaction_id):\n        pass\n\nclass CreditCardProcessor(PaymentProcessor):\n    # Must implement ALL abstract methods from PaymentProcessor\n    def process_payment(self, amount):\n        # Real implementation would call a credit card API here\n        return f\"Charged ${amount} to credit card\"\n\n    def refund(self, transaction_id):\n        return f\"Refunded transaction {transaction_id}\"\n\nclass PayPalProcessor(PaymentProcessor):\n    def process_payment(self, amount):\n        return f\"Charged ${amount} via PayPal\"\n\n    def refund(self, transaction_id):\n        return f\"Refunded PayPal transaction {transaction_id}\"\n\n# Both processors can be used interchangeably — that's the power of abstraction\nprocessors = [CreditCardProcessor(), PayPalProcessor()]\nfor p in processors:\n    print(p.process_payment(50))\n# Expected output:\n# Charged $50 to credit card\n# Charged $50 via PayPal"
+    },
+    {
+      "type": "explanation",
+      "title": "ABCs vs duck typing — the trade-off",
+      "content": "Python traditionally uses duck typing ('if it quacks like a duck, treat it like a duck'), which means you don't need formal interfaces — just call methods and trust the object has them. This is flexible but can lead to runtime AttributeError when an object doesn't implement expected methods. ABCs add safety through explicit contracts at the cost of tighter coupling. Use ABCs when building frameworks, libraries, or large systems where other developers need clear guidance on what to implement. Use duck typing for internal code where you control all implementations and prefer flexibility. Python also offers Protocol (from typing) as a middle ground — structural subtyping without inheritance."
+    },
+    {
+      "type": "tip",
+      "title": "You can't instantiate an ABC directly",
+      "content": "Beginners to ABCs often try to create an instance of the abstract class itself. Wrong: processor = PaymentProcessor() raises TypeError. Abstract classes are blueprints, not usable directly. Always create a concrete subclass that implements all abstract methods, then instantiate that."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create an abstract base class called Shape with two abstract methods: area() and perimeter(). Then create two concrete subclasses: Rectangle (takes width and height) and Circle (takes radius). Implement area() and perimeter() for both. Create one instance of each and print their area and perimeter.",
+      "hints": [
+        "Which decorator marks a method as abstract and required in subclasses?",
+        "What happens if a subclass doesn't implement all abstract methods?"
+      ]
+    }
+  ]
+}

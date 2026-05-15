@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 7,
+  "title": "Arrays and Lists",
+  "summary": "Store collections of items in lists and access, add, or remove elements",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Lists are like a numbered to-do list",
+      "content": "A Python list is an ordered collection of items, just like a grocery list on your fridge. Each item has a position (index) starting at 0 — so the first item is at position 0, the second at position 1, and so on. This zero-based counting feels odd at first, but it's standard across programming. Lists can hold any data type: strings, numbers, booleans, or even other lists. You create one with square brackets and commas between items: ['apples', 'bananas', 'milk']."
+    },
+    {
+      "type": "example",
+      "title": "Working with a list of student scores",
+      "content": "This example creates a list of test scores, accesses individual scores, and adds a new one",
+      "code": "# Create a list of four test scores using square brackets\nscores = [85, 92, 78, 95]  # Four students' test results\n# Access the first score — index 0 is always the first element\nfirst_score = scores[0]  # Gets 85 from position 0\n# Access the last score — index -1 wraps to the last element\nlast_score = scores[-1]  # Gets 95 from the end of the list\n# Add a new score to the end of the list using append()\nscores.append(88)  # Now the list has 5 elements: [85, 92, 78, 95, 88]\n# Get the total number of items in the list using len()\nnumber_of_scores = len(scores)  # Returns 5\nprint(\"First:\", first_score, \"| Last:\", last_score)\nprint(\"Total scores:\", number_of_scores)\nprint(\"All scores:\", scores)\n# Expected output:\n# First: 85 | Last: 95\n# Total scores: 5\n# All scores: [85, 92, 78, 95, 88]"
+    },
+    {
+      "type": "explanation",
+      "title": "List operations you'll use every day",
+      "content": "Beyond accessing individual items, lists support powerful operations. You can slice a list to get a portion — like getting items 1 through 3 with scores[1:4]. The append() method adds one item to the end. remove() deletes a specific value. pop() removes and returns the last item. You can check if something is in a list with the 'in' keyword: if 'Milk' in groceries:. Lists are mutable — you can change, add, or remove items after creation. This flexibility makes lists one of Python's most-used features."
+    },
+    {
+      "type": "tip",
+      "title": "Index out of range errors",
+      "content": "Accessing an index that doesn't exist crashes your program. Wrong: items = ['a', 'b']; print(items[5]) raises IndexError. Always check that the index is less than the length. Correct: if 5 < len(items): print(items[5]). Or use negative indices to access from the end safely: items[-1] gives the last item without knowing the length."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You're tracking daily temperatures for a week. Create a list with 7 temperature values (any numbers). Write code to: print the third day's temperature, add an 8th day, and print how many temperatures you have in total.",
+      "hints": [
+        "What index corresponds to the third item in a list?",
+        "Which method adds a new element to the end of a list?"
+      ]
+    }
+  ]
+}

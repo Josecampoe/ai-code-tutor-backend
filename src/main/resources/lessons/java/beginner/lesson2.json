@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 2,
+  "title": "Variables and Data Types",
+  "summary": "Store different kinds of data in variables and understand Java's type system",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Variables as Labeled Boxes",
+      "content": "Imagine you're organizing a warehouse with labeled boxes. Each box has a label (the variable name) and can only hold a certain type of item — this box holds shoes, that one holds hats, and you can't mix them. In Java, variables work the same way. You declare what kind of data a variable holds (the type), give it a name, and then store a value inside it. The key is that Java checks what you put in your boxes to make sure it matches the label."
+    },
+    {
+      "type": "example",
+      "title": "Declaring and Using Variables",
+      "content": "This code stores different kinds of information about a student using the correct data types",
+      "code": "// int stores whole numbers (no decimals)\nint studentAge = 20;\n// double stores decimal numbers\ndouble tuitionFee = 4500.50;\n// String stores text (notice the capital S)\nString studentName = \"Ana Garcia\";\n// boolean stores true or false values\nboolean isEnrolled = true;\n// Print all the values to the console\nSystem.out.println(studentName);\nSystem.out.println(studentAge);\nSystem.out.println(tuitionFee);\nSystem.out.println(isEnrolled);\n// Expected output:\n// Ana Garcia\n// 20\n// 4500.5\n// true"
+    },
+    {
+      "type": "explanation",
+      "title": "Primitive Types vs Reference Types",
+      "content": "Java splits data into two families. Primitive types (int, double, boolean, char) are like storing a value directly in the box — the box holds the actual item. Reference types (String, arrays, objects) are like storing a receipt with directions to a storage room where the item is kept. The box doesn't contain the value itself, just directions to find it. This distinction matters when you copy variables: primitives copy the value, but reference types copy the directions, so two variables can point to the same object."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to declare the data type",
+      "content": "Most common mistake: writing age = 25; without int, String, or another type before it. Java requires every variable to have a declared type before it can be used. Fix: always write the type first, like int age = 25;. Wrong: age = 25;. Correct: int age = 25;"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You're building a library checkout system. Create variables to store a book title (String), the author's name, the number of pages (int), the price in dollars with cents (double), and whether the book is checked out (boolean). Print each value on its own line.",
+      "hints": [
+        "What data type holds text?",
+        "What data type holds true/false values?",
+        "What data type should you use for a price like $14.99?"
+      ]
+    }
+  ]
+}

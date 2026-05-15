@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Arrays and Lists",
+  "summary": "Store collections of data in arrays and understand their fixed-size nature",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Arrays as a Pill Organizer",
+      "content": "Imagine a weekly pill organizer with seven compartments labeled Monday through Sunday. Each compartment holds exactly one day's pills, and you access them by their position (day 0 = Monday, day 1 = Tuesday, etc.). Java arrays work the same way: they're fixed-size containers where each slot holds one value of the same type. The key rule is that once you create an array with 7 slots, it always has exactly 7 slots — you can't add an 8th one later. You access each position using an index starting at 0."
+    },
+    {
+      "type": "example",
+      "title": "Creating and Accessing an Array",
+      "content": "This code stores exam scores for 5 students in an array and calculates the average",
+      "code": "// Create an array of 5 integers using curly braces\nint[] scores = {88, 92, 75, 95, 83};\n// Variable to hold the sum of all scores\nint sum = 0;\n// Loop through each element using the length property\nfor (int i = 0; i < scores.length; i++) {\n    // Add each score to the running total\n    sum = sum + scores[i];\n}\n// Calculate average as a double (cast to avoid truncation)\ndouble average = (double) sum / scores.length;\nSystem.out.println(\"Average score: \" + average);\n// Expected output:\n// Average score: 86.6"
+    },
+    {
+      "type": "explanation",
+      "title": "Index Out of Bounds",
+      "content": "If you have 5 exam scores in an array, the valid indexes are 0, 1, 2, 3, and 4. Trying to access index 5 is like asking for the 6th slice of a pizza that was cut into only 5 slices — it doesn't exist. Java protects you by throwing an ArrayIndexOutOfBoundsException when this happens, which crashes your program. This is one of the most common errors beginners face. Always remember: an array of size N has valid indexes from 0 to N-1."
+    },
+    {
+      "type": "tip",
+      "title": "Off-by-one errors when looping through arrays",
+      "content": "Most common mistake: writing for (int i = 0; i <= scores.length; i++) when it should be i < scores.length. The <= tries to access the index equal to the length, which is one past the last valid element. Fix: always use < (not <=) when comparing the loop counter to the array length. Wrong: for (int i = 0; i <= scores.length; i++). Correct: for (int i = 0; i < scores.length; i++)"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A small business records daily revenue for a week: $120, $85, $200, $150, $90, $175, $130. Store these in an array. Write a loop that finds and prints the highest revenue day and its index (day number starting from 0).",
+      "hints": [
+        "What variable can track the highest value found so far?",
+        "How do you compare the current element against the current maximum?",
+        "What should you initialize your 'max' variable to?"
+      ]
+    }
+  ]
+}

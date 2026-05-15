@@ -32,6 +32,10 @@ public class LessonService {
         return lessonRepository.findByTopicIdAndLanguageAndLevelAndLessonNumber(topicId, language, level, lessonNumber);
     }
 
+    public Optional<Lesson> findByTopicIdAndLevelAndLessonNumber(Long topicId, String level, Integer lessonNumber) {
+        return lessonRepository.findByTopicIdAndLevelAndLessonNumber(topicId, level, lessonNumber);
+    }
+
     public List<Lesson> findByTopicIdAndLevel(Long topicId, String level) {
         return lessonRepository.findByTopicIdAndLevelOrderByLessonNumber(topicId, level);
     }

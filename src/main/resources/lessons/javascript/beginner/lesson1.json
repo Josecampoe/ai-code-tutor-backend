@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Introduction and Hello World",
+  "summary": "Write your first JavaScript program and understand how code runs in the browser",
+  "estimatedMinutes": 12,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "What is JavaScript?",
+      "content": "JavaScript is like a remote control for a website. Just as a remote tells your TV what to do, JavaScript tells web pages how to behave, what to show, and when to change. It is the programming language that makes websites interactive — enabling buttons to respond, forms to validate, and animations to play. Without JavaScript, web pages would be as static as a printed magazine."
+    },
+    {
+      "type": "example",
+      "title": "Hello World in JavaScript",
+      "content": "The simplest JavaScript program that prints a greeting to the console",
+      "code": "// This is a comment — JavaScript ignores it\n// Comments help humans understand code\n\n// console.log prints text to the developer console\nconsole.log('Hello, World!');\n// Expected output: Hello, World!\n\n// You can also print numbers\nconsole.log(42);\n// Expected output: 42\n\n// Multiple values can be printed at once\nconsole.log('Hello', 'World', '!');\n// Expected output: Hello World !"
+    },
+    {
+      "type": "explanation",
+      "title": "How JavaScript Runs",
+      "content": "JavaScript runs inside a special environment called a runtime. In browsers, the runtime is built-in — every browser has a JavaScript engine that reads your code line by line and executes it instantly. Think of the engine as a translator: you speak JavaScript, and the engine translates it into actions the computer understands. When you open a web page with JavaScript, the engine scans through the script, understands what each line means, and carries out the instructions immediately."
+    },
+    {
+      "type": "tip",
+      "title": "Mind your quotes",
+      "content": "The #1 mistake beginners make is mixing up quotation marks or forgetting to close them. 'Hello, World!\" will crash your program because the opening single quote doesn't match the closing double quote. Always use matching quotes (both single or both double) and always close them before starting a new line."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You are building a digital business card for a friend named Maria. Write a JavaScript program that prints Maria's name, her job title 'Graphic Designer', and the year 2026 — each on a separate line using three console.log statements.",
+      "hints": [
+        "What function do you use to print something in JavaScript?",
+        "How do you write text so JavaScript knows it is a string?",
+        "Which of the three values needs to be wrapped in quotes and which one does not?"
+      ]
+    }
+  ]
+}

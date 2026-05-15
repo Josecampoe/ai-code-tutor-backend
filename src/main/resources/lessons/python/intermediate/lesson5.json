@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 5,
+  "title": "Modules and Packages",
+  "summary": "Organize Python code into modules and packages for reuse and maintainability",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Modules are chapters in your codebook",
+      "content": "Imagine writing everything in a single notebook — finding anything becomes impossible. Modules are separate chapters in your codebook, each focused on one area. Any Python file (.py) is a module. You import its functions and classes into other files using 'import module_name'. Python's standard library is a vast collection of built-in modules you can import without installing anything — like math for calculations, os for operating system commands, or json for working with JSON data. Packages are directories of related modules with a special __init__.py file that tells Python 'this directory is a package.'"
+    },
+    {
+      "type": "example",
+      "title": "Importing and using standard library modules",
+      "content": "Use the math module for mathematical operations and the datetime module for dates",
+      "code": "# Import an entire module — all functions are available via math.xxx\nimport math  # Gives access to sin, cos, sqrt, pi, etc.\n\n# Import specific functions from a module to use them directly\nfrom datetime import datetime, timedelta  # No need for datetime.datetime\n\n# Use math module functions with dot notation\nradius = 5\narea = math.pi * (radius ** 2)  # pi is a constant in the math module\nprint(f\"Circle area: {area:.2f}\")  # Format to 2 decimal places\n\n# Use the datetime module for current date and time\nnow = datetime.now()  # Gets current date and time from system clock\nprint(f\"Current time: {now}\")  # Default string representation\n\n# Create a future date by adding a timedelta (duration)\nfuture_date = now + timedelta(days=7)  # One week from today\nprint(f\"One week from now: {future_date}\")\n# Expected output:\n# Circle area: 78.54\n# Current time: 2026-05-15 14:20:00.123456\n# One week from now: 2026-05-22 14:20:00.123456"
+    },
+    {
+      "type": "explanation",
+      "title": "Organizing your own code into packages",
+      "content": "As projects grow, throw all functions into one file becomes unmanageable. Create a package by making a directory with an __init__.py file (can be empty) and putting related modules inside. For example, a sales system might have a package called 'reporting/' with __init__.py, sales_report.py, and inventory_report.py. Other files import from it: from reporting.sales_report import generate_report. The __init__.py can also run setup code when the package is first imported. Use relative imports (from . import helper) inside packages to reference sibling modules."
+    },
+    {
+      "type": "tip",
+      "title": "Circular imports will confuse you",
+      "content": "A common intermediate mistake is creating circular imports where module A imports module B, and module B imports module A. This creates an infinite loop. Wrong: sales.py imports from inventory.py, and inventory.py imports from sales.py. Python raises ImportError. Fix: restructure so the dependency goes one direction, or move the shared dependency to a third module (e.g., models.py that both import from)."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a package structure called 'shapes' with two modules: 'circle.py' (with functions area(radius) and circumference(radius)) and 'square.py' (with area(side) and perimeter(side)). Include an __init__.py that imports both modules. Then write a main.py script that imports from the shapes package and calculates the area of a circle with radius 3 and a square with side 4.",
+      "hints": [
+        "What file must exist inside the 'shapes' directory to turn it into a package?",
+        "How do you write the import statement to access shapes.circle.area(3)?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Advanced Project",
+  "summary": "Design and implement a multi-module application with concurrency, persistence, and testing",
+  "estimatedMinutes": 25,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Project Architecture: Event-Driven Design",
+      "content": "This project uses an event-driven architecture where components communicate through events, like a newsroom where reporters file stories and editors pick them up. An OrderPlaced event triggers inventory deduction. A PaymentReceived event triggers shipping. This decouples components — the order service doesn't need to know about shipping, it just publishes events. You'll implement this with a simple in-memory event bus and thread pools. This pattern is used in real production systems by Netflix, Uber, and Amazon because it scales horizontally: each component can run on separate servers connected by a message queue like Kafka or RabbitMQ."
+    },
+    {
+      "type": "example",
+      "title": "Event Bus with Concurrent Processing",
+      "content": "This shows the core event bus that dispatches events to multiple subscribers concurrently",
+      "code": "import java.util.concurrent.*;\nimport java.util.*;\n\npublic class EventBus {\n    // ConcurrentHashMap ensures thread-safe subscriber storage\n    private final Map<Class<?>, List<Consumer<?>>> subscribers\n        = new ConcurrentHashMap<>();\n    \n    // Thread pool for async event processing\n    private final ExecutorService executor\n        = Executors.newFixedThreadPool(4);\n    \n    // Register a subscriber for a specific event type\n    public <T> void subscribe(Class<T> eventType, Consumer<T> handler) {\n        subscribers.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>());\n        subscribers.get(eventType).add(handler);\n    }\n    \n    // Publish event to all subscribers (async)\n    public <T> void publish(T event) {\n        List<Consumer<?>> handlers = subscribers.get(event.getClass());\n        if (handlers != null) {\n            for (Consumer<?> handler : handlers) {\n                executor.submit(() -> ((Consumer<T>) handler).accept(event));\n            }\n        }\n    }\n}\n// Expected: events are processed by all subscribers in parallel"
+    },
+    {
+      "type": "explanation",
+      "title": "Bringing It All Together: Layers and Testing",
+      "content": "Your project will have three modules: core (domain models and events), persistence (database access with JDBC/HikariCP), and service (business logic and event processing). Each module is built, tested, and versioned independently. The persistence module depends on core, and service depends on both. You'll write JUnit 5 tests with Mockito for the service layer (mocking persistence), and integration tests using an H2 in-memory database for the persistence layer. This multi-module setup mirrors real enterprise projects at companies like Spotify and Twitter where teams own different modules and communicate through well-defined interfaces."
+    },
+    {
+      "type": "tip",
+      "title": "Not separating integration tests from unit tests",
+      "content": "Most common mistake: mixing fast unit tests (milliseconds) with slow integration tests (seconds) in the same test run, making developers avoid running tests. Fix: use Maven's test vs failsafe plugin separation, or JUnit tags to distinguish categories. Run unit tests on every save, integration tests only before commit. Wrong: all tests in src/test/java with no categories. Correct: unit tests in src/test/java, integration tests in src/integration-test/java."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Design and implement a mini stock trading system with three modules. The order-service module validates trades (a buy order needs sufficient funds, a sell order needs sufficient shares). The market-data module publishes price changes as events. The reporting module listens for trade execution events and generates daily summaries. Use the EventBus pattern, JDBC for persistence (H2 in-memory), and a thread pool for concurrent order processing. Write at least 5 JUnit tests for the order validation logic and 2 integration tests for persistence.",
+      "hints": [
+        "What events does the order-service publish when a trade executes?",
+        "How do you test concurrent order processing without actual threads?",
+        "What database schema captures accounts, holdings, and trade history?"
+      ]
+    }
+  ]
+}

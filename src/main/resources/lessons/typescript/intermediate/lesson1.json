@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "OOP Deep Dive",
+  "summary": "Use inheritance, polymorphism, access modifiers, and method overriding to build robust class hierarchies",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Inheritance Is Like a Family Tree",
+      "content": "Inheritance lets one class (a child) reuse properties and methods from another class (a parent), much like children inherit traits from parents. A 'Vehicle' parent class might have 'speed' and 'move()'. A 'Car' child class inherits those and adds 'doors' and 'honk()'. This avoids duplicating shared code — write it once in the parent, reuse it in every child. TypeScript uses the 'extends' keyword for inheritance. A child can also override a parent method to provide specialized behavior, like a Bicycle overriding 'move()' to say 'pedaling' instead of 'driving'. This keeps your code DRY (Don't Repeat Yourself)."
+    },
+    {
+      "type": "example",
+      "title": "Employee and Manager Inheritance",
+      "content": "A Manager class extends Employee, adding a team size property and overriding the getDetails method",
+      "code": "// Base class: Employee\nclass Employee {\n  constructor(\n    public name: string,\n    protected salary: number,\n    private id: number\n  ) {}\n  // Public method accessible from anywhere\n  getDetails(): string {\n    return `Employee: ${this.name}, ID: ${this.id}`;\n  }\n  // Protected method accessible in this class and subclasses\n  protected getSalary(): number {\n    return this.salary;\n  }\n}\n// Subclass: Manager extends Employee\nclass Manager extends Employee {\n  constructor(\n    name: string,\n    salary: number,\n    id: number,\n    public teamSize: number\n  ) {\n    super(name, salary, id); // Call parent constructor\n  }\n  // Override parent method with more detail\n  getDetails(): string {\n    return `${super.getDetails()}, Team: ${this.teamSize} people`;\n  }\n}\nconst emp = new Manager('Alice', 85000, 101, 5);\nconsole.log(emp.getDetails());\n// Expected: Employee: Alice, ID: 101, Team: 5 people"
+    },
+    {
+      "type": "explanation",
+      "title": "Access Modifiers — Public, Private, and Protected",
+      "content": "Access modifiers control who can see or modify class members, like different security clearance levels. 'public' (default) means anyone can access the property or method — like a storefront window. 'private' means only the owning class can access it — like a personal diary. 'protected' opens access to the class and its children but not the outside world — like a family heirloom passed to descendants but not sold to strangers. TypeScript also has a shorthand: declaring parameters in the constructor with a modifier (public/private/protected) automatically creates and assigns the property, saving boilerplate code."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting super() in the Child Constructor",
+      "content": "The #1 intermediate mistake is defining a child class constructor without calling super(). Wrong approach: 'class Manager extends Employee { constructor(name: string, salary: number) { this.teamSize = 0; } }' — TypeScript will error because the parent constructor was never called. Correct approach: 'constructor(name: string, salary: number) { super(name, salary); this.teamSize = 0; }'. The 'super()' call must happen before you access 'this' in the child constructor. Think of it as unlocking the parent's features by calling super() first, like turning on the main power switch before using any appliances."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A school system needs a class hierarchy. Create a Person class with name and age. Create a Student class that extends Person with grade and studentId. Create a Teacher class that extends Person with subject and employeeId. Both subclasses should override a method 'getDescription()' to include their specific information. Create one student and one teacher, call getDescription on both.",
+      "hints": [
+        "What access modifier should the Person properties have so both subclasses can read them?",
+        "What keyword must you call in the Student and Teacher constructors?",
+        "How can you reuse the parent's getDescription inside the override?"
+      ]
+    }
+  ]
+}

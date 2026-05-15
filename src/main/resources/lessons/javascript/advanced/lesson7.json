@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Working with APIs",
+  "summary": "Build robust API clients with retry logic, caching, and rate limiting",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "API Clients Are Like Restaurant Ordering",
+      "content": "An API client is like a waiter taking your order to the kitchen. You send a request (order), the kitchen processes it (server), and brings back a response (food). Professional API clients handle common issues: network failures (kitchen dropped the order — retry), rate limits (kitchen is too busy — wait), and caching (same customer orders the same dish — serve the pre-made one). A well-built client abstracts these concerns so the rest of your code just calls fetchData() and gets data."
+    },
+    {
+      "type": "example",
+      "title": "Fetch with retry and timeout",
+      "content": "Wraps fetch with exponential backoff retry and abort controller timeout",
+      "code": "async function fetchWithRetry(url, options = {}, retries = 3) {\n  const controller = new AbortController();\n  const timeout = setTimeout(() => controller.abort(), 5000);\n\n  for (let attempt = 1; attempt <= retries; attempt++) {\n    try {\n      const res = await fetch(url, {\n        ...options,\n        signal: controller.signal\n      });\n      if (!res.ok) throw new Error('HTTP ' + res.status);\n      clearTimeout(timeout);\n      return await res.json();\n    } catch (err) {\n      clearTimeout(timeout);\n      if (attempt === retries) throw err;\n      await new Promise(r => setTimeout(r, 1000 * attempt));\n    }\n  }\n}\n\nfetchWithRetry('https://api.example.com/data')\n  .then(data => console.log(data));"
+    },
+    {
+      "type": "explanation",
+      "title": "Rate Limiting and API Contracts",
+      "content": "APIs enforce rate limits — maximum requests per minute. Respecting limits requires tracking request timestamps and queuing or delaying excess requests. Use a token bucket algorithm: you have N tokens, each request consumes one, and tokens refill at a fixed rate. Additionally, parse Retry-After headers from 429 responses. For REST APIs, follow the contract: use correct HTTP methods (GET for read, POST for create, PUT for update, DELETE for remove), handle pagination via Link headers, and cache ETags for conditional requests."
+    },
+    {
+      "type": "tip",
+      "title": "Ignoring error status codes and edge cases",
+      "content": "The #1 mistake developers make is only handling the happy path (status 200). Wrong: const res = await fetch(url); const data = await res.json(); return data; — this crashes on 404, 500, or network errors. Correct: check res.ok, handle specific status codes (404 = not found, 429 = rate limit, 500 = server error), catch network errors, and implement retries with backoff. A production API client handles every HTTP status category appropriately."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build an API client for a weather service. Implement: getCurrentWeather(city) that fetches and caches results in a Map for 5 minutes (use timestamps), getForecast(city, days) that handles pagination if the API returns partial results, and a rate limiter that allows max 10 requests per minute. Include proper error handling for 404 (city not found), 429 (rate limit), and network errors.",
+      "hints": [
+        "How do you check if a cached entry is still valid based on its timestamp?",
+        "What headers or status codes indicate rate limiting from most APIs?",
+        "How do you track request timestamps to enforce 10 requests per minute?"
+      ]
+    }
+  ]
+}

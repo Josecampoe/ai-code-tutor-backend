@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Operators",
+  "summary": "Perform calculations and compare values using JavaScript operators",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Operators Are Math Tools",
+      "content": "Operators are symbols that perform operations on values, just like buttons on a calculator. The most familiar ones are arithmetic operators: + (add), - (subtract), * (multiply), and / (divide). There is also % (modulus) which gives the remainder of division — think of it as what is left over after splitting a pizza evenly. Beyond math, JavaScript has comparison operators (like > and ===) that check relationships between values and return true or false."
+    },
+    {
+      "type": "example",
+      "title": "Arithmetic and comparison operators in action",
+      "content": "Performs basic calculations and comparisons using common operators",
+      "code": "// Arithmetic operators\nlet price = 20;\nlet tax = 0.08;\nlet total = price + price * tax;\nconsole.log(total);\n// Expected output: 21.6\n\n// Modulus — remainder after division\nlet slices = 10;\nlet people = 3;\nlet leftover = slices % people;\nconsole.log(leftover);\n// Expected output: 1\n\n// Comparison operators return true or false\nconsole.log(10 > 5);\n// Expected output: true\nconsole.log(price === 20);\n// Expected output: true\nconsole.log(price !== 20);\n// Expected output: false"
+    },
+    {
+      "type": "explanation",
+      "title": "The Difference Between =, ==, and ===",
+      "content": "A single = is assignment — it puts a value into a variable. Two == is loose equality — it checks if values are equal after converting types (like '5' == 5 is true). Three === is strict equality — it checks value AND type without conversion ('5' === 5 is false). Always use === unless you have a specific reason to allow type conversion. This prevents subtle bugs where JavaScript silently changes types in unexpected ways."
+    },
+    {
+      "type": "tip",
+      "title": "Confusing assignment with comparison",
+      "content": "The #1 mistake beginners make is using = instead of === inside conditions. if (score = 100) does not check if score equals 100 — it assigns 100 to score, and the condition is always true. Wrong: if (score = 100). Correct: if (score === 100). This is such a common bug that many linters flag single = inside if statements."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A coffee shop calculates bills. A customer buys 3 coffees at $4 each and 2 muffins at $3.50 each. Write code to compute the subtotal, apply a 10% discount if the subtotal is over $15, and print the final amount. Use variables, arithmetic, and comparison operators.",
+      "hints": [
+        "How do you calculate a percentage of a number in JavaScript?",
+        "Which operator checks if one value is greater than another?",
+        "Should the condition use =, ==, or === to check the subtotal?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Strings",
+  "summary": "Manipulate text using String methods to process names, messages, and user input",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Strings as Beads on a Necklace",
+      "content": "Think of a String as a necklace where each bead is a single character. The beads are arranged in a specific order, and you can count them, find specific beads, or cut the necklace at certain points. In Java, a String is a sequence of characters surrounded by double quotes. Unlike primitive types, String is an object with built-in methods that let you ask questions like 'how long is this text?' or 'does this sentence contain the word hello?' These methods are incredibly useful for processing names, messages, and any text your program handles."
+    },
+    {
+      "type": "example",
+      "title": "Common String Operations",
+      "content": "This code processes a customer name using several built-in String methods",
+      "code": "// A customer's full name stored as a String\nString fullName = \"Maria Lopez\";\n// length() returns the number of characters (spaces count)\nint nameLength = fullName.length();\n// toUpperCase() converts all letters to uppercase\nString upperName = fullName.toUpperCase();\n// charAt(0) gets the first character (index 0)\nchar firstLetter = fullName.charAt(0);\n// Check if the name contains a space character\nboolean hasSpace = fullName.contains(\" \");\nSystem.out.println(\"Length: \" + nameLength);\nSystem.out.println(\"Uppercase: \" + upperName);\nSystem.out.println(\"First letter: \" + firstLetter);\n// Expected output:\n// Length: 11\n// Uppercase: MARIA LOPEZ\n// First letter: M"
+    },
+    {
+      "type": "explanation",
+      "title": "String Immutability",
+      "content": "Strings in Java are immutable, which means once you create a String, you cannot change it. The String methods you call don't modify the original — they create and return a brand new String with the changes applied. This is like carving your name on a brick: the brick itself never changes, but you can make a new brick with different text. So when you call fullName.toUpperCase(), it doesn't modify fullName itself. It creates a new String \"MARIA LOPEZ\" and returns it. You must store that return value in a variable to keep it."
+    },
+    {
+      "type": "tip",
+      "title": "Using == to compare Strings instead of equals()",
+      "content": "Most common mistake: comparing Strings with == like if (name == \"Maria\"). The == operator checks if two objects are the same object in memory, not if they have the same characters. Fix: always use the equals() method for String comparison. Wrong: if (name == \"Maria\"). Correct: if (name.equals(\"Maria\"))."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A username validator checks if a username is valid: it must be at least 5 characters long, contain no spaces, and start with a letter. Write code that takes a username string and prints whether it is valid, checking each condition separately.",
+      "hints": [
+        "Which String method checks the number of characters?",
+        "How do you check whether a String contains a space?",
+        "How can you get and examine the first character?"
+      ]
+    }
+  ]
+}

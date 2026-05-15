@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 3,
+  "title": "Collections",
+  "summary": "Use Map, Set, and typed arrays to store, organize, and efficiently retrieve data collections",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Maps and Sets Are Specialized Arrays",
+      "content": "If arrays are like numbered lockers, Maps are like labeled lockers where you choose the key (not just a number). A Map stores key-value pairs where keys can be any type — strings, numbers, even objects. This is perfect for dictionaries, caches, or any lookup table. A Set is like a bag that automatically rejects duplicates — add the same item twice and the second addition is ignored. Sets are ideal for tracking unique items like visited pages or tags on a post. Both are built into TypeScript and support generic type parameters to ensure type safety, like 'Map<string, number>' for a dictionary of names to scores."
+    },
+    {
+      "type": "example",
+      "title": "Tracking Product Inventory with a Map",
+      "content": "Uses a Map to store product names and quantities, then checks stock levels",
+      "code": "// Create a Map with string keys (product) and number values (quantity)\nconst inventory: Map<string, number> = new Map();\n// Add products to the inventory\ninventory.set('Laptop', 15);\ninventory.set('Mouse', 42);\ninventory.set('Keyboard', 28);\n// Update an existing product's quantity\ninventory.set('Mouse', inventory.get('Mouse')! + 10);\n// Check if a product exists and get its quantity\nconst laptopStock: number | undefined = inventory.get('Laptop');\nconsole.log('Laptop stock:', laptopStock);\n// Iterate over all entries\ninventory.forEach((quantity, product) => {\n  console.log(`${product}: ${quantity} units`);\n});\n// Check if product exists\nconsole.log('Has Tablet?', inventory.has('Tablet'));\n// Expected:\n// Laptop stock: 15\n// Laptop: 15 units\n// Mouse: 52 units\n// Keyboard: 28 units\n// Has Tablet? false"
+    },
+    {
+      "type": "explanation",
+      "title": "Sets for Uniqueness and Fast Lookups",
+      "content": "A Set automatically enforces uniqueness — adding a value that already exists simply does nothing. This makes Sets the right choice whenever you need to track 'what have I seen?' without caring about counts or order. Sets also provide O(1) lookup speed with .has(), which is much faster than checking an array with .includes() for large collections. The trade-off is that Sets do not store indexes — you cannot get 'the third element' from a Set. TypeScript's Set type is generic: 'Set<number>' for a set of numbers, 'Set<string>' for strings. Use Sets for tags, unique IDs, or any collection where duplicates are meaningless."
+    },
+    {
+      "type": "tip",
+      "title": "Using an Array When a Set or Map Would Be Better",
+      "content": "The #1 intermediate mistake is using arrays for everything, even when you need uniqueness or key-based lookups. Wrong approach: 'const visitedPages: string[] = []; if (!visitedPages.includes(url)) { visitedPages.push(url); }' — O(n) check every time. Correct approach: 'const visitedPages: Set<string> = new Set(); visitedPages.add(url);' — O(1) and automatically deduplicates. Similarly, using two parallel arrays instead of a Map is a code smell. If you find yourself calling .find() or .filter() to locate an item by a property, you probably need a Map."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A website analytics system needs to track unique visitor IP addresses per day and also store each visitor's page view count. Use a Set for today's unique IPs (starts empty) and a Map<string, number> for tracking how many pages each IP has viewed. Write code to: (1) add IP '192.168.1.1' viewing 3 pages, (2) add '10.0.0.1' viewing 1 page, (3) add '192.168.1.1' again viewing 2 more pages, (4) print total unique IPs and each IP's total page views.",
+      "hints": [
+        "How do you update a Map value when the key already exists — do you need to get the old value first?",
+        "What does Set.add() do if the value already exists in the set?",
+        "How do you iterate over a Map to print each key and value?"
+      ]
+    }
+  ]
+}

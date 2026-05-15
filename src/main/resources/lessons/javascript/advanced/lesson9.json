@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 9,
+  "title": "Deployment Basics",
+  "summary": "Prepare and deploy a Node.js application to production with CI/CD and environment management",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Deployment Is Moving from the Workshop to the Store",
+      "content": "Developing an app on your laptop is like building furniture in a workshop. Deployment is moving that furniture to the store where customers (users) can use it. Production environments differ from development: they handle real traffic, require SSL certificates, need environment-specific configuration, and must restart automatically if they crash. A deployment pipeline includes: building (compiling/transpiling), testing, packaging, and releasing. Tools like Docker, GitHub Actions, and cloud platforms (Render, Railway, AWS) automate these steps."
+    },
+    {
+      "type": "example",
+      "title": "Environment configuration with dotenv",
+      "content": "Uses environment variables for configuration — secrets stay out of the codebase",
+      "code": "// .env file (never commit this)\n// PORT=3000\n// DB_URL=postgres://user:pass@localhost:5432/myapp\n// NODE_ENV=production\n\n// config.js\nrequire('dotenv').config();\n\nconst config = {\n  port: parseInt(process.env.PORT, 10) || 3000,\n  dbUrl: process.env.DB_URL,\n  isProduction: process.env.NODE_ENV === 'production',\n  jwtSecret: process.env.JWT_SECRET\n};\n\nif (!config.dbUrl || !config.jwtSecret) {\n  console.error('Missing required environment variables');\n  process.exit(1);\n}\n\nmodule.exports = config;\n\n// Start server\nconst app = require('./app');\napp.listen(config.port, () => {\n  console.log('Server running on port', config.port);\n});"
+    },
+    {
+      "type": "explanation",
+      "title": "Process Managers and Zero-Downtime Deployment",
+      "content": "In production, your app must survive crashes and restarts without downtime. Process managers like PM2 keep your app running: if it crashes, PM2 restarts it immediately. For zero-downtime deployments: start a new instance, wait for it to be ready, then switch traffic from the old instance. This is called a rolling deployment. Node.js clustering (using the cluster module) lets you spawn multiple worker processes across CPU cores, improving throughput. Each worker shares the same port."
+    },
+    {
+      "type": "tip",
+      "title": "Hardcoding secrets or environment-specific values",
+      "content": "The #1 mistake developers make when deploying is hardcoding API keys, database URLs, or environment-specific config in source files. Wrong: const DB_URL = 'localhost:5432/myapp' in the source code. Correct: read all secrets and environment-specific values from process.env, use .env files locally, and inject real values via the deployment platform's environment variable system. Never commit .env files to version control. Add .env to .gitignore immediately."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a deployment-ready Express application. Set up: (1) a config module reading from environment variables with sensible defaults, (2) a health check endpoint at GET /health that returns { status: 'ok', uptime: process.uptime() }, (3) a graceful shutdown handler that closes database connections on SIGTERM, and (4) a Dockerfile that uses multi-stage builds (install deps, then copy only production files to a smaller image).",
+      "hints": [
+        "What process events do you listen for to implement graceful shutdown (SIGTERM, SIGINT)?",
+        "How does a multi-stage Dockerfile reduce the final image size?",
+        "What should the health check endpoint return if the database connection is down vs up?"
+      ]
+    }
+  ]
+}

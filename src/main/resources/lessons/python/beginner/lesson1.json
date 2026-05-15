@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 1,
+  "title": "Introduction and Hello World",
+  "summary": "Write your first Python program and understand how code runs on your computer",
+  "estimatedMinutes": 12,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "What is Python and why learn it?",
+      "content": "Think of Python as a universal translator between you and your computer. Just like you'd use Spanish or French to talk to a person from another country, you use Python to give instructions to a machine. Python is one of the most beginner-friendly programming languages because its rules are simple and its sentences read almost like plain English. Big companies like Google, Netflix, and Spotify use Python every day to run their services."
+    },
+    {
+      "type": "example",
+      "title": "Your first Python program",
+      "content": "This classic one-line program displays text on your screen",
+      "code": "# print() is a built-in function that shows text in the console\n# The text inside quotes is called a \"string\"\n# When you run this, Python executes line by line from top to bottom\nprint(\"Hello, World!\")  # This line sends output to the screen\n# Expected output:\n# Hello, World!"
+    },
+    {
+      "type": "explanation",
+      "title": "How Python runs your code",
+      "content": "You don't need a special compiler — Python reads your file line by line and executes each instruction immediately, like a chef reading a recipe step by step. You write code in a plain text file (ending in .py), then run it through the Python interpreter. The interpreter acts as the middleman, translating your human-readable instructions into machine actions."
+    },
+    {
+      "type": "tip",
+      "title": "Watch your quotes",
+      "content": "The most common beginner mistake is mixing up quote types or forgetting to close them. Python needs matching opening and closing quotes. Wrong: print(\"Hello) or print('World\"). Correct: print(\"Hello\") and print('World'). Always check that both quotes are the same style—single or double, but not mixed."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "You're creating a name badge for a company event. Write a program that prints your name on one line and your favorite programming language on the next line.",
+      "hints": [
+        "How do you print the first line so it ends before the second line starts?",
+        "What symbol surrounds the text you want to print?"
+      ]
+    }
+  ]
+}

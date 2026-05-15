@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Databases and Persistence",
+  "summary": "Connect to databases, run queries, and manage migrations in Node.js",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Databases Are Organized Filing Cabinets",
+      "content": "A database is a giant, organized filing cabinet behind your application. Instead of storing JSON files on disk (like the intermediate project), a database provides: concurrent access (multiple users reading/writing simultaneously), querying (find all users over 18), indexing (fast lookup by ID), and transactions (group operations that all succeed or all fail together). SQL databases (PostgreSQL, SQLite) use structured tables and relationships. NoSQL databases (MongoDB) store documents in JSON-like format. Each has trade-offs in consistency, availability, and performance."
+    },
+    {
+      "type": "example",
+      "title": "Querying with better-sqlite3",
+      "content": "Connects to SQLite, creates a table, inserts data, and runs a query with parameters",
+      "code": "const Database = require('better-sqlite3');\nconst db = new Database('shop.db');\n\n// Create table (run once)\ndb.exec(`CREATE TABLE IF NOT EXISTS products (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT NOT NULL,\n  price REAL NOT NULL,\n  stock INTEGER DEFAULT 0\n)`);\n\n// Insert with parameterized query\nconst insert = db.prepare(\n  'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)'\n);\ninsert.run('Widget', 9.99, 100);\n\n// Query with parameter\nconst result = db.prepare(\n  'SELECT * FROM products WHERE price > ?'\n).all(5.00);\nconsole.log(result);\n// Expected output: array of matching product objects"
+    },
+    {
+      "type": "explanation",
+      "title": "SQL Injection and Parameterized Queries",
+      "content": "SQL injection is one of the most dangerous security vulnerabilities. It happens when you insert user input directly into a SQL string. Wrong: db.run('SELECT * FROM users WHERE name = \"' + userName + '\"'). If userName is ' OR '1'='1, the query returns all users. Always use parameterized queries (the ? placeholders shown above). The database driver safely escapes values. Never concatenate user input into SQL strings — even if you think you sanitized it."
+    },
+    {
+      "type": "tip",
+      "title": "String interpolation in SQL queries",
+      "content": "The #1 mistake developers make is building SQL queries with string concatenation or template literals. Wrong: `SELECT * FROM users WHERE id = ${userId}` — SQL injection vulnerability. Correct: db.prepare('SELECT * FROM users WHERE id = ?').get(userId). Always use placeholders. This applies to all databases — SQLite, PostgreSQL (with $1), MongoDB (use built-in sanitization). Your database driver's parameterized query feature exists specifically to prevent injection."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Create a database schema for a blogging platform with tables: users (id, username, email), posts (id, user_id, title, body, created_at), and comments (id, post_id, user_id, body, created_at). Write functions: createUser, createPost, getPostsWithCommentCount (using a JOIN with GROUP BY), and getRecentPosts(days) that returns posts from the last N days. Use parameterized queries for all user input.",
+      "hints": [
+        "How do you relate posts to users and comments to posts using foreign keys?",
+        "What SQL JOIN gets post data together with the count of its comments?",
+        "How does the WHERE clause filter posts created within the last N days using date functions?"
+      ]
+    }
+  ]
+}

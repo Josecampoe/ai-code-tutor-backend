@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functions",
+  "summary": "Create reusable blocks of code with functions to avoid repetition",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Functions Are Recipes",
+      "content": "A function is like a recipe card. The recipe lists ingredients (parameters) and steps to follow (the code body). Instead of rewriting the steps every time you cook, you just grab the card and follow it. In JavaScript, you define a function once and call it as many times as you want with different ingredients. This keeps your code organized, reusable, and easy to update — change the recipe in one place and every call uses the new version."
+    },
+    {
+      "type": "example",
+      "title": "A function that greets a user",
+      "content": "Defines a function with one parameter and calls it three times with different arguments",
+      "code": "// Define the function\nfunction greet(name) {\n  // name is a parameter — it acts like a variable\n  return 'Hello, ' + name + '!';\n}\n\n// Call the function with different arguments\nlet message1 = greet('Alice');\nconsole.log(message1);\n// Expected output: Hello, Alice!\n\nlet message2 = greet('Bob');\nconsole.log(message2);\n// Expected output: Hello, Bob!\n\n// Function with two parameters\nfunction add(a, b) {\n  return a + b;\n}\nconsole.log(add(5, 3));\n// Expected output: 8"
+    },
+    {
+      "type": "explanation",
+      "title": "Parameters vs Arguments, Return vs Print",
+      "content": "Parameters are placeholders listed in the function definition — they are like blank spaces on a form. Arguments are the actual values you fill in when calling the function. A function can return a value (send data back to where it was called) or just print something. The return keyword sends a value back; without it, the function returns undefined. Use return when you need the result for further calculations, and console.log only for debugging."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the return keyword",
+      "content": "The #1 mistake beginners make is forgetting to use return and expecting the function to output a value. Wrong: function add(a, b) { a + b; } — this adds a and b but does not send the result back. let result = add(2, 3); gives undefined. Correct: function add(a, b) { return a + b; }. A function without return produces undefined."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A pizza shop needs a function that calculates the total cost of an order. Write a function called calculateTotal that takes a price and a quantity, applies an 8% tax, and returns the final amount. Then call it to calculate the cost of 3 pizzas at $12 each.",
+      "hints": [
+        "What parameters should calculateTotal accept?",
+        "After multiplying price by quantity, how do you add the 8% tax?",
+        "Does the function need to print the result, or send it back to where it was called?"
+      ]
+    }
+  ]
+}

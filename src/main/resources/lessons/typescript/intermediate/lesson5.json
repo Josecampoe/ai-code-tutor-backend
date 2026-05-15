@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Modules and Packages",
+  "summary": "Organize code across multiple files using import and export statements and understand module resolution",
+  "estimatedMinutes": 15,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Modules Are Like Books in a Library",
+      "content": "A single TypeScript file is like a chapter in a book. Modules let you split your program across multiple files, each responsible for one aspect of functionality — exactly like a library where each book covers a different topic. The 'export' keyword makes a function, class, or variable available to other files. The 'import' keyword pulls it in where needed. This organization prevents the chaos of a 5000-line file and lets you reuse code across projects. TypeScript supports ES modules (import/export) natively, which is the modern standard. Each module has its own scope — variables declared in one module do not leak into another unless explicitly exported."
+    },
+    {
+      "type": "example",
+      "title": "Exporting and Importing Utilities Across Files",
+      "content": "Shows a math utilities module being exported and imported in a main file",
+      "code": "// ----- File: src/utils/math.ts -----\n// Export a function so other files can use it\nexport function calculateTotal(items: number[]): number {\n  // Sum all numbers in the array using reduce\n  return items.reduce((sum, item) => sum + item, 0);\n}\n// Export a constant value\nexport const TAX_RATE: number = 0.08;\n// Default export — one per module\n// ----- File: src/main.ts -----\n// Import the named exports and the default export\nimport { calculateTotal, TAX_RATE } from './utils/math.js';\n// Use the imported function and constant\nconst prices: number[] = [29.99, 49.99, 15.00];\nconst subtotal: number = calculateTotal(prices);\nconst tax: number = subtotal * TAX_RATE;\nconsole.log(`Subtotal: $${subtotal}, Tax: $${tax.toFixed(2)}`);\n// Expected: Subtotal: $94.98, Tax: $7.60"
+    },
+    {
+      "type": "explanation",
+      "title": "Named Exports vs Default Exports and Barrel Files",
+      "content": "Named exports (using 'export' before each declaration) are explicit and let you export multiple items from one module. Default exports ('export default') are for the main feature of a module — each module can have only one. Named exports are preferred in larger codebases because they make imports predictable and enable IDE autocompletion. A common pattern is the 'barrel file' — an index.ts that re-exports everything from a directory, so consumers import from a single path. This is like having a directory index at the front of a filing cabinet telling you which folder contains what."
+    },
+    {
+      "type": "tip",
+      "title": "Importing from the Wrong Path or Missing File Extension",
+      "content": "The #1 intermediate mistake is import path errors — wrong relative path or missing file extension. Wrong approach: 'import { foo } from \"./utils/math\"' expecting TypeScript to find 'math.ts' without the extension. In Node.js ESM, you must include the extension: './utils/math.js' (even though the source is .ts). Wrong approach: './utils/helper' when the file is actually at './utils/helpers'. Correct: double-check the file exists at the specified path and use .js extension for ESM. TypeScript's path mapping ('paths' in tsconfig.json) can simplify this for shared code."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Refactor a monolithic file into modules. You have a shopping cart system with functions: addItem, removeItem, calculateTotal, and a constant SHIPPING_COST. Split these into three modules: 'cart/cart.ts' (addItem, removeItem), 'cart/pricing.ts' (calculateTotal, SHIPPING_COST), and 'cart/index.ts' (barrel that re-exports everything). Then write a main.ts that imports from './cart/index.js' and uses all functions.",
+      "hints": [
+        "Which functions belong together — what do addItem and removeItem have in common?",
+        "How do you re-export something from a barrel file?",
+        "What's the difference between 'export' and 'export default' when you have multiple exports?"
+      ]
+    }
+  ]
+}

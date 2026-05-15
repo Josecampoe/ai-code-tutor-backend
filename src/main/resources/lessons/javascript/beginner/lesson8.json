@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 8,
+  "title": "Strings",
+  "summary": "Manipulate text with string methods and understand immutability",
+  "estimatedMinutes": 13,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Strings Are Text Containers",
+      "content": "A string is a sequence of characters — letters, numbers, spaces, and symbols — wrapped in quotes. Think of a string as a beaded necklace: each character is a bead, and the order matters. JavaScript provides many built-in tools (methods) for working with strings, like finding how long a string is, converting to uppercase, or extracting parts of it. These methods do not change the original string; they return a new one because strings are immutable."
+    },
+    {
+      "type": "example",
+      "title": "Common string operations",
+      "content": "Demonstrates length, case conversion, trimming, and extraction on a name string",
+      "code": "let message = '  Hello, JavaScript!  ';\n\n// Get the length (includes spaces)\nconsole.log(message.length);\n// Expected output: 21\n\n// Remove extra spaces at start and end\nconsole.log(message.trim());\n// Expected output: Hello, JavaScript!\n\n// Convert to uppercase\nconsole.log(message.trim().toUpperCase());\n// Expected output: HELLO, JAVASCRIPT!\n\n// Extract part of a string\nlet greeting = message.trim().slice(0, 5);\nconsole.log(greeting);\n// Expected output: Hello"
+    },
+    {
+      "type": "explanation",
+      "title": "String Concatenation and Template Literals",
+      "content": "Combining strings is called concatenation. The old way uses the + operator: 'Hello, ' + name + '!'. The modern way uses template literals — backticks with ${} placeholders: `Hello, ${name}!`. Template literals are easier to read and less error-prone because you do not juggle quotation marks and plus signs. They also respect line breaks, allowing multi-line strings without special characters."
+    },
+    {
+      "type": "tip",
+      "title": "Trying to modify a string directly",
+      "content": "The #1 mistake beginners make is thinking they can change a string like an array. Wrong: let name = 'Alice'; name[0] = 'O'; — this does nothing. Strings are immutable, meaning they cannot be changed in place. Correct: let name = 'Alice'; name = 'O' + name.slice(1); — you must create a new string and assign it back to the variable."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A ticket system stores names in 'LAST, First' format like 'SMITH, John'. Write code that converts this to 'John SMITH' (first name, space, last name in all caps). Use string methods like split, trim, and toUpperCase.",
+      "hints": [
+        "Which method can break a string into parts at a specific character like comma?",
+        "After splitting, which array index holds the last name and which holds the first name?",
+        "How do you build the final formatted string from the two parts?"
+      ]
+    }
+  ]
+}

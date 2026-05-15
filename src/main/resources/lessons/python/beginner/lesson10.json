@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 10,
+  "title": "Beginner Project",
+  "summary": "Build a complete program combining variables, loops, lists, functions, and user input",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Putting it all together",
+      "content": "So far you've learned individual concepts like variables, loops, functions, and lists. Now it's time to combine them into something real. Professional developers call this integration — pieces working together. Think of building a sandwich: you know what bread, cheese, and meat are individually, but combining them makes a meal. This project will ask for user input (making the program interactive), store data in lists, use functions to organize code, and loop to handle multiple operations. You'll write a practical tool you could actually use."
+    },
+    {
+      "type": "example",
+      "title": "A simple shopping list manager",
+      "content": "This program lets a user add items, view the list, and calculate the total cost",
+      "code": "# Start with an empty list to hold shopping items\nshopping_list = []  # Each item will be a dictionary with name and price\n\ndef add_item(name, price):\n    # Create a dictionary with two key-value pairs\n    item = {\"name\": name, \"price\": price}  # Curly braces create a dict\n    # Add the dictionary to the shopping list\n    shopping_list.append(item)\n    # Confirm the addition to the user\n    print(f\"Added {name} for ${price:.2f}\")\n\ndef show_total():\n    # Start the total at zero\n    total = 0  # Will accumulate the sum of all prices\n    # Loop through every item in the list\n    for item in shopping_list:  # item is each dictionary in the list\n        # Add this item's price to the running total\n        total += item[\"price\"]  # Access the price value in the dict\n    # Display the final total formatted to 2 decimal places\n    print(f\"Total: ${total:.2f}\")\n\n# Add some items to demonstrate the program\nadd_item(\"Apples\", 3.50)  # Add first item\nadd_item(\"Milk\", 2.99)   # Add second item\nshow_total()  # Calculate and display the total\n# Expected output:\n# Added Apples for $3.50\n# Added Milk for $2.99\n# Total: $6.49"
+    },
+    {
+      "type": "explanation",
+      "title": "Building confidence through projects",
+      "content": "A project is different from exercises — it's open-ended and has multiple possible solutions. This is where real learning happens. You'll need to make design decisions: which data structures to use, how to name functions, how to handle errors. Don't worry about getting it perfect the first time. Plan on paper first, write code, test it, then improve it. The goal is to experience the full cycle of creating something from scratch. By the end, you'll have a program you can show others and a solid understanding of how Python pieces fit together."
+    },
+    {
+      "type": "tip",
+      "title": "Start simple, then add features",
+      "content": "Beginners often try to build everything at once and get overwhelmed. Wrong approach: writing 100 lines then running it to see it fail everywhere. Correct approach: start with 5 lines that work, test them, then add 5 more. Get the 'add item' feature working before you tackle 'remove item.' Working incrementally means you always have a working program to fall back on."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build a grade tracker program. Create a list to store student names and their scores. Write functions to: (1) add a student with a score, (2) show all students and their scores, (3) calculate the class average. Add at least 4 students with different scores and display everything. Bonus: let the user choose which action to perform using input().",
+      "hints": [
+        "What data structure can hold both a name and a score for each student?",
+        "How do you calculate the average of all scores in the list?"
+      ]
+    }
+  ]
+}

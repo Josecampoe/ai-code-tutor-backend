@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 10,
+  "title": "Advanced Project",
+  "summary": "Build a production-grade REST API with async patterns, testing, database, and Docker deployment",
+  "estimatedMinutes": 30,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Full-stack Python — from idea to deployed API",
+      "context": "This capstone project ties together everything you've learned: OOP design, async concurrency, testing, databases, API design, error handling, and deployment. You'll build a task management API (like a simplified Trello) with FastAPI, SQLAlchemy, async endpoints, pytest tests, and Docker deployment. The project is larger than previous ones, but you'll build it in layers: first the data model, then the API endpoints, then tests, then Docker. Each layer builds on the previous one. By the end, you'll have a production-ready web service you could deploy to the cloud. This mirrors real-world Python development where you own a feature end-to-end."
+    },
+    {
+      "type": "example",
+      "title": "Async CRUD endpoints with FastAPI and SQLAlchemy",
+      "content": "A task management API with create, read, and list endpoints",
+      "code": "# main.py — FastAPI application entry point\nfrom fastapi import FastAPI, HTTPException, Depends  # Web framework\nfrom pydantic import BaseModel  # Request/response validation\nfrom sqlalchemy import create_engine, Column, Integer, String, Boolean\nfrom sqlalchemy.orm import declarative_base, Session, sessionmaker\n\n# Pydantic model for request validation — enforces types automatically\nclass TaskCreate(BaseModel):\n    title: str  # Required string — FastAPI rejects missing/invalid\n    description: str = \"\"  # Optional with default empty string\n\nclass TaskResponse(BaseModel):\n    id: int\n    title: str\n    description: str\n    completed: bool\n\n# Database setup — SQLite for simplicity, PostgreSQL for production\nDATABASE_URL = \"sqlite:///./tasks.db\"  # File-based database\nengine = create_engine(DATABASE_URL, connect_args={\"check_same_thread\": False})\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\n\napp = FastAPI(title=\"Task Manager API\")  # Create the FastAPI application\n\ndef get_db():\n    # Dependency that provides a database session to each request\n    db = SessionLocal()\n    try:\n        yield db  # Session is provided to the endpoint\n    finally:\n        db.close()  # Always close the session after request completes\n\n@app.post(\"/tasks/\", response_model=TaskResponse)\ndef create_task(task: TaskCreate, db: Session = Depends(get_db)):\n    db_task = TaskModel(title=task.title, description=task.description)\n    db.add(db_task)\n    db.commit()\n    db.refresh(db_task)\n    return db_task\n\n@app.get(\"/tasks/\", response_model=list[TaskResponse])\ndef list_tasks(db: Session = Depends(get_db)):\n    return db.query(TaskModel).all()\n\n# Run with: uvicorn main:app --reload --port 8000\n# Test: curl http://localhost:8000/tasks/"
+    },
+    {
+      "type": "explanation",
+      "title": "Project architecture — beyond the code",
+      "context": "A professional project has structure beyond just working code. Organize by layers: models/ (database models), schemas/ (Pydantic models), routers/ (API endpoints), services/ (business logic), and tests/. Use dependency injection for database sessions, authentication, and configuration. Add request logging with structlog for production debugging. Set up CI/CD (GitHub Actions) to run tests and deploy on every push to main. Use environment variables for all configuration — never hard-code database URLs or secret keys. Document your API with auto-generated docs (FastAPI provides /docs automatically). Implement proper HTTP status codes (201 for created, 404 for not found, 422 for validation errors)."
+    },
+    {
+      "type": "tip",
+      "title": "Don't put business logic in endpoint functions",
+      "context": "Fat endpoint functions with business logic mixed into request handling are untestable. Wrong: @app.post(...) directly computes tax, saves to DB, sends email — all in 50 lines. Correct: endpoint calls service layer: service.create_order(data). Service calls repository: repo.save(order). Each layer is independently testable. Endpoints handle HTTP concerns (status codes, serialization). Services handle business rules. Repositories handle data access. A change to tax calculation means editing the service, not the route."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Build the complete task manager API with these files: (1) models.py — SQLAlchemy Task model with id, title, description, completed, created_at, (2) schemas.py — Pydantic models for TaskCreate, TaskUpdate, TaskResponse, (3) main.py — FastAPI app with CRUD endpoints (create, list, get by id, update, delete), (4) test_api.py — pytest tests using TestClient from fastapi.testclient, testing all 5 CRUD operations, (5) Dockerfile — multi-stage build, (6) docker-compose.yml — app + database services. The update endpoint should support partial updates (only modify fields that are provided).",
+      "hints": [
+        "How do you use FastAPI's TestClient to test endpoints without a running server?",
+        "What HTTP methods correspond to each CRUD operation (create, read, update, delete)?"
+      ]
+    }
+  ]
+}

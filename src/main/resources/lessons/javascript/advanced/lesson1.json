@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Design Patterns in Practice",
+  "summary": "Apply Singleton, Observer, and Factory patterns to real JavaScript problems",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Design Patterns Are Proven Templates",
+      "content": "Design patterns are like architectural blueprints for solving recurring software problems. They are not code you copy-paste but templates you adapt. The Singleton pattern ensures a class has only one instance — like a single printer queue shared across an office. The Observer pattern lets objects subscribe to events — like Twitter followers getting notified when you post. The Factory pattern creates objects without specifying the exact class — like a vending machine that dispenses different drinks from the same slot."
+    },
+    {
+      "type": "example",
+      "title": "Singleton pattern for a logger",
+      "content": "Ensures only one Logger instance exists across the entire application",
+      "code": "class Logger {\n  constructor() {\n    if (Logger.instance) {\n      return Logger.instance;\n    }\n    this.logs = [];\n    Logger.instance = this;\n  }\n\n  log(message) {\n    this.logs.push(message);\n    console.log('[LOG]', message);\n  }\n\n  getHistory() {\n    return [...this.logs];\n  }\n}\n\nconst logger1 = new Logger();\nconst logger2 = new Logger();\nconsole.log(logger1 === logger2);\n// Expected output: true\n\nlogger1.log('App started');\nconsole.log(logger2.getHistory().length);\n// Expected output: 1"
+    },
+    {
+      "type": "explanation",
+      "title": "When Patterns Become Anti-Patterns",
+      "content": "Design patterns solve specific problems but are often overused. Singleton, for example, introduces global state that makes testing difficult and hides dependencies. Observer can create memory leaks if observers are not properly unsubscribed. Factory can add unnecessary complexity for simple object creation. The professional skill is recognizing when a pattern fits and when it is overkill. If a simple object literal works, do not force a Factory. If module-level state suffices, do not force a Singleton."
+    },
+    {
+      "type": "tip",
+      "title": "Overusing Singleton for everything",
+      "content": "The #1 mistake developers make with patterns is using Singleton as a default. Wrong: making every service a Singleton 'because we only need one'. Singletons hide dependencies, make unit testing impossible (tests share state), and create hidden coupling. Correct: use dependency injection — create a single instance at the composition root and pass it explicitly. Reserve Singleton for truly resource-limited cases like database connection pools."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Implement a simple event bus using the Observer pattern. Create an EventBus class with on(event, handler), off(event, handler), and emit(event, data) methods. Then create two modules: one that emits 'user:login' events with user data, and one that subscribes and logs welcome messages. Ensure subscribers can unsubscribe and do not receive events after removal.",
+      "hints": [
+        "What data structure (Map of arrays) stores multiple handlers per event?",
+        "When off is called, how do you remove only the specific handler, not all handlers?",
+        "What happens if emit is called for an event with no subscribers — should it throw?"
+      ]
+    }
+  ]
+}

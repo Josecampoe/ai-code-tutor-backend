@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 10,
+  "title": "Beginner Project",
+  "summary": "Build a complete command-line quiz application that uses variables, functions, arrays, control flow, and classes together",
+  "estimatedMinutes": 20,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Project Overview — Trivia Quiz App",
+      "content": "You are building a trivia quiz app that asks multiple-choice questions, tracks the user's score, and gives feedback. This project combines everything from lessons 1 through 9: variables store the score, arrays hold questions, functions handle logic, control flow checks answers, and a class models the quiz itself. Think of it like assembling a meal from ingredients you have already prepared individually — now you combine them into a full dish. The app will run in the terminal using console.log for output. By completing this, you will see how small pieces of code combine into a real, useful program."
+    },
+    {
+      "type": "example",
+      "title": "The Question Class and Quiz Logic",
+      "content": "Shows the Question class and a function to run a single question, with full type annotations",
+      "code": "// Define a Question class with all properties typed\nclass Question {\n  text: string;\n  options: string[]; // Array of possible answers\n  correctIndex: number; // Index of the correct option (0-based)\n  constructor(text: string, options: string[], correctIndex: number) {\n    this.text = text;\n    this.options = options;\n    this.correctIndex = correctIndex;\n  }\n  // Check if a given answer index is correct\n  isCorrect(answerIndex: number): boolean {\n    return answerIndex === this.correctIndex;\n  }\n}\n// Function to display a question and get feedback\nfunction askQuestion(q: Question): void {\n  console.log(q.text); // Display question text\n  q.options.forEach((opt, i) => { // Loop through options\n    console.log(`${i + 1}. ${opt}`); // Print each option\n  });\n  // For now, we simulate an answer (will be user input in full version)\n  const userAnswer: number = 1; // This would come from user input\n  const correct: boolean = q.isCorrect(userAnswer);\n  console.log(correct ? 'Correct!' : 'Wrong!');\n}\n// Expected output depends on the question data"
+    },
+    {
+      "type": "explanation",
+      "title": "Putting It All Together — Main Program Flow",
+      "content": "The main program creates an array of Question objects, then loops through them calling askQuestion for each. A 'score' variable tracks how many the user got right. After all questions, the program prints the final score out of the total. This is the same basic structure used by real quiz apps, survey tools, and even certification exams. Notice how the class encapsulates question data, the function encapsulates display logic, and the main code orchestrates everything. This separation of responsibilities makes the code easy to extend — adding a timer, shuffling questions, or saving results would each only require changes in one place."
+    },
+    {
+      "type": "tip",
+      "title": "Trying to Do Everything Inside main Without Abstraction",
+      "content": "The #1 beginner project mistake is writing all logic in one giant block without functions or classes. Wrong approach: declaring raw question arrays, writing display loops inline, and duplicating code for each question. Correct approach: create a Question class, write a reusable askQuestion function, and keep the main flow short. This is like cooking without washing dishes as you go — it works for one meal but scales terribly. Practice separating your program into small pieces that each do one thing. If a function does more than 15 lines, ask yourself if it can be split."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Complete the quiz app by adding at least 5 questions on topics you know. The questions should be stored in an array of Question objects. Write a function called 'runQuiz' that takes the array of questions, runs them all, tracks the score, and prints a final message like 'You got 4 out of 5 correct (80%)'. Use the Question class from the example. Make sure to handle edge cases like an empty question array.",
+      "hints": [
+        "What variable tracks the running score, and where should it be initialized?",
+        "How do you calculate a percentage from the score and total?",
+        "What loop should you use to go through every question in the array?"
+      ]
+    }
+  ]
+}

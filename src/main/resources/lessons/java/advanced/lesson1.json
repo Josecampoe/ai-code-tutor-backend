@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 1,
+  "title": "Design Patterns in Practice",
+  "summary": "Apply Gang of Four design patterns to solve recurring architectural problems",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Design Patterns as Blueprints for Common Problems",
+      "content": "Architects don't reinvent the wheel for every building — they use proven blueprints for common structures like door frames, staircases, and support beams. Software design patterns are the same: reusable solutions to problems that developers encounter repeatedly. Patterns are not copy-paste code; they're templates you adapt. The Singleton pattern ensures a class has only one instance (like a single database connection pool). The Factory pattern delegates object creation to subclasses (like a car factory that produces different models). Knowing patterns gives you a shared vocabulary with other developers: saying 'we need a Strategy pattern here' communicates a design instantly."
+    },
+    {
+      "type": "example",
+      "title": "Strategy Pattern: Payment Processing",
+      "content": "This shows the Strategy pattern where payment algorithms are interchangeable at runtime",
+      "code": "// Strategy interface: all payment strategies must implement this\ninterface PaymentStrategy {\n    void pay(double amount);\n}\n\n// Concrete strategy: credit card with fee calculation\nclass CreditCardStrategy implements PaymentStrategy {\n    private double feeRate = 0.03;  // 3% processing fee\n    \n    public void pay(double amount) {\n        double total = amount * (1 + feeRate);\n        System.out.println(\"Credit: $\" + String.format(\"%.2f\", total));\n    }\n}\n\n// Concrete strategy: cash with no fees\nclass CashStrategy implements PaymentStrategy {\n    public void pay(double amount) {\n        System.out.println(\"Cash: $\" + String.format(\"%.2f\", amount));\n    }\n}\n\n// Context: uses a strategy without knowing its details\nclass Checkout {\n    private PaymentStrategy strategy;\n    public Checkout(PaymentStrategy strategy) {\n        this.strategy = strategy;\n    }\n    public void processPayment(double amount) {\n        strategy.pay(amount);\n    }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Singleton, Factory, and Builder in Depth",
+      "content": "The Singleton pattern uses a private constructor and a static getInstance() method to control instantiation. It's useful for shared resources like configuration managers or thread pools — but it's also overused and makes unit testing difficult. The Factory Method pattern defines an interface for creating objects but lets subclasses decide which class to instantiate. Think of a document converter that can produce PDF, HTML, or Word output — the factory chooses the right writer. The Builder pattern solves the problem of constructors with many parameters. Instead of a 10-parameter constructor that's confusing and error-prone, you chain setter-like methods: new PizzaBuilder().size(\"large\").cheese(true).pepperoni(true).build();"
+    },
+    {
+      "type": "tip",
+      "title": "Overusing Singleton when dependency injection would be better",
+      "content": "Most common mistake: making every service class a Singleton with a static getInstance() method. This creates hidden dependencies that make unit testing nearly impossible because you can't mock the singleton in tests. Fix: use dependency injection (constructor-based) instead. Wrong: DatabaseManager.getInstance().query(...). Correct: inject DatabaseManager via the constructor: new ReportService(databaseManager)."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Implement the Observer pattern for a weather station. Create a WeatherStation (subject) that maintains a list of WeatherDisplay (observer) objects. When the temperature changes, all displays should be notified and updated automatically. Create at least two different display types (like CurrentConditionsDisplay and StatisticsDisplay) that implement the observer interface.",
+      "hints": [
+        "What methods should the Observer interface declare?",
+        "How does the subject keep track of all its observers?",
+        "When should the subject notify observers — before or after updating its own state?"
+      ]
+    }
+  ]
+}

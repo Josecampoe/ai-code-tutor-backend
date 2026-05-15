@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 7,
+  "title": "Recursion",
+  "summary": "Solve problems recursively by defining functions that call themselves with a base case and a recursive case",
+  "estimatedMinutes": 16,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Recursion Is Like Russian Nesting Dolls",
+      "content": "Recursion means a function calls itself, like opening a Russian nesting doll only to find a smaller version of the same doll inside. Each recursive call tackles a smaller version of the original problem until it reaches the smallest possible version (the 'base case'), which returns a simple answer. Then each doll closes back up, combining results until the original call gets the answer. This is elegant for problems that have a naturally self-similar structure — like traversing a file system (folders inside folders) or calculating factorials. Every recursive function needs two parts: a base case that stops the recursion, and a recursive case that moves toward the base case."
+    },
+    {
+      "type": "example",
+      "title": "Calculating Factorial Recursively",
+      "content": "Implements factorial (n!) using recursion with a clear base case and recursive step",
+      "code": "// Recursive function: factorial of n (n! = n * (n-1) * ... * 1)\nfunction factorial(n: number): number {\n  // Base case: factorial of 0 or 1 is 1\n  // Without this, recursion would never stop (stack overflow)\n  if (n <= 1) {\n    return 1;\n  }\n  // Recursive case: n * factorial of (n-1)\n  // Each call reduces n by 1, moving toward the base case\n  return n * factorial(n - 1);\n}\n// Test with 5 (expected: 5 * 4 * 3 * 2 * 1 = 120)\nconsole.log('Factorial of 5:', factorial(5));\n// Test edge cases\nconsole.log('Factorial of 0:', factorial(0));\nconsole.log('Factorial of 1:', factorial(1));\n// Expected output:\n// Factorial of 5: 120\n// Factorial of 0: 1\n// Factorial of 1: 1"
+    },
+    {
+      "type": "explanation",
+      "title": "Recursion vs Iteration — Trade-offs",
+      "content": "Anything you can do with recursion, you can do with a loop (iteration), and vice versa. Recursion often produces more readable code for problems with a naturally recursive structure — like tree traversal, directory walking, or parsing nested expressions. However, recursion has a cost: each call adds a frame to the call stack. If you recurse too deeply (thousands of levels), you get a 'stack overflow' error — like stacking plates too high until they topple. Iteration uses constant stack space. For problems with predictable depth, either approach works. For unbounded depth, prefer iteration or use 'tail call optimization' (which TypeScript/JavaScript engines have limited support for)."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting the Base Case and Causing Infinite Recursion",
+      "content": "The #1 intermediate mistake is writing a recursive function without a proper base case, causing infinite recursion until the stack overflows. Wrong approach: 'function countdown(n: number): void { console.log(n); countdown(n - 1); }' — this never stops. Correct approach: 'function countdown(n: number): void { if (n < 0) return; console.log(n); countdown(n - 1); }' — the base case 'n < 0' stops the recursion. Always ask yourself: 'What condition makes this function stop calling itself?' Write that base case first, before the recursive logic. Test with the smallest possible input to verify the base case works."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A file system has folders that can contain files and subfolders. Model this as a nested object: { name: 'root', files: ['readme.md', 'index.js'], subfolders: [{ name: 'src', files: ['app.ts'], subfolders: [{ name: 'utils', files: ['helpers.ts'], subfolders: [] }] }] }. Write a recursive function 'countFiles(folder)' that returns the total number of files including all nested subfolders. Do not use loops — only recursion.",
+      "hints": [
+        "What is the base case — when is a folder guaranteed to have zero files inside?",
+        "How do you combine the file count of the current folder with the counts from all subfolders?",
+        "What array method can you use to recursively process each subfolder?"
+      ]
+    }
+  ]
+}

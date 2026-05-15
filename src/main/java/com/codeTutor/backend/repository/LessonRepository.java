@@ -14,5 +14,7 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
 
     Optional<Lesson> findByTopicIdAndLanguageAndLevelAndLessonNumber(Long topicId, String language, String level, Integer lessonNumber);
 
+    Optional<Lesson> findByTopicIdAndLevelAndLessonNumber(Long topicId, String level, Integer lessonNumber);
+
     List<Lesson> findByTopicIdAndLevelOrderByLessonNumber(Long topicId, String level);
 }

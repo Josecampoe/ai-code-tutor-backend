@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Advanced OOP and SOLID",
+  "summary": "Apply SOLID principles to create maintainable, scalable object-oriented designs",
+  "estimatedMinutes": 17,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "SOLID Is a Set of Design Guidelines",
+      "content": "SOLID is an acronym for five principles that keep object-oriented code maintainable. Single Responsibility: a class should have one reason to change (like a chef who only cooks, not serves and cleans). Open/Closed: classes should be open for extension but closed for modification (add features via new code, not by changing existing code). Liskov Substitution: derived classes must be substitutable for their base classes without breaking anything. Interface Segregation: many small interfaces are better than one large one. Dependency Inversion: depend on abstractions, not concretions."
+    },
+    {
+      "type": "example",
+      "title": "Single Responsibility and Dependency Inversion",
+      "content": "Refactors a monolithic class into SOLID-compliant smaller classes with dependency injection",
+      "code": "// Before: violates SRP — handles orders AND email\nclass OrderProcessor {\n  process(order) {\n    // validates, saves, and emails\n  }\n}\n\n// After: SOLID-compliant\nclass OrderValidator {\n  validate(order) { /* only validation */ }\n}\n\nclass OrderRepository {\n  save(order) { /* only persistence */ }\n}\n\nclass EmailService {\n  sendConfirmation(email) { /* only email */ }\n}\n\nclass OrderProcessor {\n  constructor(validator, repo, emailer) {\n    this.validator = validator;\n    this.repo = repo;\n    this.emailer = emailer;\n  }\n  process(order) {\n    this.validator.validate(order);\n    this.repo.save(order);\n    this.emailer.sendConfirmation(order.email);\n  }\n}"
+    },
+    {
+      "type": "explanation",
+      "title": "Liskov Substitution in Practice",
+      "content": "The Liskov Substitution Principle (LSP) means if you have a base class Bird and a function that makes birds fly, then a Penguin subclass (which cannot fly) should not extend Bird — it violates LSP because it cannot substitute. The fix: separate FlyableBird from Bird, or use composition instead of inheritance. In JavaScript, LSP violations manifest as overridden methods that throw errors, change expected behavior, or leave properties unused. These are design smells that indicate inheritance was the wrong relationship."
+    },
+    {
+      "type": "tip",
+      "title": "Violating Liskov Substitution with inappropriate overrides",
+      "content": "The #1 mistake developers make with SOLID is creating subclasses that break base class contracts. Wrong: class Square extends Rectangle { setWidth(w) { this.width = w; this.height = w; } } — changing height when width is set violates the expectation. Correct: do not force inheritance. Either keep them separate (Square takes sideLength) or use a common Shape base class with area() as abstract. Subtypes must honor the contract of their supertypes."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Refactor a ReportGenerator class that currently: (1) fetches data from a database, (2) formats it as HTML, (3) sends it via email. Apply SRP by splitting into three classes. Apply Dependency Inversion by making ReportGenerator accept abstractions (interfaces) for each dependency. Add a second formatter (PDFFormatter) and a second sender (SlackSender) to demonstrate Open/Closed principle without modifying ReportGenerator.",
+      "hints": [
+        "What common interface should all formatters implement (what method)?",
+        "What common interface should all senders implement?",
+        "How does injecting dependencies through the constructor make the system Open/Closed?"
+      ]
+    }
+  ]
+}

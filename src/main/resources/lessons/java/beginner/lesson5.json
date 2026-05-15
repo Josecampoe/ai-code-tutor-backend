@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 5,
+  "title": "Loops",
+  "summary": "Repeat actions efficiently using for and while loops",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Loops as a Washing Machine Cycle",
+      "content": "A washing machine runs the same cycle over and over until the timer reaches zero. Each spin, rinse, and drain is one iteration. Java loops work the same way: they repeat a block of code until a condition tells them to stop. The for loop is like a washing machine with a preset program — you know exactly how many cycles you need. The while loop is like waiting for bread to toast — you keep checking until it's done, but you don't know exactly how long it will take."
+    },
+    {
+      "type": "example",
+      "title": "Counting with a For Loop",
+      "content": "This for loop prints the multiplication table for the number 5",
+      "code": "// Loop from 1 to 10 using a counter variable i\nfor (int i = 1; i <= 10; i++) {\n    // Calculate 5 times the current number\n    int product = 5 * i;\n    // Print each line of the table\n    System.out.println(\"5 x \" + i + \" = \" + product);\n}\n// Expected output:\n// 5 x 1 = 5\n// 5 x 2 = 10\n// 5 x 3 = 15\n// ... continues to 5 x 10 = 50"
+    },
+    {
+      "type": "explanation",
+      "title": "While Loops and When to Use Each",
+      "content": "Use a for loop when you know the exact number of repetitions, like printing all students in a class of 30. Use a while loop when the repetitions depend on a condition that might change, like waiting for a user to type 'quit'. A common pattern is the 'sentinel loop': keep asking for input until the user enters a special value. The do-while variant always runs the body at least once, like checking a restaurant menu — you always look at it, but whether you order depends on what you see."
+    },
+    {
+      "type": "tip",
+      "title": "Creating an infinite loop by accident",
+      "content": "Most common mistake: forgetting to update the loop variable, like writing int i = 1; while (i <= 10) { System.out.println(i); } without i++. The condition never becomes false, so the loop runs forever. Fix: always ensure your loop variable changes toward the exit condition. Wrong: while (count < 5) { System.out.println(\"hi\"); }. Correct: while (count < 5) { System.out.println(\"hi\"); count++; }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A gym tracks daily visitors. You have an array of visitor counts for 7 days: [45, 52, 38, 61, 47, 55, 42]. Write a loop that calculates and prints the total visitors for the week and the average per day.",
+      "hints": [
+        "Which loop type works best when you know the array length?",
+        "How do you add each day's count to a running total?",
+        "How do you calculate an average from a total?"
+      ]
+    }
+  ]
+}

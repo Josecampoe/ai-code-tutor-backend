@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 6,
+  "title": "Functions",
+  "summary": "Break programs into reusable blocks called methods that accept inputs and return results",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Methods as Kitchen Appliances",
+      "content": "A kitchen blender is a machine you use over and over. You put ingredients in (inputs), press a button, and get a smoothie out (output). You don't need to know how the motor works — you just need to know what the blender does. Java methods work the same way. A method is a reusable block of code that takes inputs (parameters), does something, and optionally returns a result. Methods let you write code once and use it many times, which keeps your programs organized and prevents repetition."
+    },
+    {
+      "type": "example",
+      "title": "Creating and Calling a Method",
+      "content": "This method calculates the area of a rectangle and the main method uses it",
+      "code": "// Method that calculates rectangle area\n// It takes width and height as parameters\n// It returns the calculated area as a double\npublic static double calculateArea(double width, double height) {\n    // Multiply width by height to get area\n    double area = width * height;\n    // Send the result back to whoever called this\n    return area;\n}\n\npublic static void main(String[] args) {\n    // Call the method and store its return value\n    double roomArea = calculateArea(5.0, 8.0);\n    System.out.println(\"Room area: \" + roomArea);\n}\n// Expected output:\n// Room area: 40.0"
+    },
+    {
+      "type": "explanation",
+      "title": "Parameters, Arguments, and Return Values",
+      "content": "Parameters are placeholders defined in the method signature — they're like blank fields in a form. Arguments are the actual values you fill in when calling the method — like writing your name on that form. The return value is the result the method sends back, like a receipt. A method with void return type does its job without sending anything back, like a trash can that takes trash but doesn't give anything back. Methods that return a value use the return keyword, which immediately exits the method with the result."
+    },
+    {
+      "type": "tip",
+      "title": "Forgetting to return a value when the method promises one",
+      "content": "Most common mistake: declaring a method as int calculateTotal() but forgetting return total; at the end. The method signature says 'I will give you an int' but the method body doesn't deliver. Fix: always ensure every code path in a non-void method has a return statement. Wrong: public int getPrice() { double price = 9.99; }. Correct: public int getPrice() { double price = 9.99; return price; }"
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A bakery sells cookies in boxes of 12. Write a method called calculateBoxes that takes the number of cookies needed and returns how many full boxes are required (use integer division). In main, test it with 50 cookies.",
+      "hints": [
+        "What data type should the parameter and return value be?",
+        "What division operator gives you whole boxes without leftovers?",
+        "How do you call your method from main?"
+      ]
+    }
+  ]
+}

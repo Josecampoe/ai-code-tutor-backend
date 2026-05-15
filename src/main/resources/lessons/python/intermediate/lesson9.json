@@ -1,0 +1,38 @@
+{
+  "lessonNumber": 9,
+  "title": "Generics",
+  "summary": "Write type-safe, reusable functions and classes using Python's generic type hints",
+  "estimatedMinutes": 14,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Type hints let Python know what to expect",
+      "content": "In dynamically-typed Python, a function that says 'add a and b' doesn't specify what types a and b should be. This is flexible but error-prone — you might accidentally pass a string where a number is expected. Type hints (introduced in Python 3.5) let you annotate function parameters and return types without affecting runtime behavior — think of them as labels on boxes telling you what should go inside. Generic types take this further: they let you write a function that works with 'any type T' while still maintaining type safety. The typing module provides TypeVar, List[T], Dict[K, V], and Optional[T] for this purpose."
+    },
+    {
+      "type": "example",
+      "title": "A generic function that works with any type",
+      "content": "This function finds the first element in a list, with proper type hints that preserve type information",
+      "code": "from typing import TypeVar, List\n\n# Declare a type variable T that can be any type\nT = TypeVar('T')  # T is a placeholder — like a wildcard for types\n\ndef first_element(items: List[T]) -> T:\n    # This function takes a list of any type T\n    # It returns a single element of that same type T\n    if not items:  # Check if the list is empty\n        return None  # Return None for empty lists\n    return items[0]  # Return the first element\n\n# Type checker knows return type matches list element type\nname = first_element([\"Alice\", \"Bob\", \"Charlie\"])  # T is str\nscore = first_element([95, 87, 92, 78])  # T is int\nprint(\"First name:\", name)\nprint(\"First score:\", score)\n\n# Without generics, we'd use Any and lose type safety\n# With generics, the type checker catches mismatches\n# Expected output:\n# First name: Alice\n# First score: 95"
+    },
+    {
+      "type": "explanation",
+      "title": "Generic classes and constraints",
+      "content": "You can also define generic classes using Generic[T] as a base class. This is powerful for data structures like a Stack or Queue that work uniformly with any type. TypeVar accepts optional constraints: TypeVar('T', int, float) creates a type variable that only accepts int or float, excluding strings. You can also use TypeVar with bound=SomeBase to accept any subclass of a given base class. These constraints give you the precision of static typing while keeping the flexibility of generics. Tools like mypy or pyright can then verify your code statically before it ever runs."
+    },
+    {
+      "type": "tip",
+      "title": "Don't use Generic[T] when just one function needs it",
+      "content": "Over-engineering with generics is a common intermediate mistake. Wrong: writing a generic repository class for a script with three functions. Generics add complexity — use them when you have a genuinely reusable component (library, framework, data structure). For simple scripts, plain type hints with Any or just documenting the expected type is sufficient. Reserve generics for code that truly works identically across multiple types."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "Write a generic function called pairs(items: List[T]) -> List[Tuple[T, T]] that takes a list and returns a list of tuples pairing adjacent elements. For example, pairs([1, 2, 3, 4]) should return [(1, 2), (3, 4)]. If there's an odd number of elements, the last element can be paired with None. Add proper type hints using TypeVar.",
+      "hints": [
+        "How do you pair every two elements using slice notation?",
+        "What import from typing lets you declare a placeholder type T?"
+      ]
+    }
+  ]
+}

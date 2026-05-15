@@ -1,0 +1,39 @@
+{
+  "lessonNumber": 4,
+  "title": "Testing",
+  "summary": "Write unit tests, integration tests, and mocks using Vitest/Jest with TypeScript, following testing best practices",
+  "estimatedMinutes": 18,
+  "sections": [
+    {
+      "type": "explanation",
+      "title": "Testing Is Like Having a Safety Net and a Mirror",
+      "content": "Tests serve two purposes: catching regressions (safety net) and documenting expected behavior (mirror). When you write a test, you are saying: 'here is what this function should do, and here is how I prove it.' Unit tests verify individual functions or classes in isolation — like testing a single engine component on a bench before installing it in the car. Integration tests verify that components work together — like testing that the engine, transmission, and wheels all turn in harmony. TypeScript enhances testing by catching type mismatches that would otherwise cause runtime test failures, and by making mocks easier with explicit interfaces."
+    },
+    {
+      "type": "example",
+      "title": "Unit Testing a Discount Calculator with Vitest",
+      "content": "Shows how to write tests for a discount calculation function with edge cases",
+      "code": "// File: src/discount.ts\nexport function applyDiscount(price: number, percent: number): number {\n  if (price < 0) throw new Error('Price cannot be negative');\n  if (percent < 0 || percent > 100) throw new Error('Invalid percent');\n  return +(price * (1 - percent / 100)).toFixed(2);\n}\n// File: src/__tests__/discount.test.ts\nimport { describe, it, expect } from 'vitest';\nimport { applyDiscount } from '../discount.js';\ndescribe('applyDiscount', () => {\n  it('applies 10% discount correctly', () => {\n    expect(applyDiscount(100, 10)).toBe(90);\n  });\n  it('returns same price for 0% discount', () => {\n    expect(applyDiscount(50, 0)).toBe(50);\n  });\n  it('handles 100% discount (free)', () => {\n    expect(applyDiscount(200, 100)).toBe(0);\n  });\n  it('throws on negative price', () => {\n    expect(() => applyDiscount(-10, 10)).toThrow('negative');\n  });\n  it('throws on invalid percent', () => {\n    expect(() => applyDiscount(50, 110)).toThrow('Invalid');\n  });\n});\n// Run: npx vitest run"
+    },
+    {
+      "type": "explanation",
+      "title": "Mocks, Stubs, and Dependency Injection for Testable Code",
+      "content": "Code that depends on external systems (databases, APIs, filesystem) is hard to test because you would need those systems running. Dependency injection solves this by making dependencies explicit — pass them into the constructor or function parameter instead of hard-coding them. In tests, you inject 'mocks' (simulated versions) that return controlled data. TypeScript interfaces make this seamless: your function depends on an interface, production code passes the real implementation, tests pass a mock. For example, a UserService that takes a Database interface can be tested with a MockDatabase that uses an in-memory array instead of PostgreSQL. This makes tests fast, deterministic, and parallelizable."
+    },
+    {
+      "type": "tip",
+      "title": "Testing Implementation Details Instead of Behavior",
+      "content": "The #1 advanced mistake is testing how a function works internally (implementation details) rather than what it produces (behavior). Wrong approach: 'expect(counter.increment).toHaveBeenCalledTimes(1); expect(counter.internalCount).toBe(1);' — if you refactor the internals, the test breaks even though the behavior is correct. Correct: 'expect(counter.getValue()).toBe(1);' — test the observable output. Tests tied to implementation details become brittle maintenance nightmares. A good rule: if you change the implementation and the test fails, the test was testing the wrong thing. Mock only external boundaries (API calls, databases), not internal methods of the class under test."
+    },
+    {
+      "type": "exercise",
+      "title": "Your turn",
+      "prompt": "A WeatherService class has a method 'getTemperature(city: string): Promise<number>' that calls an external API (interface WeatherAPI { fetch(city: string): Promise<{ temp: number }> }). Write tests for WeatherService using a mock WeatherAPI. Test: (1) correct temperature is returned, (2) API errors are propagated as 'Unable to fetch weather' errors, (3) the API is called with the correct city name. Do not use real HTTP calls — inject a mock that returns controlled data.",
+      "hints": [
+        "How does dependency injection help — should WeatherService create its own API client?",
+        "How does the mock API simulate both success and failure scenarios?",
+        "What Vitest method verifies that a function was called with specific arguments?"
+      ]
+    }
+  ]
+}
