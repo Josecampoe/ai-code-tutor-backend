@@ -1,10 +1,11 @@
 package com.codeTutor.backend.config;
 
-import java.io.InputStream;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +52,18 @@ public class LessonSeeder implements CommandLineRunner {
                 topicRepository.findByNameContainingIgnoreCase(language);
 
             if (topicOpt.isEmpty()) {
-                log.error("Topic not found for: {}", language);
+                topicOpt = topicRepository
+                    .findByNameContainingIgnoreCase(language + " Basics");
+            }
+
+            if (topicOpt.isEmpty()) {
+                log.error("Cannot find topic for language: {}", language);
+                log.error("Available topics: {}",
+                    topicRepository.findAll()
+                        .stream()
+                        .map(LearningTopic::getName)
+                        .collect(Collectors.toList())
+                );
                 continue;
             }
 
@@ -60,20 +72,19 @@ public class LessonSeeder implements CommandLineRunner {
             for (String level : LEVELS) {
                 for (int n = 1; n <= LESSONS_PER_LEVEL; n++) {
                     String path = String.format(
-                        "/lessons/%s/%s/lesson%d.json",
+                        "lessons/%s/%s/lesson%d.json",
                         language, level, n
                     );
 
                     try {
-                        InputStream is =
-                            getClass().getResourceAsStream(path);
+                        ClassPathResource resource = new ClassPathResource(path);
 
-                        if (is == null) {
-                            log.warn("File not found: {}", path);
+                        if (!resource.exists()) {
+                            log.warn("JSON file not found: {}", path);
                             continue;
                         }
 
-                        JsonNode json = objectMapper.readTree(is);
+                        JsonNode json = objectMapper.readTree(resource.getInputStream());
 
                         Lesson lesson = new Lesson();
                         lesson.setTopic(topic);

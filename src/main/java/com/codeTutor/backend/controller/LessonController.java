@@ -1,7 +1,10 @@
 package com.codeTutor.backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +63,27 @@ public class LessonController {
                     .body("Lessons not available yet.");
         }
         return ResponseEntity.ok(lessons);
+    }
+
+    @GetMapping("/debug/count")
+    public ResponseEntity<?> debugCount() {
+        List<Lesson> all = lessonService.findAll();
+        Map<String, Object> body = new HashMap<>();
+        body.put("total", all.size());
+        List<Map<String, Object>> samples = all.stream()
+            .limit(3)
+            .map(l -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", l.getId().toString());
+                m.put("title", l.getTitle());
+                m.put("level", l.getLevel());
+                m.put("lessonNumber", l.getLessonNumber());
+                m.put("topicName", l.getTopic().getName());
+                return m;
+            })
+            .collect(Collectors.toList());
+        body.put("samples", samples);
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping
