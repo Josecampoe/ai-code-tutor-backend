@@ -134,8 +134,8 @@ public class CachingAIDecorator implements AIServiceInterface {
     }
 
     @Override
-    public String generateLessonContent(String topicName, String language, String level) {
-        return wrapped.generateLessonContent(topicName, language, level);
+    public String generateLessonContent(String language, String level, int lessonNumber, String title) {
+        return wrapped.generateLessonContent(language, level, lessonNumber, title);
     }
 
     /**

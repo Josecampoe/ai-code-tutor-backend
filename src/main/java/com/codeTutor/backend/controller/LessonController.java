@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeTutor.backend.config.SeedingStatus;
 import com.codeTutor.backend.model.Lesson;
-import com.codeTutor.backend.repository.LearningTopicRepository;
-import com.codeTutor.backend.service.AIServiceInterface;
 import com.codeTutor.backend.service.LessonService;
 
 @RestController
@@ -25,13 +24,11 @@ import com.codeTutor.backend.service.LessonService;
 public class LessonController {
 
     private final LessonService lessonService;
-    private final LearningTopicRepository learningTopicRepository;
-    private final AIServiceInterface aiService;
+    private final SeedingStatus seedingStatus;
 
-    public LessonController(LessonService lessonService, LearningTopicRepository learningTopicRepository, AIServiceInterface aiService) {
+    public LessonController(LessonService lessonService, SeedingStatus seedingStatus) {
         this.lessonService = lessonService;
-        this.learningTopicRepository = learningTopicRepository;
-        this.aiService = aiService;
+        this.seedingStatus = seedingStatus;
     }
 
     @GetMapping
@@ -47,48 +44,29 @@ public class LessonController {
     }
 
     @GetMapping("/topic/{topicId}")
-    public ResponseEntity<?> getLessonByTopicAndLanguageAndLevel(
+    public ResponseEntity<Lesson> getLessonByTopicAndLanguageAndLevel(
             @PathVariable Long topicId,
             @RequestParam String language,
             @RequestParam String level,
             @RequestParam Integer lessonNumber) {
-        var existing = lessonService.findByTopicIdAndLanguageAndLevelAndLessonNumber(topicId, language, level, lessonNumber);
-        if (existing.isPresent()) {
-            return ResponseEntity.ok(existing.get());
+        return lessonService.findByTopicIdAndLanguageAndLevelAndLessonNumber(topicId, language, level, lessonNumber)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/topic/{topicId}/level/{level}")
+    public ResponseEntity<?> getLessonsByTopicAndLevel(
+            @PathVariable Long topicId,
+            @PathVariable String level) {
+        if (!seedingStatus.isComplete()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body("Lessons are being generated. Please try again in a few minutes.");
         }
-
-        try {
-            var topic = learningTopicRepository.findById(topicId);
-            if (topic.isEmpty()) return ResponseEntity.notFound().build();
-
-            String topicName = topic.get().getName();
-
-            String lessonTitle = getLessonTitle(level, lessonNumber);
-            String contentJson = aiService.generateLessonContent(topicName, language, level);
-            if (contentJson != null) {
-                contentJson = contentJson.trim();
-                if (contentJson.startsWith("```json")) contentJson = contentJson.substring(7);
-                if (contentJson.startsWith("```")) contentJson = contentJson.substring(3);
-                if (contentJson.endsWith("```")) contentJson = contentJson.substring(0, contentJson.length() - 3);
-                contentJson = contentJson.trim();
-            }
-
-            Lesson lesson = Lesson.builder()
-                    .topic(topic.get())
-                    .language(language)
-                    .level(level)
-                    .lessonNumber(lessonNumber)
-                    .title(lessonTitle)
-                    .summary("Lesson " + lessonNumber + " of " + level + " level for " + topicName)
-                    .contentJson(contentJson)
-                    .estimatedMinutes(10)
-                    .build();
-
-            Lesson saved = lessonService.save(lesson);
-            return ResponseEntity.ok(saved);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error generating lesson: " + e.getMessage());
+        List<Lesson> lessons = lessonService.findByTopicIdAndLevel(topicId, level);
+        if (lessons.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(lessons);
     }
 
     @PostMapping
@@ -108,40 +86,5 @@ public class LessonController {
         return lessonService.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
-    }
-
-    private String getLessonTitle(String level, int lessonNumber) {
-        String[] beginnerTitles = {
-            "Introduction", "Variables and Data Types", "Operators",
-            "Control Flow", "Loops", "Functions",
-            "Arrays and Lists", "Strings", "Introduction to OOP",
-            "Beginner Project"
-        };
-        String[] intermediateTitles = {
-            "Object-Oriented Programming Deep Dive", "Error Handling",
-            "Collections and Data Structures", "File I/O",
-            "Modules and Packages", "Functional Programming Basics",
-            "Recursion", "Interfaces and Abstractions",
-            "Generics and Templates", "Intermediate Project"
-        };
-        String[] advancedTitles = {
-            "Design Patterns in Practice", "Concurrency and Threads",
-            "Memory Management", "Testing",
-            "Performance and Optimization", "Advanced OOP",
-            "Working with APIs", "Databases and Persistence",
-            "Deployment Basics", "Advanced Project"
-        };
-
-        String[] titles;
-        switch (level) {
-            case "intermediate" -> titles = intermediateTitles;
-            case "advanced" -> titles = advancedTitles;
-            default -> titles = beginnerTitles;
-        }
-
-        if (lessonNumber >= 1 && lessonNumber <= 10) {
-            return titles[lessonNumber - 1];
-        }
-        return "Lesson " + lessonNumber;
     }
 }
