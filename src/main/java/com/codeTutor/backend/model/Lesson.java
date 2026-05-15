@@ -14,7 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(
     name = "lessons",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"topic_id", "language", "level"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"topic_id", "language", "level", "lesson_number"})
 )
 @Getter
 @Setter
@@ -46,6 +46,9 @@ public class Lesson {
 
     @Column(name = "content_json", columnDefinition = "TEXT")
     private String contentJson;
+
+    @Column(name = "lesson_number", nullable = false)
+    private Integer lessonNumber;
 
     @Column(name = "estimated_minutes")
     private Integer estimatedMinutes;

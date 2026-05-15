@@ -10,10 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codeTutor.backend.model.Lesson;
 import com.codeTutor.backend.repository.LessonRepository;
 
-/**
- * Service layer for Lesson entity.
- * Handles business logic for lesson operations.
- */
 @Service
 @Transactional
 public class LessonService {
@@ -24,44 +20,29 @@ public class LessonService {
         this.lessonRepository = lessonRepository;
     }
 
-    /**
-     * Retrieves all lessons.
-     */
     public List<Lesson> findAll() {
         return lessonRepository.findAll();
     }
 
-    /**
-     * Finds a lesson by its ID.
-     */
     public Optional<Lesson> findById(UUID id) {
         return lessonRepository.findById(id);
     }
 
-    /**
-     * Finds a lesson by topic, language, and level.
-     * Returns empty if not found.
-     */
-    public Optional<Lesson> findByTopicIdAndLanguageAndLevel(Long topicId, String language, String level) {
-        return lessonRepository.findByTopicIdAndLanguageAndLevel(topicId, language, level);
+    public Optional<Lesson> findByTopicIdAndLanguageAndLevelAndLessonNumber(Long topicId, String language, String level, Integer lessonNumber) {
+        return lessonRepository.findByTopicIdAndLanguageAndLevelAndLessonNumber(topicId, language, level, lessonNumber);
     }
 
-    /**
-     * Saves a new lesson.
-     */
     public Lesson save(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
 
-    /**
-     * Updates an existing lesson.
-     */
     public Optional<Lesson> update(UUID id, Lesson updatedLesson) {
         return lessonRepository.findById(id)
                 .map(existingLesson -> {
                     existingLesson.setTopic(updatedLesson.getTopic());
                     existingLesson.setLanguage(updatedLesson.getLanguage());
                     existingLesson.setLevel(updatedLesson.getLevel());
+                    existingLesson.setLessonNumber(updatedLesson.getLessonNumber());
                     existingLesson.setTitle(updatedLesson.getTitle());
                     existingLesson.setSummary(updatedLesson.getSummary());
                     existingLesson.setContentJson(updatedLesson.getContentJson());
@@ -70,9 +51,6 @@ public class LessonService {
                 });
     }
 
-    /**
-     * Deletes a lesson by its ID.
-     */
     public boolean delete(UUID id) {
         if (lessonRepository.existsById(id)) {
             lessonRepository.deleteById(id);
