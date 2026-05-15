@@ -3,6 +3,7 @@ package com.codeTutor.backend.config;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @Order(2)
+@ConditionalOnProperty(name = "app.seed-lessons", havingValue = "true")
 public class LessonSeeder implements CommandLineRunner {
 
     private static final String[] BEGINNER_TITLES = {
