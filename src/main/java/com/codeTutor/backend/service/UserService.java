@@ -129,19 +129,14 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Verifica las credenciales del usuario y retorna sus datos si son correctas.
-     * Usa BCrypt.matches() para comparar la contraseña ingresada con el hash guardado.
-     */
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("No existe una cuenta con ese email"));
+                .orElse(null);
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new UnauthorizedException("Contraseña incorrecta");
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new UnauthorizedException("Invalid email or password");
         }
 
-        // Update last login timestamp
         user.setLastLoginAt(java.time.LocalDateTime.now());
         userRepository.save(user);
 
@@ -152,7 +147,7 @@ public class UserService extends BaseEntityService<CreateUserRequest, UserRespon
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .token(token)
-                .message("Inicio de sesión exitoso")
+                .message("Login successful")
                 .build();
     }
 }

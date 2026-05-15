@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +20,7 @@ import com.codeTutor.backend.dto.response.CodeSnapshotResponse;
 import com.codeTutor.backend.dto.response.EditorLoadResponse;
 import com.codeTutor.backend.dto.response.ProjectContextResponse;
 import com.codeTutor.backend.dto.response.ProjectResponse;
+import com.codeTutor.backend.exception.ForbiddenException;
 import com.codeTutor.backend.repository.AiMessageRepository;
 import com.codeTutor.backend.repository.AiSessionRepository;
 import com.codeTutor.backend.repository.ProjectStepRepository;
@@ -74,12 +75,12 @@ public class ProjectController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * GET /api/projects/user/{userId}
-     * Retorna todos los proyectos de un usuario.
-     */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ProjectResponse>> getProjectsByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<ProjectResponse>> getProjectsByUser(
+            @PathVariable Long userId, Authentication auth) {
+        if (auth == null || !auth.getPrincipal().equals(userId)) {
+            throw new ForbiddenException("Access denied");
+        }
         List<ProjectResponse> response = projectService.getProjectsByUser(userId);
         return ResponseEntity.ok(response);
     }

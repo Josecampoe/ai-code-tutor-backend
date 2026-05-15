@@ -14,17 +14,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * Intercepts every HTTP request and validates the JWT token from the Authorization header.
- * Sets the authenticated user in the SecurityContext if the token is valid.
- */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
 
-    // Skip JWT validation for these public paths
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
@@ -34,12 +29,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || (path.equals("/api/users") && "POST".equals(method))
                 || path.equals("/api/users/login")
                 || path.startsWith("/api/learn/")
-                || path.startsWith("/api/chat")
-                || path.startsWith("/api/terminal")
                 || path.startsWith("/api/topics")
                 || path.startsWith("/api/categories")
-                || path.startsWith("/api/lessons")
-                || path.startsWith("/api/progress");
+                || path.startsWith("/api/lessons");
     }
 
     @Override
@@ -49,18 +41,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token de autenticación requerido");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Authentication required\"}");
             return;
         }
 
         String token = authHeader.substring(7);
-        if (!jwtService.isTokenValid(token)) {
+        String validationError = jwtService.getValidationError(token);
+        if (validationError != null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token inválido o expirado");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"" + validationError + "\"}");
             return;
         }
 
-        // Set authenticated user in security context
         Long userId = jwtService.extractUserId(token);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userId, null, List.of());
