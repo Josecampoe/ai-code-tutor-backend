@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-/**
- * DTO for creating a new user.
- * Validates username and password length and disallows spaces.
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,17 +13,20 @@ import lombok.*;
 @Builder
 public class CreateUserRequest {
 
-    @NotBlank(message = "El nombre de usuario es obligatorio")
-    @Size(min = 3, max = 10, message = "El nombre de usuario debe tener entre 3 y 10 caracteres")
-    @Pattern(regexp = "^\\S+$", message = "El nombre de usuario no puede contener espacios")
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Pattern(regexp = "^\\S+$", message = "Username cannot contain spaces")
     private String username;
 
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email no es válido")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, max = 10, message = "La contraseña debe tener entre 6 y 10 caracteres")
-    @Pattern(regexp = "^\\S+$", message = "La contraseña no puede contener espacios")
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 100, message = "Password must be at least 8 characters")
+    @Pattern(
+        regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$",
+        message = "Password must contain at least one uppercase letter, one number, and one special character (!@#$%^&*)"
+    )
     private String password;
 }

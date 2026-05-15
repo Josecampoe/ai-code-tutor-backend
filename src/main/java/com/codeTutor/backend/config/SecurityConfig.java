@@ -1,8 +1,9 @@
 package com.codeTutor.backend.config;
 
-import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,10 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.codeTutor.backend.security.JwtAuthFilter;
 
-/**
- * Spring Security configuration.
- * Configures JWT filter, CORS with restricted origin, stateless sessions and BCrypt.
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -28,9 +25,11 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
+    @Value("${app.allowed-origins}")
+    private String allowedOriginsEnv;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        // Cost factor 12 as required by security standards
         return new BCryptPasswordEncoder(12);
     }
 
@@ -46,18 +45,20 @@ public class SecurityConfig {
                 .requestMatchers("POST", "/api/users").permitAll()
                 .requestMatchers("POST", "/api/users/login").permitAll()
                 .requestMatchers("/api/learn/**").permitAll()
-                .requestMatchers("/api/chat/**").permitAll()
-                .requestMatchers("/api/terminal/**").permitAll()
                 .requestMatchers("/api/topics/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
                 .requestMatchers("/api/lessons/**").permitAll()
-                .requestMatchers("/api/progress/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
                 .frameOptions(frame -> frame.deny())
+                .xssProtection(xss -> xss.enable())
                 .contentTypeOptions(ct -> {})
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000)
+                )
             );
 
         return http.build();
@@ -66,15 +67,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Allow both the configured origin and localhost for development
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
+        config.setAllowedOrigins(Arrays.asList(allowedOriginsEnv.split(",")));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/api/**", config);
         return source;
     }
 }

@@ -2,11 +2,14 @@ package com.codeTutor.backend.service;
 
 import com.codeTutor.backend.dto.request.CreateProjectRequest;
 import com.codeTutor.backend.dto.response.ProjectResponse;
+import com.codeTutor.backend.exception.ForbiddenException;
 import com.codeTutor.backend.model.Project;
 import com.codeTutor.backend.model.User;
 import com.codeTutor.backend.repository.ProjectRepository;
 import com.codeTutor.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -116,15 +119,15 @@ public class ProjectService {
     // MÉTODOS PRINCIPALES
     // =========================================================
 
-    /**
-     * Crea un nuevo proyecto validando que el usuario dueño exista.
-     */
     public ProjectResponse createProject(CreateProjectRequest request) {
-        // Verificar que el usuario existe antes de crear el proyecto
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + request.getUserId()));
+        Long currentUserId = getCurrentUserId();
+        if (currentUserId == null) {
+            throw new RuntimeException("Authentication required");
+        }
 
-        // Construir el proyecto con los datos del request
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + currentUserId));
+
         Project project = Project.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -132,17 +135,14 @@ public class ProjectService {
                 .user(user)
                 .build();
 
-        // Guardar y retornar el proyecto creado
         Project saved = projectRepository.save(project);
         return toResponse(saved);
     }
 
-    /**
-     * Retorna un proyecto por su ID o lanza excepción si no existe.
-     */
     public ProjectResponse getProjectById(Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Project not found with ID: " + id));
+        verifyOwnership(project);
         return toResponse(project);
     }
 
@@ -225,9 +225,21 @@ public class ProjectService {
         return versionHistory;
     }
 
-    /**
-     * Convierte un Project a su DTO de respuesta.
-     */
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long) {
+            return (Long) auth.getPrincipal();
+        }
+        return null;
+    }
+
+    private void verifyOwnership(Project project) {
+        Long currentUserId = getCurrentUserId();
+        if (currentUserId != null && !project.getUser().getId().equals(currentUserId)) {
+            throw new ForbiddenException("Access denied");
+        }
+    }
+
     private ProjectResponse toResponse(Project project) {
         return ProjectResponse.builder()
                 .id(project.getId())
