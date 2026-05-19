@@ -50,18 +50,14 @@ public class LessonController {
             @RequestParam Integer lessonNumber) {
         return lessonService.findByTopicIdAndLevelAndLessonNumber(topicId, level, lessonNumber)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/topic/{topicId}/level/{level}")
-    public ResponseEntity<?> getLessonsByTopicAndLevel(
+    public ResponseEntity<List<Lesson>> getLessonsByTopicAndLevel(
             @PathVariable Long topicId,
             @PathVariable String level) {
         List<Lesson> lessons = lessonService.findByTopicIdAndLevel(topicId, level);
-        if (lessons.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Lessons not available yet.");
-        }
         return ResponseEntity.ok(lessons);
     }
 
